@@ -341,25 +341,70 @@
     border-color: var(--cream);
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 767px) {
+    /* Hero */
+    .editorial-hero {
+      min-height: 100svh;
+    }
+
     .editorial-hero__body {
-      padding: max(8rem, 22vw) 6vw 10vw;
+      padding: max(7rem, 20vw) 1.2rem 8vw;
+    }
+
+    .editorial-hero__season {
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      margin-bottom: 1.2rem;
+    }
+
+    .editorial-hero__headline {
+      font-size: clamp(2.6rem, 12vw, 4.5rem);
+    }
+
+    .editorial-hero__headline-line2 {
+      padding-left: clamp(1rem, 6vw, 3rem);
+    }
+
+    .editorial-hero__cta {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      margin-top: 2.2rem;
     }
 
     .editorial-hero__scroll-hint {
       display: none;
     }
 
+    /* Ticker */
+    .editorial-ticker {
+      padding: 0.9rem 0;
+    }
+
+    /* Category grid: 1 column */
     .editorial-categories {
       grid-template-columns: 1fr;
+      gap: 1px;
     }
 
     .editorial-cat--wide {
       grid-column: span 1;
     }
 
-    .editorial-cat--wide .editorial-cat__media {
+    .editorial-cat--wide .editorial-cat__media,
+    .editorial-cat:not(.editorial-cat--wide) .editorial-cat__media {
       aspect-ratio: 4 / 5;
+    }
+
+    .editorial-cat__info {
+      padding: 1rem 1.1rem 1.4rem;
+    }
+
+    .editorial-cat__title {
+      font-size: clamp(1.5rem, 7vw, 2.2rem);
+    }
+
+    .editorial-cat__link {
+      font-size: 0.6rem;
     }
   }
 {% endstylesheet %}

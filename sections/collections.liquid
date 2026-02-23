@@ -175,10 +175,61 @@
   @media (max-width: 780px) {
     .colls-grid {
       grid-template-columns: 1fr;
+      gap: 3.5rem;
     }
 
     .colls-card__media {
       aspect-ratio: 3 / 4;
+    }
+  }
+
+  @media (max-width: 767px) {
+    /* Page header */
+    .colls-page-header {
+      padding: clamp(5rem, 16vw, 8rem) 1.1rem 1.8rem;
+    }
+
+    .colls-page-header__eyebrow {
+      font-size: 0.58rem;
+      letter-spacing: 0.26em;
+    }
+
+    .colls-page-header__title {
+      font-size: clamp(2.6rem, 12vw, 4rem);
+      line-height: 0.95;
+    }
+
+    /* Grid */
+    .colls-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      padding: 0 1.1rem 4rem;
+    }
+
+    /* Cards */
+    .colls-card--offset {
+      margin-top: 0;
+    }
+
+    .colls-card__media {
+      aspect-ratio: 4 / 5;
+    }
+
+    .colls-card__body {
+      padding: 1rem 0 1.4rem;
+    }
+
+    .colls-card__name {
+      font-size: clamp(1.3rem, 6vw, 1.8rem);
+    }
+
+    .colls-card__desc {
+      font-size: 0.78rem;
+    }
+
+    .colls-card__cta {
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
     }
   }
 {% endstylesheet %}

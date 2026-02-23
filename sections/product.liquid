@@ -374,6 +374,7 @@
     font-size: 0.9rem;
     text-align: center;
     padding: 0.5rem 0;
+    appearance: textfield;
     -moz-appearance: textfield;
   }
 
@@ -443,7 +444,7 @@
     display: none !important;
   }
 
-  /* ── RESPONSIVE ──────────────────────────────────────────── */
+  /* ── RESPONSIVE — tablet ────────────────────────────────── */
   @media (max-width: 900px) {
     .pd {
       grid-template-columns: 1fr;
@@ -452,10 +453,132 @@
     .pd__aside {
       position: static;
       height: auto;
+      overflow: visible;
     }
 
     .pd__info {
-      padding: 2.5rem 1.4rem 4rem;
+      padding: 2.8rem 1.5rem 4rem;
+    }
+
+    .pd__gallery {
+      gap: 2px;
+    }
+  }
+
+  /* ── RESPONSIVE — mobile (≤ 767px) ──────────────────────── */
+  @media (max-width: 767px) {
+    /* Layout: strict single column, no side padding on gallery */
+    .pd {
+      grid-template-columns: 1fr;
+      background: var(--bg) !important;
+    }
+
+    /* Gallery: full-bleed images, no gap */
+    .pd__gallery {
+      gap: 1px;
+    }
+
+    .pd__frame {
+      border-radius: 0 !important;
+    }
+
+    .pd__photo {
+      aspect-ratio: 4 / 5;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Aside: minimal side padding */
+    .pd__info {
+      padding: 1.8rem 1.1rem 3.5rem;
+      gap: 0;
+    }
+
+    /* Vendor: even smaller on mobile */
+    .pd__vendor {
+      font-size: 0.55rem;
+      letter-spacing: 0.24em;
+      margin-bottom: 0.7rem;
+    }
+
+    /* Title: readable size, no overflow */
+    .pd__title {
+      font-size: clamp(1.75rem, 7.5vw, 2.4rem);
+      line-height: 1.05;
+      word-break: break-word;
+      hyphens: auto;
+      margin-bottom: 1rem;
+    }
+
+    /* Price: slightly smaller */
+    .pd__price {
+      font-size: 1.1rem;
+    }
+
+    /* Divider: tighter margins */
+    .pd__rule {
+      margin: 1.2rem 0;
+    }
+
+    /* Description: tighter line-height */
+    .pd__desc {
+      font-size: 0.82rem;
+      line-height: 1.7;
+    }
+
+    /* Form: tighter gaps */
+    .pd__form {
+      gap: 1rem;
+    }
+
+    .pd__label {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+    }
+
+    /* Select: full touch target */
+    .pd__select {
+      font-size: 0.92rem;
+      padding: 0.8rem 2rem 0.8rem 0;
+    }
+
+    /* Quantity: full width on mobile */
+    .pd__qty-wrap {
+      width: 100%;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .pd__qty-btn {
+      width: 2.8rem;
+      height: 3rem;
+      font-size: 1.3rem;
+    }
+
+    .pd__qty {
+      flex: 1;
+      width: auto;
+      font-size: 1rem;
+    }
+
+    /* Buttons: full width, large touch target */
+    .pd__btn {
+      width: 100% !important;
+      padding: 1.2rem 1rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
+    /* Buy it now override on mobile */
+    .pd__dynamic-payment .shopify-payment-button__button {
+      padding: 1.2rem 1rem !important;
+      font-size: 0.68rem !important;
+      letter-spacing: 0.2em !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      width: 100% !important;
     }
   }
 {% endstylesheet %}

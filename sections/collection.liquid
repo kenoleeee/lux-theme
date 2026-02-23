@@ -230,19 +230,48 @@
     .coll-grid { --cols: 2; }
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 767px) {
+    /* Header */
+    .coll-header {
+      min-height: clamp(220px, 60vw, 380px);
+    }
+
+    .coll-header__body {
+      padding: clamp(4rem, 14vw, 7rem) 1.1rem 1.8rem;
+    }
+
+    .coll-header__eyebrow {
+      font-size: 0.6rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .coll-header__title {
+      font-size: clamp(2rem, 10vw, 3rem);
+      line-height: 1;
+    }
+
+    .coll-header__desc {
+      font-size: 0.8rem;
+      margin-top: 0.9rem;
+    }
+
+    /* Grid: strict 1 column, minimal side padding */
     .coll-grid {
       --cols: 1;
       --offset: 0rem;
-      gap: 3.5rem;
-      padding-inline: 1.2rem;
+      gap: 3rem;
+      padding: 2rem 1.1rem 4rem;
     }
 
     .coll-card--offset { margin-top: 0; }
 
-    .coll-header__body {
-      padding-inline: 1.4rem;
-      padding-block: clamp(5rem, 18vw, 9rem) 2.5rem;
+    /* Pagination: tighter */
+    .coll-pagination {
+      padding: 0 1.1rem 3rem;
+    }
+
+    .coll-pagination .pagination {
+      gap: 1rem;
     }
   }
 {% endstylesheet %}
