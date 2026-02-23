@@ -76,9 +76,15 @@
     </button>
   </div>
 
-  {% comment %} Main links {% endcomment %}
+  {% comment %} Main links — use section menu if set, otherwise fall back to main-menu linklist {% endcomment %}
+  {%- if section.settings.menu != blank -%}
+    {%- assign nav_links = section.settings.menu.links -%}
+  {%- else -%}
+    {%- assign nav_links = linklists['main-menu'].links -%}
+  {%- endif -%}
+
   <ul class="mobile-nav__links" role="list">
-    {% for link in section.settings.menu.links %}
+    {% for link in nav_links %}
       <li class="mobile-nav__item">
         <a
           class="mobile-nav__link"
@@ -268,31 +274,44 @@
 
   /* ── MOBILE BREAKPOINT ───────────────────────────────────── */
   @media (max-width: 768px) {
-    /* Switch to 3-col mobile grid: [menu] [logo] [bag] */
+    /* 3-col grid with EXPLICIT placement so display:none items
+       don't break auto-flow:  col1=MENU  col2=LOGO  col3=BAG  */
     .site-header__inner {
       grid-template-columns: 1fr auto 1fr;
-      padding: 1.4rem 1.2rem;
+      padding: 1.3rem 1.2rem;
       align-items: center;
     }
 
-    /* Hide desktop nav & actions */
+    /* Hide desktop nav & actions — they're removed from flow */
     .site-header__nav,
     .site-header__actions {
       display: none !important;
     }
 
-    /* Show mobile controls */
+    /* Pin each mobile element to its explicit column */
     .site-header__menu-btn {
       display: flex;
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: start;
+    }
+
+    .site-header__brand {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: center;
     }
 
     .site-header__mobile-cart {
       display: flex;
+      grid-column: 3;
+      grid-row: 1;
+      justify-self: end;
     }
 
     /* Scrolled state tighter on mobile */
     .site-header[data-scrolled] .site-header__inner {
-      padding: 1rem 1.2rem;
+      padding: 0.9rem 1.2rem;
     }
   }
 
