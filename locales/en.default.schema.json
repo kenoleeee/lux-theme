@@ -86,7 +86,8 @@
   "collection": {
     "columns_desktop": "Columns on desktop",
     "grid_gap": "Grid gap",
-    "stagger_offset": "Card stagger offset"
+    "stagger_offset": "Card stagger offset",
+    "shop_url_label": "Shop button URL"
   },
   "home": {
     "hero": {

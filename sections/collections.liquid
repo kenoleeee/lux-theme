@@ -3,91 +3,84 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/list-collections
 {% endcomment %}
 
-{% comment %} ── PAGE HEADER ────────────────────────────────────────────── {% endcomment %}
-<header class="colls-header full-width">
-  <p class="colls-header__eyebrow">{{ 'collections.page_eyebrow' | t }}</p>
-  <h1 class="colls-header__title">{{ 'collections.title' | t }}</h1>
+{% comment %} ── PAGE HEADER ─────────────────────────────────────────────── {% endcomment %}
+<header class="colls-page-header full-width">
+  <p class="colls-page-header__eyebrow">{{ 'collections.page_eyebrow' | t }}</p>
+  <h1 class="colls-page-header__title">{{ 'collections.title' | t }}</h1>
 </header>
 
 {% comment %} ── COLLECTIONS GRID ────────────────────────────────────────── {% endcomment %}
-<section
-  class="colls-grid"
-  aria-label="{{ 'collections.title' | t }}"
->
+<section class="colls-grid full-width" aria-label="{{ 'collections.title' | t }}">
   {% for collection in collections %}
-    {%- assign is_even = forloop.index | modulo: 2 -%}
+    <a class="colls-card" href="{{ collection.url }}">
 
-    <a
-      class="colls-card{% if is_even == 0 %} colls-card--offset{% endif %}"
-      href="{{ collection.url }}"
-      aria-label="{{ collection.title | escape }}"
-    >
+      {% comment %} ── Photo ─────────────────────────────────────────────── {% endcomment %}
       <div class="colls-card__media">
         {% if collection.featured_image %}
-          {{ collection.featured_image | image_url: width: 1400, height: 1800, crop: 'center'
+          {{ collection.featured_image
+            | image_url: width: 1600, height: 2000, crop: 'center'
             | image_tag:
               class: 'colls-card__img',
               loading: 'lazy',
-              widths: '480, 720, 960, 1200',
-              sizes: '(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw'
+              widths: '600, 900, 1200, 1600',
+              sizes: '(max-width: 640px) 100vw, 50vw'
           }}
         {% else %}
-          <div class="colls-card__img colls-card__img--placeholder"></div>
+          <div class="colls-card__img colls-card__img--empty"></div>
         {% endif %}
-
-        <div class="colls-card__grain" aria-hidden="true"></div>
-        <div class="colls-card__vignette" aria-hidden="true"></div>
       </div>
 
-      <footer class="colls-card__info">
+      {% comment %} ── Info ──────────────────────────────────────────────── {% endcomment %}
+      <div class="colls-card__body">
         <h2 class="colls-card__name">{{ collection.title | escape }}</h2>
 
         {% if collection.description != blank %}
           <p class="colls-card__desc">
-            {{ collection.description | strip_html | truncatewords: 12 }}
+            {{ collection.description | strip_html | truncatewords: 18 }}
           </p>
         {% endif %}
 
-        <span class="colls-card__cta">{{ 'collections.shop_link' | t }}</span>
-      </footer>
+        <span class="colls-card__cta">{{ 'collections.view_collection' | t }}</span>
+      </div>
+
     </a>
   {% endfor %}
 </section>
 
 {% stylesheet %}
-  /* ── variables (dark palette) ────────────────────────── */
-  .colls-header,
+  /* ── Palette ─────────────────────────────────────────── */
+  .colls-page-header,
   .colls-grid {
-    --bg:     #0a0a09;
-    --surface:#111110;
-    --cream:  #f0ede5;
-    --muted:  rgba(240, 237, 229, 0.5);
-    --serif:  var(--font-heading--family, "Playfair Display", Georgia, serif);
-    --sans:   var(--font-body--family,    "Work Sans", system-ui, sans-serif);
+    --bg:    #0a0a09;
+    --cream: #f0ede5;
+    --muted: rgba(240, 237, 229, 0.5);
+    --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
+    --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
   }
 
   /* ── PAGE HEADER ─────────────────────────────────────── */
-  .colls-header {
+  .colls-page-header {
     background: var(--bg);
     color: var(--cream);
-    padding: clamp(6rem, 14vw, 12rem) clamp(1.5rem, 5vw, 5rem) clamp(2rem, 4vw, 4rem);
+    padding: clamp(7rem, 15vw, 13rem) clamp(1.5rem, 6vw, 6rem) clamp(2.5rem, 4vw, 4rem);
+    border-bottom: 1px solid rgba(240, 237, 229, 0.08);
   }
 
-  .colls-header__eyebrow {
+  .colls-page-header__eyebrow {
     font-family: var(--sans);
     font-size: 0.64rem;
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.1rem;
   }
 
-  .colls-header__title {
+  .colls-page-header__title {
     font-family: var(--serif);
     font-weight: 300;
-    font-size: clamp(3rem, 8vw, 7rem);
-    line-height: 0.93;
-    letter-spacing: -0.02em;
+    font-size: clamp(3.2rem, 9vw, 8rem);
+    line-height: 0.9;
+    letter-spacing: -0.025em;
     color: var(--cream);
   }
 
@@ -95,139 +88,104 @@
   .colls-grid {
     background: var(--bg);
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 4rem calc(4rem * 0.65);
-    padding: 0 clamp(1.5rem, 5vw, 5rem) clamp(4rem, 8vw, 8rem);
-    align-items: start;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;              /* thin divider lines between cards */
+    background-color: rgba(240, 237, 229, 0.1);   /* the gap becomes a subtle line */
+    padding-bottom: 1px;
   }
 
   /* ── CARD ────────────────────────────────────────────── */
   .colls-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
     text-decoration: none;
     color: var(--cream);
+    background: var(--bg);
+    transition: background 300ms ease;
   }
 
-  .colls-card--offset {
-    margin-top: 4rem;
+  .colls-card:hover {
+    background: #0f0f0e;
   }
 
+  /* ── PHOTO ───────────────────────────────────────────── */
   .colls-card__media {
-    position: relative;
     overflow: hidden;
-    aspect-ratio: 3 / 4;
-    background: var(--surface);
+    aspect-ratio: 4 / 5;
+    flex-shrink: 0;
   }
 
   .colls-card__img {
-    position: absolute;
-    inset: 0;
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: saturate(0.82) contrast(1.06) brightness(0.92);
+    filter: saturate(0.8) contrast(1.06);
     transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1), filter 500ms ease;
   }
 
   .colls-card:hover .colls-card__img {
     transform: scale(1.04);
-    filter: saturate(0.9) contrast(1.04) brightness(1);
+    filter: saturate(0.95) contrast(1.02);
   }
 
-  .colls-card__img--placeholder {
-    background: linear-gradient(150deg, #1a1a18 0%, #2e2e2a 100%);
-    position: absolute;
-    inset: 0;
+  .colls-card__img--empty {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(150deg, #1a1a18 0%, #2c2c29 100%);
   }
 
-  /* grain overlay */
-  .colls-card__grain {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    background-size: 200px;
-    mix-blend-mode: overlay;
-    opacity: 0.5;
-  }
-
-  /* bottom gradient so info stays readable */
-  .colls-card__vignette {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(10,10,9,0.72) 0%, rgba(10,10,9,0) 50%);
-    pointer-events: none;
-  }
-
-  /* ── CARD INFO (overlaid on photo) ───────────────────── */
-  .colls-card__info {
-    position: absolute;
-    inset: 0;
+  /* ── BODY (below photo) ──────────────────────────────── */
+  .colls-card__body {
+    padding: clamp(1.4rem, 3vw, 2.5rem) clamp(1.2rem, 3vw, 2.5rem) clamp(1.8rem, 3.5vw, 3rem);
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    padding: clamp(1rem, 2.5vw, 1.8rem);
+    gap: 0.75rem;
   }
 
   .colls-card__name {
     font-family: var(--serif);
-    font-size: clamp(1.4rem, 2.4vw, 2.2rem);
     font-weight: 300;
+    font-size: clamp(1.6rem, 2.8vw, 2.6rem);
     line-height: 1.05;
     letter-spacing: -0.01em;
   }
 
   .colls-card__desc {
-    margin-top: 0.5rem;
     font-family: var(--sans);
-    font-size: 0.72rem;
-    line-height: 1.6;
-    color: rgba(240, 237, 229, 0.72);
-    max-width: 28ch;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 36ch;
   }
 
   .colls-card__cta {
     display: inline-block;
-    margin-top: 0.9rem;
+    margin-top: 0.4rem;
     font-family: var(--sans);
     font-size: 0.62rem;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.26em;
     text-transform: uppercase;
     color: var(--cream);
-    border-bottom: 1px solid rgba(240, 237, 229, 0.4);
-    padding-bottom: 2px;
+    border-bottom: 1px solid rgba(240, 237, 229, 0.35);
+    padding-bottom: 3px;
     width: fit-content;
-    transition: border-color 250ms ease;
+    transition: border-color 250ms ease, color 250ms ease;
   }
 
   .colls-card:hover .colls-card__cta {
     border-color: var(--cream);
+    color: #fff;
   }
 
   /* ── RESPONSIVE ──────────────────────────────────────── */
-  @media (max-width: 1100px) {
-    .colls-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .colls-card--offset {
-      margin-top: 3rem;
-    }
-  }
-
-  @media (max-width: 640px) {
+  @media (max-width: 780px) {
     .colls-grid {
       grid-template-columns: 1fr;
-      gap: 2.5rem;
-      padding-inline: 1.2rem;
     }
 
-    .colls-card--offset {
-      margin-top: 0;
-    }
-
-    .colls-header {
-      padding-inline: 1.4rem;
+    .colls-card__media {
+      aspect-ratio: 3 / 4;
     }
   }
 {% endstylesheet %}
@@ -235,7 +193,13 @@
 {% schema %}
 {
   "name": "t:general.collections_grid",
-  "settings": [],
+  "settings": [
+    {
+      "type": "url",
+      "id": "shop_url",
+      "label": "t:collection.shop_url_label"
+    }
+  ],
   "presets": [{ "name": "t:general.collections_grid" }]
 }
 {% endschema %}
