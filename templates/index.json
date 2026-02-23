@@ -11,7 +11,9 @@
   "sections": {
     "main": {
       "type": "hello-world",
-      "settings": {}
+      "settings": {
+        "hero_image": "shopify://shop_images/Diana-By-Mateusz-Stefanowski-2.jpg"
+      }
     }
   },
   "order": [
