@@ -63,7 +63,6 @@
     background: var(--bg);
     color: var(--cream);
     padding: clamp(7rem, 15vw, 13rem) clamp(1.5rem, 6vw, 6rem) clamp(2.5rem, 4vw, 4rem);
-    border-bottom: 1px solid rgba(240, 237, 229, 0.08);
   }
 
   .colls-page-header__eyebrow {
@@ -89,9 +88,8 @@
     background: var(--bg);
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1px;              /* thin divider lines between cards */
-    background-color: rgba(240, 237, 229, 0.1);   /* the gap becomes a subtle line */
-    padding-bottom: 1px;
+    gap: 6rem 4rem;
+    padding: 0 clamp(1.5rem, 6vw, 6rem) clamp(5rem, 10vw, 9rem);
   }
 
   /* ── CARD ────────────────────────────────────────────── */
@@ -100,12 +98,7 @@
     flex-direction: column;
     text-decoration: none;
     color: var(--cream);
-    background: var(--bg);
-    transition: background 300ms ease;
-  }
-
-  .colls-card:hover {
-    background: #0f0f0e;
+    background: transparent;
   }
 
   /* ── PHOTO ───────────────────────────────────────────── */
