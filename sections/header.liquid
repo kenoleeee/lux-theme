@@ -1,44 +1,134 @@
+{% comment %} ── DESKTOP / TABLET HEADER ─────────────────────────────── {% endcomment %}
 <header class="site-header full-width" data-header>
   <div class="site-header__inner">
+
+    {% comment %} Left nav (desktop only) {% endcomment %}
     <nav class="site-header__nav" aria-label="{{ 'header.nav_left_aria' | t }}">
       {% for link in section.settings.menu.links limit: 3 %}
         <a class="site-header__nav-link" href="{{ link.url }}">{{ link.title }}</a>
       {% endfor %}
     </nav>
 
+    {% comment %} Centre: logo {% endcomment %}
     <div class="site-header__brand">
       <a class="site-header__logo" href="{{ routes.root_url }}">{{ shop.name }}</a>
     </div>
 
+    {% comment %} Right actions (desktop only) {% endcomment %}
     <div class="site-header__actions">
-      <a class="site-header__action-link" href="{{ routes.search_url }}" aria-label="{{ 'header.search' | t }}">
-        {{ 'header.search' | t }}
-      </a>
+      <a class="site-header__action-link" href="{{ routes.search_url }}">{{ 'header.search' | t }}</a>
 
       {% if shop.customer_accounts_enabled %}
-        <a class="site-header__action-link" href="{{ routes.account_url }}" aria-label="{{ 'header.account' | t }}">
-          {{ 'header.account' | t }}
-        </a>
+        <a class="site-header__action-link" href="{{ routes.account_url }}">{{ 'header.account' | t }}</a>
       {% endif %}
 
-      <a class="site-header__action-link site-header__cart" href="{{ routes.cart_url }}" aria-label="{{ 'header.cart' | t }}">
+      <a class="site-header__action-link site-header__cart" href="{{ routes.cart_url }}">
         {{ 'header.cart' | t }}
         {% if cart.item_count > 0 %}
           <span class="site-header__cart-count">({{ cart.item_count }})</span>
         {% endif %}
       </a>
     </div>
+
+    {% comment %} Mobile: MENU trigger (left) {% endcomment %}
+    <button
+      class="site-header__menu-btn"
+      aria-label="{{ 'header.open_menu' | t }}"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+      data-menu-open
+    >
+      <span class="site-header__burger" aria-hidden="true"></span>
+      <span class="site-header__menu-label">{{ 'header.menu_label' | t }}</span>
+    </button>
+
+    {% comment %} Mobile: BAG link (right) {% endcomment %}
+    <a class="site-header__mobile-cart" href="{{ routes.cart_url }}">
+      {{ 'header.cart' | t }}
+      {% if cart.item_count > 0 %}
+        <span class="site-header__cart-count">({{ cart.item_count }})</span>
+      {% endif %}
+    </a>
+
   </div>
 </header>
 
+{% comment %} ── MOBILE FULLSCREEN NAV OVERLAY ──────────────────────────── {% endcomment %}
+<nav
+  id="mobile-nav"
+  class="mobile-nav"
+  aria-label="{{ 'header.nav_left_aria' | t }}"
+  aria-hidden="true"
+  data-mobile-nav
+>
+  {% comment %} Top bar inside overlay {% endcomment %}
+  <div class="mobile-nav__top">
+    <a class="mobile-nav__logo" href="{{ routes.root_url }}" data-menu-close>
+      {{ shop.name }}
+    </a>
+
+    <button
+      class="mobile-nav__close"
+      aria-label="{{ 'header.close_menu' | t }}"
+      data-menu-close
+    >
+      {{ 'header.close_label' | t }}
+    </button>
+  </div>
+
+  {% comment %} Main links {% endcomment %}
+  <ul class="mobile-nav__links" role="list">
+    {% for link in section.settings.menu.links %}
+      <li class="mobile-nav__item">
+        <a
+          class="mobile-nav__link"
+          href="{{ link.url }}"
+          data-menu-close
+        >{{ link.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  {% comment %} Bottom utility links {% endcomment %}
+  <div class="mobile-nav__bottom">
+    <a class="mobile-nav__util" href="{{ routes.search_url }}" data-menu-close>
+      {{ 'header.search' | t }}
+    </a>
+
+    {% if shop.customer_accounts_enabled %}
+      <a class="mobile-nav__util" href="{{ routes.account_url }}" data-menu-close>
+        {{ 'header.account' | t }}
+      </a>
+    {% endif %}
+
+    <a class="mobile-nav__util" href="{{ routes.cart_url }}" data-menu-close>
+      {{ 'header.cart' | t }}
+      {% if cart.item_count > 0 %}
+        <span class="site-header__cart-count">({{ cart.item_count }})</span>
+      {% endif %}
+    </a>
+  </div>
+</nav>
+
 {% stylesheet %}
+  /* ── Tokens ──────────────────────────────────────────────── */
+  .site-header,
+  .mobile-nav {
+    --bg:    #0a0a09;
+    --cream: #f0ede5;
+    --muted: rgba(240, 237, 229, 0.5);
+    --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
+    --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
+  }
+
+  /* ── HEADER SHELL ────────────────────────────────────────── */
   .site-header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100;
-    mix-blend-mode: normal;
+    z-index: 200;
+    color: var(--cream);
   }
 
   .site-header__inner {
@@ -50,12 +140,13 @@
   }
 
   .site-header[data-scrolled] .site-header__inner {
-    background: rgba(240, 237, 229, 0.84);
+    background: rgba(10, 10, 9, 0.88);
     backdrop-filter: blur(22px);
     -webkit-backdrop-filter: blur(22px);
     padding: 1.1rem 3rem;
   }
 
+  /* ── DESKTOP NAV ─────────────────────────────────────────── */
   .site-header__nav {
     display: flex;
     align-items: center;
@@ -64,12 +155,12 @@
 
   .site-header__nav-link,
   .site-header__action-link {
-    font-family: var(--font-body--family);
+    font-family: var(--sans);
     font-size: 0.68rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     text-decoration: none;
-    color: currentColor;
+    color: var(--cream);
     position: relative;
     padding-bottom: 1px;
     transition: opacity 200ms ease;
@@ -83,7 +174,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: currentColor;
+    background: var(--cream);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -94,20 +185,22 @@
     transform: scaleX(1);
   }
 
+  /* ── LOGO ────────────────────────────────────────────────── */
   .site-header__brand {
     text-align: center;
   }
 
   .site-header__logo {
-    font-family: var(--font-heading--family);
+    font-family: var(--serif);
     font-size: 1.55rem;
     font-weight: 400;
     letter-spacing: 0.12em;
     text-decoration: none;
-    color: currentColor;
+    color: var(--cream);
     text-transform: uppercase;
   }
 
+  /* ── DESKTOP ACTIONS ─────────────────────────────────────── */
   .site-header__actions {
     display: flex;
     align-items: center;
@@ -121,38 +214,285 @@
     opacity: 0.8;
   }
 
+  /* ── MOBILE TRIGGER BUTTONS (hidden on desktop) ──────────── */
+  .site-header__menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--cream);
+    align-items: center;
+    gap: 0.55rem;
+    justify-content: flex-start;
+  }
+
+  .site-header__burger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 18px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .site-header__burger::before,
+  .site-header__burger::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 100%;
+    background: var(--cream);
+    transition: transform 300ms ease, opacity 300ms ease;
+  }
+
+  .site-header__menu-label {
+    font-family: var(--sans);
+    font-size: 0.62rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--cream);
+  }
+
+  .site-header__mobile-cart {
+    display: none;
+    font-family: var(--sans);
+    font-size: 0.62rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--cream);
+    justify-content: flex-end;
+  }
+
+  /* ── MOBILE BREAKPOINT ───────────────────────────────────── */
   @media (max-width: 768px) {
+    /* Switch to 3-col mobile grid: [menu] [logo] [bag] */
     .site-header__inner {
-      padding: 1.4rem 1.4rem;
+      grid-template-columns: 1fr auto 1fr;
+      padding: 1.4rem 1.2rem;
+      align-items: center;
     }
 
-    .site-header__nav {
-      display: none;
-    }
-
+    /* Hide desktop nav & actions */
+    .site-header__nav,
     .site-header__actions {
-      gap: 1.2rem;
+      display: none !important;
     }
 
-    .site-header__inner {
-      grid-template-columns: 1fr auto;
+    /* Show mobile controls */
+    .site-header__menu-btn {
+      display: flex;
     }
+
+    .site-header__mobile-cart {
+      display: flex;
+    }
+
+    /* Scrolled state tighter on mobile */
+    .site-header[data-scrolled] .site-header__inner {
+      padding: 1rem 1.2rem;
+    }
+  }
+
+  /* ── MOBILE NAV OVERLAY ──────────────────────────────────── */
+  .mobile-nav {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: var(--bg);
+    color: var(--cream);
+    display: flex;
+    flex-direction: column;
+
+    /* hidden by default */
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition:
+      opacity  320ms cubic-bezier(0.4, 0, 0.2, 1),
+      transform 320ms cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0ms linear 320ms;
+  }
+
+  .mobile-nav[data-open] {
+    opacity: 1;
+    pointer-events: all;
+    visibility: visible;
+    transform: translateY(0);
+    transition:
+      opacity  320ms cubic-bezier(0.4, 0, 0.2, 1),
+      transform 320ms cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0ms linear 0ms;
+  }
+
+  /* Hide overlay entirely on desktop */
+  @media (min-width: 769px) {
+    .mobile-nav {
+      display: none !important;
+    }
+  }
+
+  /* ── OVERLAY TOP BAR ─────────────────────────────────────── */
+  .mobile-nav__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.4rem 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .mobile-nav__logo {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--cream);
+  }
+
+  .mobile-nav__close {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 200ms ease;
+  }
+
+  .mobile-nav__close:hover {
+    color: var(--cream);
+  }
+
+  /* ── OVERLAY LINKS ───────────────────────────────────────── */
+  .mobile-nav__links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 1.4rem;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+  }
+
+  .mobile-nav__item {
+    border-top: 1px solid rgba(240, 237, 229, 0.08);
+  }
+
+  .mobile-nav__item:last-child {
+    border-bottom: 1px solid rgba(240, 237, 229, 0.08);
+  }
+
+  .mobile-nav__link {
+    display: block;
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.2rem, 10vw, 3.6rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--cream);
+    text-decoration: none;
+    padding: 0.75rem 0;
+    transition: opacity 200ms ease, letter-spacing 300ms ease;
+  }
+
+  .mobile-nav__link:hover {
+    opacity: 0.6;
+    letter-spacing: 0.04em;
+  }
+
+  /* stagger-in animation */
+  .mobile-nav__item {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 380ms ease, transform 380ms ease;
+  }
+
+  .mobile-nav[data-open] .mobile-nav__item:nth-child(1) { opacity: 1; transform: none; transition-delay: 80ms;  }
+  .mobile-nav[data-open] .mobile-nav__item:nth-child(2) { opacity: 1; transform: none; transition-delay: 130ms; }
+  .mobile-nav[data-open] .mobile-nav__item:nth-child(3) { opacity: 1; transform: none; transition-delay: 180ms; }
+  .mobile-nav[data-open] .mobile-nav__item:nth-child(4) { opacity: 1; transform: none; transition-delay: 230ms; }
+  .mobile-nav[data-open] .mobile-nav__item:nth-child(5) { opacity: 1; transform: none; transition-delay: 280ms; }
+  .mobile-nav[data-open] .mobile-nav__item:nth-child(6) { opacity: 1; transform: none; transition-delay: 330ms; }
+
+  /* ── OVERLAY BOTTOM ──────────────────────────────────────── */
+  .mobile-nav__bottom {
+    display: flex;
+    gap: 2rem;
+    padding: 1.8rem 1.4rem;
+    border-top: 1px solid rgba(240, 237, 229, 0.08);
+    flex-shrink: 0;
+  }
+
+  .mobile-nav__util {
+    font-family: var(--sans);
+    font-size: 0.62rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color 200ms ease;
+  }
+
+  .mobile-nav__util:hover {
+    color: var(--cream);
   }
 {% endstylesheet %}
 
 {% javascript %}
   (function () {
-    const header = document.querySelector('[data-header]');
-    if (!header) return;
+    const header  = document.querySelector('[data-header]');
+    const nav     = document.querySelector('[data-mobile-nav]');
+    const openBtn = document.querySelector('[data-menu-open]');
+    const closeBtns = document.querySelectorAll('[data-menu-close]');
 
-    const onScroll = () => {
+    if (!nav || !openBtn) return;
+
+    function openMenu() {
+      nav.setAttribute('data-open', '');
+      nav.setAttribute('aria-hidden', 'false');
+      openBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      nav.removeAttribute('data-open');
+      nav.setAttribute('aria-hidden', 'true');
+      openBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    openBtn.addEventListener('click', openMenu);
+
+    closeBtns.forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        /* If it's a link navigating away, let it go — menu will close anyway */
+        closeMenu();
+      });
+    });
+
+    /* Close on Escape */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeMenu();
+    });
+
+    /* Scroll-aware header */
+    if (!header) return;
+    var onScroll = function () {
       if (window.scrollY > 40) {
         header.setAttribute('data-scrolled', '');
       } else {
         header.removeAttribute('data-scrolled');
       }
     };
-
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
   })();

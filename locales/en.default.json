@@ -112,7 +112,11 @@
     "nav_left_aria": "Primary navigation",
     "search": "Search",
     "account": "Account",
-    "cart": "Bag"
+    "cart": "Bag",
+    "menu_label": "Menu",
+    "open_menu": "Open navigation menu",
+    "close_menu": "Close navigation menu",
+    "close_label": "Close"
   },
   "footer": {
     "tagline": "Refined essentials for the considered wardrobe.",
