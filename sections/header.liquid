@@ -1,54 +1,62 @@
-{% comment %} ── DESKTOP / TABLET HEADER ─────────────────────────────── {% endcomment %}
+{% comment %} ── HEADER ───────────────────────────────────────────────── {% endcomment %}
+{%- liquid
+  if section.settings.menu != blank
+    assign nav_links = section.settings.menu.links
+  else
+    assign nav_links = linklists['main-menu'].links
+  endif
+-%}
+
 <header class="site-header full-width" data-header>
   <div class="site-header__inner">
 
-    {% comment %} Left nav (desktop only) {% endcomment %}
-    <nav class="site-header__nav" aria-label="{{ 'header.nav_left_aria' | t }}">
-      {% for link in section.settings.menu.links limit: 3 %}
-        <a class="site-header__nav-link" href="{{ link.url }}">{{ link.title }}</a>
-      {% endfor %}
-    </nav>
+    {% comment %} LEFT col: desktop nav / mobile MENU button {% endcomment %}
+    <div class="site-header__left">
+      <nav class="site-header__nav" aria-label="{{ 'header.nav_left_aria' | t }}">
+        {% for link in nav_links limit: 3 %}
+          <a class="site-header__nav-link" href="{{ link.url }}">{{ link.title }}</a>
+        {% endfor %}
+      </nav>
 
-    {% comment %} Centre: logo {% endcomment %}
+      <button
+        class="site-header__menu-btn"
+        aria-label="{{ 'header.open_menu' | t }}"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        data-menu-open
+      >
+        <span class="site-header__burger" aria-hidden="true"></span>
+        <span class="site-header__menu-label">{{ 'header.menu_label' | t }}</span>
+      </button>
+    </div>
+
+    {% comment %} CENTRE: logo {% endcomment %}
     <div class="site-header__brand">
       <a class="site-header__logo" href="{{ routes.root_url }}">{{ shop.name }}</a>
     </div>
 
-    {% comment %} Right actions (desktop only) {% endcomment %}
-    <div class="site-header__actions">
-      <a class="site-header__action-link" href="{{ routes.search_url }}">{{ 'header.search' | t }}</a>
+    {% comment %} RIGHT col: desktop actions / mobile BAG {% endcomment %}
+    <div class="site-header__right">
+      <div class="site-header__actions">
+        <a class="site-header__action-link" href="{{ routes.search_url }}">{{ 'header.search' | t }}</a>
+        {% if shop.customer_accounts_enabled %}
+          <a class="site-header__action-link" href="{{ routes.account_url }}">{{ 'header.account' | t }}</a>
+        {% endif %}
+        <a class="site-header__action-link site-header__cart" href="{{ routes.cart_url }}">
+          {{ 'header.cart' | t }}
+          {% if cart.item_count > 0 %}
+            <span class="site-header__cart-count">({{ cart.item_count }})</span>
+          {% endif %}
+        </a>
+      </div>
 
-      {% if shop.customer_accounts_enabled %}
-        <a class="site-header__action-link" href="{{ routes.account_url }}">{{ 'header.account' | t }}</a>
-      {% endif %}
-
-      <a class="site-header__action-link site-header__cart" href="{{ routes.cart_url }}">
+      <a class="site-header__mobile-cart" href="{{ routes.cart_url }}">
         {{ 'header.cart' | t }}
         {% if cart.item_count > 0 %}
           <span class="site-header__cart-count">({{ cart.item_count }})</span>
         {% endif %}
       </a>
     </div>
-
-    {% comment %} Mobile: MENU trigger (left) {% endcomment %}
-    <button
-      class="site-header__menu-btn"
-      aria-label="{{ 'header.open_menu' | t }}"
-      aria-expanded="false"
-      aria-controls="mobile-nav"
-      data-menu-open
-    >
-      <span class="site-header__burger" aria-hidden="true"></span>
-      <span class="site-header__menu-label">{{ 'header.menu_label' | t }}</span>
-    </button>
-
-    {% comment %} Mobile: BAG link (right) {% endcomment %}
-    <a class="site-header__mobile-cart" href="{{ routes.cart_url }}">
-      {{ 'header.cart' | t }}
-      {% if cart.item_count > 0 %}
-        <span class="site-header__cart-count">({{ cart.item_count }})</span>
-      {% endif %}
-    </a>
 
   </div>
 </header>
@@ -76,13 +84,7 @@
     </button>
   </div>
 
-  {% comment %} Main links — use section menu if set, otherwise fall back to main-menu linklist {% endcomment %}
-  {%- if section.settings.menu != blank -%}
-    {%- assign nav_links = section.settings.menu.links -%}
-  {%- else -%}
-    {%- assign nav_links = linklists['main-menu'].links -%}
-  {%- endif -%}
-
+  {% comment %} Main links (nav_links assigned at top of file) {% endcomment %}
   <ul class="mobile-nav__links" role="list">
     {% for link in nav_links %}
       <li class="mobile-nav__item">
@@ -137,6 +139,7 @@
     color: var(--cream);
   }
 
+  /* Always 3 columns: left | brand | right */
   .site-header__inner {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -150,6 +153,19 @@
     backdrop-filter: blur(22px);
     -webkit-backdrop-filter: blur(22px);
     padding: 1.1rem 3rem;
+  }
+
+  /* ── LEFT / RIGHT WRAPPERS ───────────────────────────────── */
+  .site-header__left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .site-header__right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
 
   /* ── DESKTOP NAV ─────────────────────────────────────────── */
@@ -210,7 +226,6 @@
   .site-header__actions {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     gap: 2rem;
   }
 
@@ -220,7 +235,7 @@
     opacity: 0.8;
   }
 
-  /* ── MOBILE TRIGGER BUTTONS (hidden on desktop) ──────────── */
+  /* ── MOBILE-ONLY ELEMENTS (hidden on desktop) ────────────── */
   .site-header__menu-btn {
     display: none;
     background: none;
@@ -230,7 +245,6 @@
     color: var(--cream);
     align-items: center;
     gap: 0.55rem;
-    justify-content: flex-start;
   }
 
   .site-header__burger {
@@ -269,47 +283,28 @@
     text-transform: uppercase;
     text-decoration: none;
     color: var(--cream);
-    justify-content: flex-end;
   }
 
   /* ── MOBILE BREAKPOINT ───────────────────────────────────── */
   @media (max-width: 768px) {
-    /* 3-col grid with EXPLICIT placement so display:none items
-       don't break auto-flow:  col1=MENU  col2=LOGO  col3=BAG  */
     .site-header__inner {
-      grid-template-columns: 1fr auto 1fr;
       padding: 1.3rem 1.2rem;
-      align-items: center;
     }
 
-    /* Hide desktop nav & actions — they're removed from flow */
+    /* On mobile: hide desktop nav/actions, show mobile equivalents */
     .site-header__nav,
     .site-header__actions {
-      display: none !important;
+      display: none;
     }
 
-    /* Pin each mobile element to its explicit column */
     .site-header__menu-btn {
       display: flex;
-      grid-column: 1;
-      grid-row: 1;
-      justify-self: start;
-    }
-
-    .site-header__brand {
-      grid-column: 2;
-      grid-row: 1;
-      justify-self: center;
     }
 
     .site-header__mobile-cart {
       display: flex;
-      grid-column: 3;
-      grid-row: 1;
-      justify-self: end;
     }
 
-    /* Scrolled state tighter on mobile */
     .site-header[data-scrolled] .site-header__inner {
       padding: 0.9rem 1.2rem;
     }
@@ -524,7 +519,8 @@
     {
       "type": "link_list",
       "id": "menu",
-      "label": "t:labels.menu"
+      "label": "t:labels.menu",
+      "default": "main-menu"
     }
   ]
 }
