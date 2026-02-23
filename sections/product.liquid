@@ -11,12 +11,17 @@
   <div class="pd__gallery">
     {% if product.images.size > 0 %}
       {% for image in product.images %}
+        {%- if forloop.first -%}
+          {%- assign img_loading = 'eager' -%}
+        {%- else -%}
+          {%- assign img_loading = 'lazy' -%}
+        {%- endif -%}
         <div class="pd__frame">
           {{ image
             | image_url: width: 1800, height: 2400, crop: 'center'
             | image_tag:
               class: 'pd__photo',
-              loading: forloop.first | default: 'eager' | replace: 'true', 'eager' | replace: 'false', 'lazy',
+              loading: img_loading,
               widths: '600, 900, 1200, 1600, 1800',
               sizes: '(max-width: 900px) 100vw, 58vw'
           }}
