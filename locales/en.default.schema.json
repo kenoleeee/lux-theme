@@ -71,6 +71,21 @@
       "title": "Title",
       "subtitle": "Subtitle",
       "normal": "Normal text"
+    }
+  },
+  "home": {
+    "hero": {
+      "section_name": "Hero banner",
+      "preset_name": "Clothing hero",
+      "image_label": "Hero image"
     },
+    "features": {
+      "block_name": "Highlight",
+      "eyebrow_label": "Label",
+      "title_label": "Title",
+      "text_label": "Text",
+      "link_label_label": "Link label",
+      "link_url_label": "Link destination"
+    }
   }
 }

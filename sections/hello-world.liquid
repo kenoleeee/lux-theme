@@ -1,143 +1,312 @@
-{% comment %}
-  Welcome to Shopify theme development!
-{% endcomment %}
-
-<div class="welcome full-width">
-  <div class="welcome-content">
-    <div>
-      <h1>Hello, World!</h1>
-
-      <p class="welcome-description">
-        The Skeleton theme is a minimal, carefully structured Shopify theme designed to help you quickly get started.
-        Designed with modularity, maintainability, and Shopify's best practices in mind.
+<section class="home-hero full-width">
+  <div class="home-hero__inner">
+    <div class="home-hero__content">
+      <p class="home-hero__eyebrow">
+        {{ 'home.hero.eyebrow' | t }}
       </p>
 
-      <p class="welcome-description">
-        Themes shape the online store experience for merchants and their customers. Build fast, flexible themes at scale
-        using Liquid, Shopify's theme templating language, along with HTML, CSS, JavaScript, and JSON.
+      <h1 class="home-hero__title">
+        {{ 'home.hero.title' | t }}
+      </h1>
+
+      <p class="home-hero__subtitle">
+        {{ 'home.hero.subtitle' | t }}
       </p>
+
+      <div class="home-hero__actions">
+        <a href="{{ routes.all_products_collection_url }}" class="home-hero__button home-hero__button--primary">
+          {{ 'home.hero.cta_shop_now' | t }}
+        </a>
+
+        <a href="{{ routes.collections_url }}" class="home-hero__button home-hero__button--ghost">
+          {{ 'home.hero.cta_new_in' | t }}
+        </a>
+      </div>
     </div>
-    <div class="icon">
-      <img src="{{ 'shoppy-x-ray.svg' | asset_url }}" width="300" height="300">
+
+    <div class="home-hero__media">
+      {% if section.settings.hero_image %}
+        {{ section.settings.hero_image | image_url: width: 1100 | image_tag: loading: 'lazy', class: 'home-hero__image' }}
+      {% else %}
+        <div class="home-hero__image home-hero__image--placeholder"></div>
+      {% endif %}
     </div>
   </div>
-</div>
+</section>
 
-<div class="highlights">
-  <div class="highlight">
-    <h3>Key Concepts</h3>
-    <p class="highlight-description">
-      Shopify themes are a package of template files, building blocks, and supporting assets. Use these building blocks
-      to create modular, customizable themes.
-    </p>
-    <p>{{ 'Learn more about key concepts' | link_to: 'https://shopify.dev/docs/storefronts/themes/architecture' }}</p>
-  </div>
+{% if section.blocks.size > 0 %}
+  <section class="home-features">
+    <div class="home-features__grid">
+      {% for block in section.blocks %}
+        <article class="home-feature" {{ block.shopify_attributes }}>
+          {% if block.settings.eyebrow != blank %}
+            <p class="home-feature__eyebrow">
+              {{ block.settings.eyebrow }}
+            </p>
+          {% endif %}
 
-  <div class="highlight">
-    <h3>Liquid</h3>
-    <p class="highlight-description">
-      The Liquid templating language is the backbone of Shopify themes, and is used to load dynamic content on
-      storefronts. Extend Liquid objects to store and present custom data using metafields.
-    </p>
-    <p>{{ 'View the Liquid reference' | link_to: 'https://shopify.dev/docs/api/liquid' }}</p>
-  </div>
+          {% if block.settings.title != blank %}
+            <h3 class="home-feature__title">
+              {{ block.settings.title }}
+            </h3>
+          {% endif %}
 
-  <div class="highlight">
-    <h3>Best Practices</h3>
-    <p class="highlight-description">
-      To optimize your theme development experience, Shopify has established a set of best practices that you can refer
-      to when developing your theme and setting up your toolchains and processes.
-    </p>
-    <p>{{ 'Follow best practices' | link_to: 'https://shopify.dev/docs/storefronts/themes/best-practices' }}</p>
-  </div>
-</div>
+          {% if block.settings.text != blank %}
+            <p class="home-feature__text">
+              {{ block.settings.text }}
+            </p>
+          {% endif %}
+
+          {% if block.settings.link_label != blank and block.settings.link_url != blank %}
+            <a href="{{ block.settings.link_url }}" class="home-feature__link">
+              {{ block.settings.link_label }}
+            </a>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}
 
 {% stylesheet %}
-  .welcome {
+  .home-hero {
     display: grid;
     grid-template-columns: var(--content-grid);
-    background-color: #f6f6f7;
-    padding: 72px 0;
+    padding: var(--section-padding-y, 96px) 0;
+    background-color: #f9f7f5;
   }
 
-  .welcome-content {
+  .home-hero__inner {
     grid-column: 2;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-    padding: 0 24px;
-  }
-
-  .welcome-description {
-    max-width: 80ch;
-    line-height: 1.4;
-    margin-top: 1.5rem;
-  }
-
-  .icon {
-    width: 300px;
-  }
-
-  .highlights {
     display: grid;
-    gap: 2rem;
-    grid-template-columns: repeat(3, 1fr);
-    margin-top: 50px;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 3rem;
   }
 
-  @media (max-width: 1100px) {
-    .highlights {
+  .home-hero__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .home-hero__eyebrow {
+    font-size: 0.875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .home-hero__title {
+    font-size: clamp(2.6rem, 3vw, 3.4rem);
+    line-height: 1.1;
+  }
+
+  .home-hero__subtitle {
+    max-width: 40rem;
+    line-height: 1.6;
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .home-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .home-hero__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.75rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+  }
+
+  .home-hero__button--primary {
+    background-color: var(--color-accent, #111);
+    color: #fff;
+    border-color: var(--color-accent, #111);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
+  }
+
+  .home-hero__button--primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .home-hero__button--ghost {
+    background-color: transparent;
+    color: inherit;
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .home-hero__button--ghost:hover {
+    border-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  .home-hero__media {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .home-hero__image {
+    width: 100%;
+    max-width: 520px;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 26px 60px rgba(15, 23, 42, 0.35);
+  }
+
+  .home-hero__image--placeholder {
+    background: linear-gradient(145deg, #111827, #4b5563);
+    position: relative;
+  }
+
+  .home-features {
+    display: grid;
+    grid-template-columns: var(--content-grid);
+    padding: 40px 0 80px;
+  }
+
+  .home-features__grid {
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .home-feature {
+    padding: 1.5rem 1.75rem;
+    border-radius: 18px;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .home-feature__eyebrow {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(0, 0, 0, 0.55);
+  }
+
+  .home-feature__title {
+    font-size: 1rem;
+  }
+
+  .home-feature__text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .home-feature__link {
+    margin-top: auto;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .home-feature__link::after {
+    content: '↗';
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 960px) {
+    .home-hero__inner {
       grid-template-columns: 1fr;
+    }
+
+    .home-hero__media {
+      justify-content: flex-start;
+      order: -1;
+    }
+
+    .home-features__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  .highlight {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 24px;
-    border-radius: 8px;
-    background-color: #eef3ff;
-    color: rgb(92, 95, 98);
-    line-height: 1.4;
-  }
+  @media (max-width: 720px) {
+    .home-hero {
+      padding: 72px 0 56px;
+    }
 
-  .highlight > * + * {
-    margin-top: 1rem;
-  }
+    .home-features {
+      padding: 24px 0 56px;
+    }
 
-  .highlight h3 {
-    font-size: 1rem;
-    color: rgb(32, 34, 35);
-  }
-
-  .highlight-description {
-    flex: 1 1;
-  }
-
-  .highlight a {
-    display: flex;
-    width: fit-content;
-    background-color: rgb(250, 251, 251);
-    box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 0px 0px inset, rgba(255, 255, 255, 0.9) 0px 2px 0px 0px inset;
-    border: 1px solid rgb(140, 145, 150);
-    border-radius: 4px;
-    color: rgb(92, 95, 98);
-    padding: 3px 10px 5px;
-    text-decoration: none;
+    .home-features__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Hello World",
-  "settings": [],
+  "name": "t:home.hero.section_name",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "t:home.hero.image_label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "t:home.features.block_name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "t:home.features.eyebrow_label",
+          "default": "Free shipping"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:home.features.title_label",
+          "default": "On all orders over $100"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "t:home.features.text_label",
+          "default": "Elevate your everyday wardrobe with timeless pieces designed to last season after season."
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "t:home.features.link_label_label",
+          "default": "Shop collection"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "t:home.features.link_url_label"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3,
   "presets": [
     {
-      "name": "Hello World Template",
-      "category": "Demo"
+      "name": "t:home.hero.preset_name",
+      "category": "t:general.home"
     }
   ]
 }
