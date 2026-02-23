@@ -43,7 +43,9 @@
   },
   "collections": {
     "title": "Collections",
+    "page_eyebrow": "Our world",
     "editorial_eyebrow": "Editorial selection",
+    "shop_link": "Shop now",
     "empty": "No pieces found.",
     "sale_badge": "Sale",
     "pagination_aria": "Product pages"
