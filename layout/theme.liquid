@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    {% render 'meta-tags' %}
+
+    <meta name="theme-color" content="{{ settings.background_color }}">
+    <meta name="color-scheme" content="light">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.shopifycloud.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    <link rel="dns-prefetch" href="//cdn.shopify.com">
+    <link rel="dns-prefetch" href="//cdn.shopifycloud.com">
+    <link rel="dns-prefetch" href="//fonts.shopifycdn.com">
+
+    {% comment %}
+      Font preloading:
+      1. Preconnect to font CDN for faster connection
+      2. Preload critical serif/base variant for first paint
+      3. Additional variants load on-demand via @font-face
+    {% endcomment %}
+    {% unless settings.type_primary_font.system? %}
+      {{ settings.type_primary_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+      {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+    {% endunless %}
+
+    {% render 'css-variables' %}
+    {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+
+    {{ content_for_header }}
+  </head>
+
+  <body
+    class="template-{{ template.name | handle }} page-type-{{ request.page_type }}"
+    style="
+      background-color: var(--color-background);
+      color: var(--color-foreground);
+    "
+  >
+    <a class="skip-link" href="#main-content">
+      {{ 'general.accessibility.skip_to_content' | t }}
+    </a>
+
+    {% sections 'header-group' %}
+
+    <main id="main-content" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {% sections 'footer-group' %}
+  </body>
+</html>
