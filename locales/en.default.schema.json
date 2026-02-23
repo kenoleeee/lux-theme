@@ -1,6 +1,7 @@
 {
   "general": {
     "404": "Not found",
+    "home": "Home",
     "article": "Article",
     "block": "Block",
     "blog": "Blog",
@@ -76,8 +77,12 @@
   "home": {
     "hero": {
       "section_name": "Hero banner",
-      "preset_name": "Clothing hero",
+      "preset_name": "Editorial home",
       "image_label": "Hero image"
+    },
+    "categories": {
+      "block_name": "Category",
+      "image_label": "Category image"
     },
     "features": {
       "block_name": "Highlight",

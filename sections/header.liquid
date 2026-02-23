@@ -1,56 +1,162 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
+<header class="site-header full-width" data-header>
+  <div class="site-header__inner">
+    <nav class="site-header__nav" aria-label="{{ 'header.nav_left_aria' | t }}">
+      {% for link in section.settings.menu.links limit: 3 %}
+        <a class="site-header__nav-link" href="{{ link.url }}">{{ link.title }}</a>
+      {% endfor %}
+    </nav>
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+    <div class="site-header__brand">
+      <a class="site-header__logo" href="{{ routes.root_url }}">{{ shop.name }}</a>
+    </div>
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      {{ 'icon-account.svg' | inline_asset_content | link_to: routes.account_url }}
-    {% endif %}
+    <div class="site-header__actions">
+      <a class="site-header__action-link" href="{{ routes.search_url }}" aria-label="{{ 'header.search' | t }}">
+        {{ 'header.search' | t }}
+      </a>
 
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
+      {% if shop.customer_accounts_enabled %}
+        <a class="site-header__action-link" href="{{ routes.account_url }}" aria-label="{{ 'header.account' | t }}">
+          {{ 'header.account' | t }}
+        </a>
       {% endif %}
 
-      {{ 'icon-cart.svg' | inline_asset_content }}
-    </a>
+      <a class="site-header__action-link site-header__cart" href="{{ routes.cart_url }}" aria-label="{{ 'header.cart' | t }}">
+        {{ 'header.cart' | t }}
+        {% if cart.item_count > 0 %}
+          <span class="site-header__cart-count">({{ cart.item_count }})</span>
+        {% endif %}
+      </a>
+    </div>
   </div>
 </header>
 
 {% stylesheet %}
-  header {
-    height: 5rem;
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    mix-blend-mode: normal;
+  }
+
+  .site-header__inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 2rem 3rem;
+    transition: background 400ms ease, padding 300ms ease;
+  }
+
+  .site-header[data-scrolled] .site-header__inner {
+    background: rgba(240, 237, 229, 0.84);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    padding: 1.1rem 3rem;
+  }
+
+  .site-header__nav {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 2rem;
   }
-  header a {
-    position: relative;
+
+  .site-header__nav-link,
+  .site-header__action-link {
+    font-family: var(--font-body--family);
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     text-decoration: none;
-    color: var(--color-foreground);
+    color: currentColor;
+    position: relative;
+    padding-bottom: 1px;
+    transition: opacity 200ms ease;
   }
-  header a sup {
+
+  .site-header__nav-link::after,
+  .site-header__action-link::after {
+    content: '';
     position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  header svg {
-    width: 2rem;
+
+  .site-header__nav-link:hover::after,
+  .site-header__action-link:hover::after {
+    transform: scaleX(1);
   }
-  header .header__menu,
-  header .header__icons {
+
+  .site-header__brand {
+    text-align: center;
+  }
+
+  .site-header__logo {
+    font-family: var(--font-heading--family);
+    font-size: 1.55rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    color: currentColor;
+    text-transform: uppercase;
+  }
+
+  .site-header__actions {
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2rem;
+  }
+
+  .site-header__cart-count {
+    font-size: 0.7em;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 768px) {
+    .site-header__inner {
+      padding: 1.4rem 1.4rem;
+    }
+
+    .site-header__nav {
+      display: none;
+    }
+
+    .site-header__actions {
+      gap: 1.2rem;
+    }
+
+    .site-header__inner {
+      grid-template-columns: 1fr auto;
+    }
   }
 {% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    const header = document.querySelector('[data-header]');
+    if (!header) return;
+
+    const onScroll = () => {
+      if (window.scrollY > 40) {
+        header.setAttribute('data-scrolled', '');
+      } else {
+        header.removeAttribute('data-scrolled');
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+{% endjavascript %}
 
 {% schema %}
 {

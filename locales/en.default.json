@@ -64,13 +64,25 @@
   "home": {
     "hero": {
       "section_name": "Hero banner",
-      "preset_name": "Clothing hero",
+      "preset_name": "Editorial home",
       "image_label": "Hero image",
       "eyebrow": "New season essentials",
+      "season": "Fall / Winter '25",
+      "headline_1": "Dressed",
+      "headline_2": "for the moment.",
       "title": "Minimalist clothing for everyday life",
       "subtitle": "Build a wardrobe of refined basics and statement pieces designed to move with you from weekday to weekend.",
-      "cta_shop_now": "Shop collection",
-      "cta_new_in": "View new arrivals"
+      "cta_shop_now": "Explore the collection",
+      "cta_new_in": "New arrivals"
+    },
+    "ticker": {
+      "text": "Free delivery on orders over $250 — — New arrivals every week — — Complimentary gift wrapping — — Returns within 30 days"
+    },
+    "categories": {
+      "label": "Shop by category",
+      "block_name": "Category",
+      "image_label": "Category image",
+      "shop_link": "Shop now"
     },
     "features": {
       "block_name": "Highlight",
@@ -80,5 +92,15 @@
       "link_label_label": "Link label",
       "link_url_label": "Link destination"
     }
+  },
+  "header": {
+    "nav_left_aria": "Primary navigation",
+    "search": "Search",
+    "account": "Account",
+    "cart": "Bag"
+  },
+  "footer": {
+    "tagline": "Refined essentials for the considered wardrobe.",
+    "nav_aria": "Footer navigation"
   }
 }

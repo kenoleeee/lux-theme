@@ -8,5 +8,20 @@
  * ------------------------------------------------------------
  */
 {
-  "current": {}
+  "current": {
+    "background_color": "#f0ede5",
+    "foreground_color": "#1a1a18",
+    "accent_color": "#1a1a18",
+    "line_color": "rgba(26,26,24,0.12)",
+    "input_corner_radius": 0,
+    "type_heading_font": "playfair_display_n4",
+    "type_body_font": "work_sans_n3",
+    "max_page_width": "110rem",
+    "min_page_margin": 24,
+    "section_padding_y": 96,
+    "enable_reveal": true,
+    "reveal_distance": 28,
+    "reveal_duration": 550,
+    "reveal_easing": "cubic-bezier(0.16, 1, 0.3, 1)"
+  }
 }
