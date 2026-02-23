@@ -83,6 +83,11 @@
       "normal": "Normal text"
     }
   },
+  "collection": {
+    "columns_desktop": "Columns on desktop",
+    "grid_gap": "Grid gap",
+    "stagger_offset": "Card stagger offset"
+  },
   "home": {
     "hero": {
       "section_name": "Hero banner",

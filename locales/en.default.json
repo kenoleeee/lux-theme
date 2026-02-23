@@ -43,7 +43,10 @@
   },
   "collections": {
     "title": "Collections",
-    "editorial_eyebrow": "Editorial selection"
+    "editorial_eyebrow": "Editorial selection",
+    "empty": "No pieces found.",
+    "sale_badge": "Sale",
+    "pagination_aria": "Product pages"
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",

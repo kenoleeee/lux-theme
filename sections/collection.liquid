@@ -1,207 +1,435 @@
 {% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
-
+  Collection page — High-End Editorial Fashion / Dark theme
   https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
 {% endcomment %}
 
-<section class="collection-editorial-header full-width">
+{% comment %} ── HEADER ──────────────────────────────────────────────────── {% endcomment %}
+<header
+  class="coll-header full-width"
+  style="--coll-pad: {{ section.settings.section_padding }}px"
+>
   {% if collection.image %}
-    {{ collection.image | image_url: width: 2200 | image_tag: class: 'collection-editorial-header__media' }}
+    <div class="coll-header__cover" aria-hidden="true">
+      {{ collection.image | image_url: width: 2400 | image_tag:
+        class: 'coll-header__cover-img',
+        loading: 'eager',
+        widths: '800, 1200, 2000, 2400',
+        sizes: '100vw'
+      }}
+      <div class="coll-header__cover-grain"></div>
+      <div class="coll-header__cover-vignette"></div>
+    </div>
   {% endif %}
 
-  <div class="collection-editorial-header__overlay">
-    <p class="collection-editorial-header__eyebrow">{{ 'collections.editorial_eyebrow' | t }}</p>
-    <h1 class="collection-editorial-header__title">{{ collection.title | escape }}</h1>
+  <div class="coll-header__body {% unless collection.image %}coll-header__body--no-cover{% endunless %}">
+    <p class="coll-header__eyebrow">{{ 'collections.editorial_eyebrow' | t }}</p>
+    <h1 class="coll-header__title">{{ collection.title | escape }}</h1>
 
     {% if collection.description != blank %}
-      <p class="collection-editorial-header__description">{{ collection.description | strip_html | escape }}</p>
+      <p class="coll-header__desc">{{ collection.description | strip_html | truncate: 220 }}</p>
     {% endif %}
   </div>
-</section>
+</header>
 
+{% comment %} ── GRID ────────────────────────────────────────────────────── {% endcomment %}
 {% paginate collection.products by 12 %}
-  <section class="collection-editorial-grid">
-    {% for product in collection.products %}
-      <article class="collection-editorial-card">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-editorial-card__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 900,
-            height: 1200,
-            crop: 'center'
-          %}
-        {% endif %}
 
-        <div class="collection-editorial-card__content">
-          <p class="collection-editorial-card__meta">
-            {% if product.vendor != blank %}
-              {{ product.vendor | escape }}
-            {% else %}
-              {{ shop.name | escape }}
-            {% endif %}
-          </p>
+  {% if collection.products.size == 0 %}
+    <div class="coll-empty">
+      <p class="coll-empty__msg">{{ 'collections.empty' | t }}</p>
+    </div>
 
-          <h2 class="collection-editorial-card__title">
-            <a href="{{ product.url }}">{{ product.title | escape }}</a>
-          </h2>
+  {% else %}
+    <section
+      class="coll-grid"
+      style="
+        --coll-gap: {{ section.settings.grid_gap }}rem;
+        --coll-cols: {{ section.settings.columns_desktop }};
+        --coll-offset: {{ section.settings.stagger_offset }}rem;
+      "
+      aria-label="{{ collection.title | escape }}"
+    >
+      {% for product in collection.products %}
+        {%- assign is_even = forloop.index | modulo: 2 -%}
 
-          <p class="collection-editorial-card__price">
-            {% if product.compare_at_price_max > product.price %}
-              <span class="collection-editorial-card__price--compare">{{ product.compare_at_price_max | money }}</span>
-            {% endif %}
-            <span>{{ product.price | money }}</span>
-          </p>
-        </div>
-      </article>
-    {% endfor %}
-  </section>
+        <article class="coll-card{% if is_even == 0 %} coll-card--offset{% endif %}">
+          <a class="coll-card__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
 
-  <div class="collection-editorial-pagination">
-    {{ paginate | default_pagination }}
-  </div>
+            <div class="coll-card__media">
+              {% comment %} Primary image {% endcomment %}
+              {% if product.featured_image %}
+                {{ product.featured_image | image_url: width: 1200, height: 1600, crop: 'center'
+                  | image_tag:
+                    class: 'coll-card__img coll-card__img--primary',
+                    loading: 'lazy',
+                    widths: '480, 720, 960, 1200',
+                    sizes: '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+                }}
+              {% endif %}
+
+              {% comment %} Hover: second image {% endcomment %}
+              {% if product.images[1] %}
+                {{ product.images[1] | image_url: width: 1200, height: 1600, crop: 'center'
+                  | image_tag:
+                    class: 'coll-card__img coll-card__img--hover',
+                    loading: 'lazy',
+                    widths: '480, 720, 960, 1200',
+                    sizes: '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
+                    aria_hidden: 'true'
+                }}
+              {% endif %}
+
+              {% comment %} Grain overlay {% endcomment %}
+              <div class="coll-card__grain" aria-hidden="true"></div>
+
+              {% comment %} Sale badge {% endcomment %}
+              {% if product.compare_at_price_max > product.price %}
+                <span class="coll-card__badge">{{ 'collections.sale_badge' | t }}</span>
+              {% endif %}
+            </div>
+
+            <footer class="coll-card__info">
+              <h2 class="coll-card__name">{{ product.title | escape }}</h2>
+
+              <p class="coll-card__price">
+                {% if product.compare_at_price_max > product.price %}
+                  <s class="coll-card__price-was">{{ product.compare_at_price_max | money }}</s>
+                {% endif %}
+                {{ product.price | money }}
+              </p>
+            </footer>
+
+          </a>
+        </article>
+      {% endfor %}
+    </section>
+
+    {% comment %} ── PAGINATION ──────────────────────────────────────────── {% endcomment %}
+    {% if paginate.pages > 1 %}
+      <nav class="coll-pagination" aria-label="{{ 'collections.pagination_aria' | t }}">
+        {{ paginate | default_pagination }}
+      </nav>
+    {% endif %}
+
+  {% endif %}
+
 {% endpaginate %}
 
 {% stylesheet %}
-  .collection-editorial-header {
+  /* ─── CSS variables (dark palette) ─── */
+  .coll-header,
+  .coll-grid,
+  .coll-empty,
+  .coll-pagination {
+    --bg:       #0a0a09;
+    --surface:  #111110;
+    --cream:    #f0ede5;
+    --muted:    rgba(240, 237, 229, 0.52);
+    --serif:    var(--font-heading--family, "Playfair Display", Georgia, serif);
+    --sans:     var(--font-body--family,    "Work Sans", system-ui, sans-serif);
+  }
+
+  /* ─── HEADER ──────────────────────────────────────────── */
+  .coll-header {
     position: relative;
-    min-height: clamp(340px, 56vw, 640px);
+    min-height: clamp(320px, 52vw, 680px);
     overflow: hidden;
     display: flex;
     align-items: flex-end;
-    margin-bottom: clamp(2rem, 6vw, 5rem);
-    background: linear-gradient(120deg, #16171d, #2a2e37 55%, #0f1013);
+    background: var(--bg);
+    color: var(--cream);
+    margin-bottom: 0;
   }
 
-  .collection-editorial-header__media {
+  .coll-header__cover {
+    position: absolute;
+    inset: 0;
+  }
+
+  .coll-header__cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: saturate(0.78) contrast(1.12) brightness(0.78);
+  }
+
+  .coll-header__cover-grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    background-size: 200px;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  .coll-header__cover-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top,  rgba(10,10,9,0.92) 0%,  rgba(10,10,9,0.0) 55%),
+      linear-gradient(to right, rgba(10,10,9,0.55) 0%, rgba(10,10,9,0.0) 60%);
+    pointer-events: none;
+  }
+
+  .coll-header__body {
+    position: relative;
+    z-index: 1;
+    padding: clamp(2rem, 6vw, 5rem) clamp(1.5rem, 5vw, 5rem);
+    max-width: 72rem;
+  }
+
+  .coll-header__body--no-cover {
+    padding-block: clamp(4rem, 10vw, 9rem);
+  }
+
+  .coll-header__eyebrow {
+    font-family: var(--sans);
+    font-size: 0.66rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .coll-header__title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.8rem, 7vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+
+  .coll-header__desc {
+    margin-top: 1.4rem;
+    max-width: 48ch;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    line-height: 1.72;
+    color: rgba(240, 237, 229, 0.72);
+  }
+
+  /* ─── GRID WRAPPER ────────────────────────────────────── */
+  .coll-grid {
+    background: var(--bg);
+    padding: var(--coll-gap, 4rem) clamp(1.5rem, 5vw, 5rem);
+    display: grid;
+    grid-template-columns: repeat(var(--coll-cols, 3), minmax(0, 1fr));
+    gap: var(--coll-gap, 4rem) calc(var(--coll-gap, 4rem) * 0.7);
+    align-items: start;
+  }
+
+  /* ─── PRODUCT CARD ────────────────────────────────────── */
+  .coll-card {
+    position: relative;
+  }
+
+  .coll-card--offset {
+    margin-top: var(--coll-offset, 3rem);
+  }
+
+  .coll-card__link {
+    display: block;
+    text-decoration: none;
+    color: var(--cream);
+  }
+
+  .coll-card__media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    background: var(--surface);
+  }
+
+  /* both images sit on top of each other */
+  .coll-card__img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: saturate(0.85) contrast(1.08);
+    transition: opacity 550ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .collection-editorial-header__overlay {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    padding: clamp(1.5rem, 4vw, 3.5rem);
-    color: #f8fafc;
-    background: linear-gradient(to top, rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.2), transparent);
+  .coll-card__img--primary {
+    opacity: 1;
+    transform: scale(1);
   }
 
-  .collection-editorial-header__eyebrow {
-    font-size: 0.75rem;
+  .coll-card__img--hover {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+
+  .coll-card__link:hover .coll-card__img--primary,
+  .coll-card__link:focus-visible .coll-card__img--primary {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+
+  .coll-card__link:hover .coll-card__img--hover,
+  .coll-card__link:focus-visible .coll-card__img--hover {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* when there is no second image, just scale the primary */
+  .coll-card__link:hover .coll-card__img--primary:only-child {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+
+  /* grain */
+  .coll-card__grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px;
+    mix-blend-mode: overlay;
+    opacity: 0.5;
+  }
+
+  /* sale badge */
+  .coll-card__badge {
+    position: absolute;
+    top: 1.1rem;
+    left: 0;
+    font-family: var(--sans);
+    font-size: 0.58rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    opacity: 0.85;
-    margin-bottom: 0.75rem;
+    color: var(--bg);
+    background: var(--cream);
+    padding: 0.32rem 0.7rem;
   }
 
-  .collection-editorial-header__title {
-    font-size: clamp(2rem, 5.5vw, 4.4rem);
-    line-height: 1;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-
-  .collection-editorial-header__description {
-    margin-top: 1rem;
-    max-width: 56ch;
-    color: rgba(248, 250, 252, 0.88);
-  }
-
-  .collection-editorial-grid {
-    display: grid;
-    gap: clamp(1.1rem, 1.6vw, 1.8rem);
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-bottom: 2rem;
-  }
-
-  .collection-editorial-card {
-    background: #fff;
-    border-radius: 18px;
-    overflow: hidden;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
-    transition: transform 220ms ease, box-shadow 220ms ease;
-  }
-
-  .collection-editorial-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 26px 54px rgba(15, 23, 42, 0.15);
-  }
-
-  .collection-editorial-card .image {
-    display: block;
-    aspect-ratio: 3 / 4;
-    overflow: hidden;
-  }
-
-  .collection-editorial-card .image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 350ms ease;
-  }
-
-  .collection-editorial-card:hover .image img {
-    transform: scale(1.05);
-  }
-
-  .collection-editorial-card__content {
-    padding: 1rem 1rem 1.2rem;
-  }
-
-  .collection-editorial-card__meta {
-    font-size: 0.72rem;
-    letter-spacing: 0.17em;
-    text-transform: uppercase;
-    color: rgba(15, 23, 42, 0.58);
-  }
-
-  .collection-editorial-card__title {
-    margin-top: 0.55rem;
-    font-size: 1.05rem;
-    line-height: 1.3;
-  }
-
-  .collection-editorial-card__title a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .collection-editorial-card__price {
-    margin-top: 0.7rem;
+  /* ─── CARD INFO ───────────────────────────────────────── */
+  .coll-card__info {
+    padding-top: 1.1rem;
     display: flex;
+    justify-content: space-between;
     align-items: baseline;
-    gap: 0.55rem;
-    font-size: 1rem;
-    color: #020617;
+    gap: 1rem;
   }
 
-  .collection-editorial-card__price--compare {
+  .coll-card__name {
+    font-family: var(--sans);
+    font-size: 0.66rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cream);
+    opacity: 0.8;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .coll-card__price {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--cream);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .coll-card__price-was {
+    font-style: normal;
+    font-size: 0.76rem;
+    color: var(--muted);
     text-decoration: line-through;
-    font-size: 0.88rem;
-    color: rgba(15, 23, 42, 0.54);
+    margin-right: 0.35rem;
   }
 
-  .collection-editorial-pagination {
-    margin-bottom: clamp(2rem, 4vw, 4rem);
+  /* ─── EMPTY STATE ─────────────────────────────────────── */
+  .coll-empty {
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40vh;
+    padding: 6rem 2rem;
   }
 
-  @media (max-width: 980px) {
-    .collection-editorial-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+  .coll-empty__msg {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.8rem, 4vw, 3.2rem);
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ─── PAGINATION ──────────────────────────────────────── */
+  .coll-pagination {
+    background: var(--bg);
+    padding: 0 clamp(1.5rem, 5vw, 5rem) clamp(3rem, 6vw, 6rem);
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+  }
+
+  .coll-pagination .pagination {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid rgba(240, 237, 229, 0.14);
+    padding-top: 2rem;
+    width: 100%;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .coll-pagination a,
+  .coll-pagination span {
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--cream);
+    opacity: 0.55;
+    transition: opacity 200ms ease;
+    padding: 0.5rem 0.2rem;
+    border-bottom: 1px solid transparent;
+  }
+
+  .coll-pagination a:hover {
+    opacity: 1;
+    border-bottom-color: rgba(240, 237, 229, 0.5);
+  }
+
+  .coll-pagination .current a,
+  .coll-pagination .current span {
+    opacity: 1;
+    border-bottom-color: var(--cream);
+  }
+
+  /* ─── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 1100px) {
+    .coll-grid {
+      --coll-cols: 2;
     }
   }
 
-  @media (max-width: 680px) {
-    .collection-editorial-grid {
-      grid-template-columns: minmax(0, 1fr);
+  @media (max-width: 640px) {
+    .coll-grid {
+      --coll-cols: 1;
+      --coll-offset: 0rem;
+      gap: 3rem;
+      padding-inline: 1.2rem;
+    }
+
+    .coll-card--offset {
+      margin-top: 0;
+    }
+
+    .coll-header__body {
+      padding: clamp(5rem, 18vw, 10rem) 1.4rem 2.5rem;
     }
   }
 {% endstylesheet %}
@@ -209,6 +437,46 @@
 {% schema %}
 {
   "name": "t:general.collection",
-  "settings": []
+  "settings": [
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "t:collection.columns_desktop",
+      "min": 2,
+      "max": 3,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "t:collection.grid_gap",
+      "min": 2,
+      "max": 8,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "stagger_offset",
+      "label": "t:collection.stagger_offset",
+      "min": 0,
+      "max": 8,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "t:labels.section_padding_y",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 96
+    }
+  ]
 }
 {% endschema %}
