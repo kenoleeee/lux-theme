@@ -5,41 +5,205 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/product
 {% endcomment %}
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
+{% assign current_variant = product.selected_or_first_available_variant %}
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
-
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
-
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
+<section class="product-editorial">
+  <div class="product-editorial__gallery">
+    {% if product.images.size > 0 %}
+      {% for image in product.images %}
+        {% render 'image',
+          class: 'product-editorial__image',
+          image: image,
+          width: 1400,
+          height: 1800,
+          crop: 'center'
+        %}
       {% endfor %}
-    </select>
+    {% endif %}
+  </div>
 
-    <input type="text" name="quantity" min="1" value="1">
+  <div class="product-editorial__info">
+    <p class="product-editorial__eyebrow">
+      {% if product.vendor != blank %}
+        {{ product.vendor | escape }}
+      {% else %}
+        {{ shop.name | escape }}
+      {% endif %}
+    </p>
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+    <h1 class="product-editorial__title">{{ product.title | escape }}</h1>
+
+    <p class="product-editorial__price">
+      {% if current_variant.compare_at_price > current_variant.price %}
+        <span class="product-editorial__price-compare">{{ current_variant.compare_at_price | money }}</span>
+      {% endif %}
+      <span>{{ current_variant.price | money }}</span>
+    </p>
+
+    {% if product.description != blank %}
+      <div class="product-editorial__description">
+        {{ product.description }}
+      </div>
+    {% endif %}
+
+    <div class="product-editorial__form-wrap">
+      {% form 'product', product %}
+        <label for="variant-id" class="product-editorial__label">{{ 'product.choose_variant' | t }}</label>
+        <select id="variant-id" name="id" class="product-editorial__select">
+          {% for variant in product.variants %}
+            <option
+              value="{{ variant.id }}"
+              {% if variant == current_variant %}
+                selected="selected"
+              {% endif %}
+            >
+              {{ variant.title }} - {{ variant.price | money }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <label for="quantity" class="product-editorial__label">{{ 'product.quantity' | t }}</label>
+        <input id="quantity" type="number" min="1" name="quantity" value="1" class="product-editorial__quantity">
+
+        <button type="submit" class="product-editorial__submit" {% unless current_variant.available %}disabled{% endunless %}>
+          {% if current_variant.available %}
+            {{ 'product.add_to_cart' | t }}
+          {% else %}
+            {{ 'product.sold_out' | t }}
+          {% endif %}
+        </button>
+
+        <div class="product-editorial__dynamic-payment">
+          {{ form | payment_button }}
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .product-editorial {
+    display: grid;
+    gap: clamp(1rem, 2vw, 2rem);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: start;
+    margin-block: clamp(1.4rem, 4vw, 3.5rem);
+  }
+
+  .product-editorial__gallery {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .product-editorial__gallery .image {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: #f8fafc;
+  }
+
+  .product-editorial__gallery .image img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+  }
+
+  .product-editorial__info {
+    position: sticky;
+    top: 1rem;
+    padding: clamp(1.1rem, 2vw, 2rem);
+    border-radius: 24px;
+    background: linear-gradient(170deg, #0f172a, #020617 68%);
+    color: #f8fafc;
+    box-shadow: 0 24px 56px rgba(2, 6, 23, 0.45);
+  }
+
+  .product-editorial__eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(248, 250, 252, 0.7);
+  }
+
+  .product-editorial__title {
+    margin-top: 0.65rem;
+    font-size: clamp(1.8rem, 2.7vw, 2.8rem);
+    line-height: 1.08;
+  }
+
+  .product-editorial__price {
+    margin-top: 0.9rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-size: 1.22rem;
+  }
+
+  .product-editorial__price-compare {
+    font-size: 0.95rem;
+    text-decoration: line-through;
+    color: rgba(248, 250, 252, 0.6);
+  }
+
+  .product-editorial__description {
+    margin-top: 1.1rem;
+    color: rgba(248, 250, 252, 0.86);
+  }
+
+  .product-editorial__form-wrap {
+    margin-top: 1.2rem;
+  }
+
+  .product-editorial__label {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 0.45rem;
+    color: rgba(248, 250, 252, 0.75);
+  }
+
+  .product-editorial__select,
+  .product-editorial__quantity {
+    width: 100%;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.7);
+    color: #f8fafc;
+    padding: 0.72rem 0.85rem;
+    border-radius: 10px;
+  }
+
+  .product-editorial__submit {
+    width: 100%;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.86rem 1rem;
+    background: #f8fafc;
+    color: #020617;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .product-editorial__submit[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .product-editorial__dynamic-payment {
+    margin-top: 0.9rem;
+  }
+
+  @media (max-width: 920px) {
+    .product-editorial {
+      grid-template-columns: 1fr;
+    }
+
+    .product-editorial__info {
+      position: static;
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {

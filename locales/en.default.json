@@ -33,7 +33,8 @@
     }
   },
   "collections": {
-    "title": "Collections"
+    "title": "Collections",
+    "editorial_eyebrow": "Editorial selection"
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
@@ -53,6 +54,12 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "product": {
+    "choose_variant": "Choose size",
+    "quantity": "Quantity",
+    "add_to_cart": "Add to bag",
+    "sold_out": "Sold out"
   },
   "home": {
     "hero": {
