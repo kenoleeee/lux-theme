@@ -4,10 +4,15 @@
 {% endcomment %}
 
 {% comment %} ── COLLECTION HEADER ─────────────────────────────────────────── {% endcomment %}
+{%- comment -%}
+  Banner priority: custom image from Theme Editor → collection image → no image (bare strip)
+{%- endcomment -%}
+{%- assign banner_img = section.settings.banner_image | default: collection.image -%}
+
 <header class="coll-header full-width">
-  {% if collection.image %}
+  {%- if banner_img -%}
     <div class="coll-header__cover" aria-hidden="true">
-      {{ collection.image | image_url: width: 2400 | image_tag:
+      {{ banner_img | image_url: width: 2400 | image_tag:
         class: 'coll-header__cover-img',
         loading: 'eager',
         widths: '800, 1200, 2000, 2400',
@@ -16,9 +21,9 @@
       <div class="coll-header__grain"></div>
       <div class="coll-header__vignette"></div>
     </div>
-  {% endif %}
+  {%- endif -%}
 
-  <div class="coll-header__body{% unless collection.image %} coll-header__body--bare{% endunless %}">
+  <div class="coll-header__body{% unless banner_img %} coll-header__body--bare{% endunless %}">
     <p class="coll-header__eyebrow">{{ 'collections.editorial_eyebrow' | t }}</p>
     <h1 class="coll-header__title">{{ collection.title | escape }}</h1>
     {% if collection.description != blank %}
@@ -300,6 +305,19 @@
 {
   "name": "t:general.collection",
   "settings": [
+    {
+      "type": "header",
+      "content": "t:collection.header_banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "t:collection.banner_image"
+    },
+    {
+      "type": "header",
+      "content": "t:collection.header_grid"
+    },
     {
       "type": "range",
       "id": "columns_desktop",
