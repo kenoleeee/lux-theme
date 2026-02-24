@@ -13,6 +13,12 @@
     "not_found": "Page not found.",
     "back_to_shopping": "Back to shopping"
   },
+  "errors": {
+    "404": {
+      "label": "Lost in archive",
+      "cta": "Return to home"
+    }
+  },
   "general": {
     "accessibility": {
       "skip_to_content": "Skip to content"

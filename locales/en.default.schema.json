@@ -96,6 +96,9 @@
   "blog": {
     "articles_per_page": "Articles per page"
   },
+  "errors": {
+    "background_image": "Background image (optional)"
+  },
   "contact": {
     "section_name": "Contact page",
     "header_studio": "Studio identity",
