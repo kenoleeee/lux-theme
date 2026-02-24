@@ -124,6 +124,17 @@
     "close_menu": "Close navigation menu",
     "close_label": "Close"
   },
+  "contact": {
+    "eyebrow": "Get in touch",
+    "form_heading": "Send a message",
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "submit": "Send inquiry",
+    "success": "Your message has been received. We will be in touch shortly.",
+    "error": "Please review the fields below."
+  },
   "footer": {
     "tagline": "Refined essentials for the considered wardrobe.",
     "nav_aria": "Footer navigation"

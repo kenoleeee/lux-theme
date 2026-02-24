@@ -1,0 +1,483 @@
+{% comment %}
+  Contact page — High-End Editorial Fashion / Dark theme
+{% endcomment %}
+
+<div class="ctc full-width">
+
+  {% comment %} ── LEFT — Studio info ───────────────────────────────────── {% endcomment %}
+  <div class="ctc__info">
+
+    <p class="ctc__eyebrow">{{ 'contact.eyebrow' | t }}</p>
+    <h1 class="ctc__studio">{{ section.settings.studio_name | escape }}</h1>
+
+    {% if section.settings.tagline != blank %}
+      <p class="ctc__tagline">{{ section.settings.tagline | escape }}</p>
+    {% endif %}
+
+    {% comment %} ── Addresses ─────────────────────────────────────────── {% endcomment %}
+    <div class="ctc__addresses">
+      {% if section.settings.address_1_label != blank %}
+        <div class="ctc__address">
+          <p class="ctc__address-label">{{ section.settings.address_1_label | escape }}</p>
+          <p class="ctc__address-text">{{ section.settings.address_1_text | newline_to_br }}</p>
+        </div>
+      {% endif %}
+      {% if section.settings.address_2_label != blank %}
+        <div class="ctc__address">
+          <p class="ctc__address-label">{{ section.settings.address_2_label | escape }}</p>
+          <p class="ctc__address-text">{{ section.settings.address_2_text | newline_to_br }}</p>
+        </div>
+      {% endif %}
+    </div>
+
+    {% comment %} ── Email contacts ────────────────────────────────────── {% endcomment %}
+    <div class="ctc__emails">
+      {% if section.settings.email_1_label != blank %}
+        <div class="ctc__email">
+          <p class="ctc__email-label">{{ section.settings.email_1_label | escape }}</p>
+          <a class="ctc__email-link" href="mailto:{{ section.settings.email_1_address | escape }}">
+            {{ section.settings.email_1_address | escape }}
+          </a>
+        </div>
+      {% endif %}
+      {% if section.settings.email_2_label != blank %}
+        <div class="ctc__email">
+          <p class="ctc__email-label">{{ section.settings.email_2_label | escape }}</p>
+          <a class="ctc__email-link" href="mailto:{{ section.settings.email_2_address | escape }}">
+            {{ section.settings.email_2_address | escape }}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  {% comment %} ── RIGHT — Contact form ──────────────────────────────── {% endcomment %}
+  <div class="ctc__form-wrap">
+
+    <p class="ctc__form-heading">{{ 'contact.form_heading' | t }}</p>
+
+    {% form 'contact' %}
+
+      {% if form.posted_successfully? %}
+        <p class="ctc__success">{{ 'contact.success' | t }}</p>
+      {% else %}
+
+        {% if form.errors %}
+          <div class="ctc__errors">
+            {{ form.errors | default_errors }}
+          </div>
+        {% endif %}
+
+        <div class="ctc__field">
+          <label class="ctc__label" for="ctc-name">{{ 'contact.name' | t }}</label>
+          <input
+            class="ctc__input"
+            type="text"
+            id="ctc-name"
+            name="contact[name]"
+            value="{{ form.name }}"
+            autocomplete="name"
+            required
+          >
+        </div>
+
+        <div class="ctc__field">
+          <label class="ctc__label" for="ctc-email">{{ 'contact.email' | t }}</label>
+          <input
+            class="ctc__input"
+            type="email"
+            id="ctc-email"
+            name="contact[email]"
+            value="{{ form.email }}"
+            autocomplete="email"
+            required
+          >
+        </div>
+
+        <div class="ctc__field">
+          <label class="ctc__label" for="ctc-subject">{{ 'contact.subject' | t }}</label>
+          <input
+            class="ctc__input"
+            type="text"
+            id="ctc-subject"
+            name="contact[subject]"
+            value="{{ form.subject }}"
+          >
+        </div>
+
+        <div class="ctc__field">
+          <label class="ctc__label" for="ctc-body">{{ 'contact.message' | t }}</label>
+          <textarea
+            class="ctc__input ctc__input--textarea"
+            id="ctc-body"
+            name="contact[body]"
+            rows="6"
+            required
+          >{{ form.body }}</textarea>
+        </div>
+
+        <button type="submit" class="ctc__submit">
+          {{ 'contact.submit' | t }}
+        </button>
+
+      {% endif %}
+
+    {% endform %}
+  </div>
+
+</div>
+
+{% stylesheet %}
+  /* ── Tokens ──────────────────────────────────────────────── */
+  .ctc {
+    --bg:      #0a0a09;
+    --cream:   #f0ede5;
+    --muted:   rgba(240, 237, 229, 0.48);
+    --line:    rgba(240, 237, 229, 0.18);
+    --line-focus: rgba(240, 237, 229, 0.7);
+    --serif:   var(--font-heading--family, "Playfair Display", Georgia, serif);
+    --sans:    var(--font-body--family,    "Work Sans", system-ui, sans-serif);
+  }
+
+  /* ── OUTER WRAPPER ───────────────────────────────────────── */
+  .ctc {
+    background:    var(--bg) !important;
+    color:         var(--cream);
+    /* top padding clears the fixed transparent header */
+    padding:       clamp(9rem, 18vw, 14rem) clamp(1.5rem, 7vw, 7rem) clamp(5rem, 10vw, 9rem);
+    display:       grid;
+    grid-template-columns: 1fr 1fr;
+    gap:           4rem 6rem;
+    align-items:   start;
+    min-height:    100vh;
+    box-sizing:    border-box;
+  }
+
+  /* ── LEFT — INFO ─────────────────────────────────────────── */
+  .ctc__eyebrow {
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 1.4rem;
+  }
+
+  .ctc__studio {
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-size:      clamp(2.2rem, 4vw, 4rem);
+    line-height:    1;
+    letter-spacing: -0.02em;
+    color:          var(--cream);
+    margin:         0 0 1.5rem;
+  }
+
+  .ctc__tagline {
+    font-family:    var(--sans);
+    font-size:      0.85rem;
+    line-height:    1.75;
+    color:          var(--muted);
+    max-width:      36ch;
+    margin:         0 0 3.5rem;
+  }
+
+  /* Addresses */
+  .ctc__addresses {
+    display:        flex;
+    flex-direction: column;
+    gap:            2rem;
+    margin-bottom:  3.5rem;
+  }
+
+  .ctc__address-label {
+    font-family:    var(--sans);
+    font-size:      0.56rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 0.5rem;
+  }
+
+  .ctc__address-text {
+    font-family:    var(--sans);
+    font-size:      0.82rem;
+    line-height:    1.65;
+    color:          rgba(240, 237, 229, 0.78);
+    margin:         0;
+  }
+
+  /* Emails */
+  .ctc__emails {
+    display:        flex;
+    flex-direction: column;
+    gap:            1.8rem;
+  }
+
+  .ctc__email-label {
+    font-family:    var(--sans);
+    font-size:      0.56rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 0.4rem;
+  }
+
+  .ctc__email-link {
+    font-family:     var(--serif);
+    font-style:      italic;
+    font-size:       1rem;
+    color:           var(--cream);
+    text-decoration: none;
+    border-bottom:   1px solid var(--line);
+    padding-bottom:  1px;
+    transition:      border-color 220ms, color 220ms;
+    display:         inline-block;
+  }
+
+  .ctc__email-link:hover {
+    border-color: var(--cream);
+    color:        #fff;
+  }
+
+  /* ── RIGHT — FORM ────────────────────────────────────────── */
+  .ctc__form-heading {
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 2.8rem;
+  }
+
+  /* Fields */
+  .ctc__field {
+    display:       flex;
+    flex-direction: column;
+    gap:           0.45rem;
+    margin-bottom: 2rem;
+  }
+
+  .ctc__label {
+    font-family:    var(--sans);
+    font-size:      0.55rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color:          var(--muted);
+  }
+
+  .ctc__input {
+    background:     transparent !important;
+    background-color: transparent !important;
+    border:         none !important;
+    border-bottom:  1px solid var(--line) !important;
+    border-radius:  0 !important;
+    box-shadow:     none !important;
+    outline:        none !important;
+    padding:        0.65rem 0 !important;
+    font-family:    var(--sans) !important;
+    font-size:      0.95rem !important;
+    color:          var(--cream) !important;
+    width:          100% !important;
+    -webkit-appearance: none;
+    appearance:     none;
+    transition:     border-color 220ms !important;
+  }
+
+  .ctc__input::placeholder {
+    color: rgba(240, 237, 229, 0.28);
+  }
+
+  .ctc__input:focus {
+    border-bottom-color: var(--line-focus) !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* autofill reset */
+  .ctc__input:-webkit-autofill,
+  .ctc__input:-webkit-autofill:hover,
+  .ctc__input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 100px var(--bg) inset !important;
+    -webkit-text-fill-color: var(--cream) !important;
+    caret-color: var(--cream);
+  }
+
+  .ctc__input--textarea {
+    resize:      vertical;
+    min-height:  9rem;
+    line-height: 1.7;
+  }
+
+  /* Submit */
+  .ctc__submit {
+    margin-top:      2rem;
+    padding:         0.85rem 2.8rem;
+    background:      transparent;
+    border:          1px solid rgba(240, 237, 229, 0.32);
+    border-radius:   0;
+    font-family:     var(--sans);
+    font-size:       0.6rem;
+    letter-spacing:  0.26em;
+    text-transform:  uppercase;
+    color:           var(--cream);
+    cursor:          pointer;
+    transition:      border-color 220ms, color 220ms, background 220ms;
+    box-shadow:      none;
+    outline:         none;
+    -webkit-appearance: none;
+    appearance:      none;
+  }
+
+  .ctc__submit:hover {
+    border-color:     var(--cream);
+    color:            #fff;
+    background:       rgba(240, 237, 229, 0.05);
+  }
+
+  .ctc__submit:focus-visible {
+    outline:       1px solid rgba(240, 237, 229, 0.5);
+    outline-offset: 4px;
+  }
+
+  /* Success & error messages */
+  .ctc__success {
+    font-family:    var(--serif);
+    font-style:     italic;
+    font-size:      1.1rem;
+    color:          rgba(240, 237, 229, 0.8);
+    margin:         2rem 0;
+    line-height:    1.7;
+  }
+
+  .ctc__errors {
+    margin-bottom: 1.5rem;
+    font-family:   var(--sans);
+    font-size:     0.78rem;
+    color:         rgba(255, 100, 80, 0.85);
+  }
+
+  /* ── Divider line between columns ────────────────────────── */
+  .ctc__form-wrap {
+    padding-left:  3rem;
+    border-left:   1px solid rgba(240, 237, 229, 0.1);
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .ctc {
+      grid-template-columns: 1fr;
+      gap:     3.5rem;
+      padding: clamp(7rem, 20vw, 10rem) 1.4rem clamp(4rem, 8vw, 6rem);
+    }
+
+    .ctc__form-wrap {
+      padding-left: 0;
+      border-left:  none;
+      border-top:   1px solid rgba(240, 237, 229, 0.1);
+      padding-top:  3rem;
+    }
+
+    .ctc__studio { font-size: clamp(2rem, 9vw, 3rem); }
+    .ctc__tagline { margin-bottom: 2.5rem; }
+    .ctc__addresses { margin-bottom: 2.5rem; }
+  }
+
+  @media (max-width: 480px) {
+    .ctc__submit { width: 100%; text-align: center; padding: 0.9rem 1rem; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:contact.section_name",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:contact.header_studio"
+    },
+    {
+      "type": "text",
+      "id": "studio_name",
+      "label": "t:contact.studio_name",
+      "default": "KENOLDEV STUDIO"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "t:contact.tagline",
+      "default": "Refined essentials. Thoughtful design. Available worldwide."
+    },
+    {
+      "type": "header",
+      "content": "t:contact.header_address_1"
+    },
+    {
+      "type": "text",
+      "id": "address_1_label",
+      "label": "t:contact.address_label",
+      "default": "Headquarters"
+    },
+    {
+      "type": "textarea",
+      "id": "address_1_text",
+      "label": "t:contact.address_text",
+      "default": "75003 Paris, France\n12 Rue de Turenne"
+    },
+    {
+      "type": "header",
+      "content": "t:contact.header_address_2"
+    },
+    {
+      "type": "text",
+      "id": "address_2_label",
+      "label": "t:contact.address_label",
+      "default": "Design Atelier"
+    },
+    {
+      "type": "textarea",
+      "id": "address_2_text",
+      "label": "t:contact.address_text",
+      "default": "10119 Berlin, Germany\nTorstraße 66"
+    },
+    {
+      "type": "header",
+      "content": "t:contact.header_email_1"
+    },
+    {
+      "type": "text",
+      "id": "email_1_label",
+      "label": "t:contact.email_label",
+      "default": "General Inquiries"
+    },
+    {
+      "type": "text",
+      "id": "email_1_address",
+      "label": "t:contact.email_address",
+      "default": "info@kenoldev.com"
+    },
+    {
+      "type": "header",
+      "content": "t:contact.header_email_2"
+    },
+    {
+      "type": "text",
+      "id": "email_2_label",
+      "label": "t:contact.email_label",
+      "default": "Press & Editorial"
+    },
+    {
+      "type": "text",
+      "id": "email_2_address",
+      "label": "t:contact.email_address",
+      "default": "press@kenoldev.com"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:contact.section_name"
+    }
+  ]
+}
+{% endschema %}

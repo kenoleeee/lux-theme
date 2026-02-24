@@ -1,0 +1,20 @@
+{
+  "sections": {
+    "main": {
+      "type": "contact",
+      "settings": {
+        "studio_name": "KENOLDEV STUDIO",
+        "tagline": "Refined essentials. Thoughtful design. Available worldwide.",
+        "address_1_label": "Headquarters",
+        "address_1_text": "75003 Paris, France\n12 Rue de Turenne",
+        "address_2_label": "Design Atelier",
+        "address_2_text": "10119 Berlin, Germany\nTorstraße 66",
+        "email_1_label": "General Inquiries",
+        "email_1_address": "info@kenoldev.com",
+        "email_2_label": "Press & Editorial",
+        "email_2_address": "press@kenoldev.com"
+      }
+    }
+  },
+  "order": ["main"]
+}

@@ -96,6 +96,20 @@
   "blog": {
     "articles_per_page": "Articles per page"
   },
+  "contact": {
+    "section_name": "Contact page",
+    "header_studio": "Studio identity",
+    "studio_name": "Studio name",
+    "tagline": "Tagline",
+    "header_address_1": "First address",
+    "header_address_2": "Second address",
+    "address_label": "Location label",
+    "address_text": "Address",
+    "header_email_1": "First email",
+    "header_email_2": "Second email",
+    "email_label": "Email label",
+    "email_address": "Email address"
+  },
   "home": {
     "hero": {
       "section_name": "Hero banner",
