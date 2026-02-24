@@ -176,7 +176,7 @@
 
   /* ─── INFO — flush with photo edge ──────────────────────── */
   .coll-grid .pc__info {
-    padding:          0.85rem 0 0 !important;
+    padding:          0.6rem 0 0 !important;
     margin:           0 !important;
     background:       #0a0a09 !important;
     background-color: #0a0a09 !important;
@@ -185,35 +185,38 @@
     border-radius:    0 !important;
     display:          flex !important;
     flex-direction:   column !important;
-    gap:              0.28rem !important;
+    gap:              0.2rem !important;
   }
 
   /* ─── TITLE — uppercase sans-serif ──────────────────────── */
   .coll-grid .pc__name {
     font-family:    var(--sans) !important;
-    font-size:      0.62rem !important;
+    font-size:      0.58rem !important;
     font-weight:    400 !important;
-    letter-spacing: 0.2em !important;
+    letter-spacing: 0.16em !important;
     text-transform: uppercase !important;
     color:          #f0ede5 !important;
-    line-height:    1.5 !important;
+    line-height:    1.4 !important;
     margin:         0 !important;
     padding:        0 !important;
     background:     transparent !important;
     border:         none !important;
+    white-space:    nowrap;
+    overflow:       hidden;
+    text-overflow:  ellipsis;
   }
 
   /* ─── PRICE — serif italic ───────────────────────────────── */
   .coll-grid .pc__price {
     font-family:  var(--serif) !important;
     font-style:   italic !important;
-    font-size:    0.95rem !important;
+    font-size:    0.82rem !important;
     font-weight:  400 !important;
     color:        #f0ede5 !important;
     display:      flex !important;
     align-items:  baseline !important;
-    gap:          0.5rem !important;
-    margin:       0.18rem 0 0 !important;
+    gap:          0.4rem !important;
+    margin:       0 !important;
     padding:      0 !important;
     background:   transparent !important;
     border:       none !important;
@@ -221,7 +224,7 @@
 
   .coll-grid .pc__price-was {
     font-style:      normal !important;
-    font-size:       0.72rem !important;
+    font-size:       0.66rem !important;
     color:           rgba(240, 237, 229, 0.42) !important;
     text-decoration: line-through !important;
   }
@@ -229,7 +232,15 @@
   /* ─── MOBILE ─────────────────────────────────────────────── */
   @media (max-width: 767px) {
     .coll-grid .pc--offset { margin-top: 0 !important; }
-    .coll-grid .pc__name   { font-size: 0.65rem !important; letter-spacing: 0.18em !important; }
-    .coll-grid .pc__price  { font-size: 0.9rem !important; }
+
+    .coll-grid .pc__name {
+      font-size:      0.6rem !important;
+      letter-spacing: 0.14em !important;
+      white-space:    normal !important;
+      overflow:       visible !important;
+      text-overflow:  clip !important;
+    }
+
+    .coll-grid .pc__price  { font-size: 0.78rem !important; }
   }
 {% endstylesheet %}

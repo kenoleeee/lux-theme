@@ -78,113 +78,117 @@
   .coll-empty,
   .coll-pagination {
     --bg:    #0a0a09;
-    --dim:   #111110;
     --cream: #f0ede5;
     --muted: rgba(240, 237, 229, 0.45);
     --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
     --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
   }
 
-  /* ─── COLLECTION HEADER ───────────────────────────────────────── */
+  /* ─── COLLECTION HEADER — compact banner strip ────────────────── */
   .coll-header {
-    position: relative;
-    min-height: clamp(320px, 52vw, 680px);
-    overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-    color: var(--cream);
+    position:    relative;
+    /* max ~28vh — short banner, not a full-screen poster */
+    height:      clamp(160px, 28vh, 320px);
+    overflow:    hidden;
+    display:     flex;
+    align-items: center;
+    background:  var(--bg) !important;
+    color:       var(--cream);
+    /* top padding accounts for fixed header (~5rem) */
+    padding-top: 5rem;
   }
 
+  /* background image fills the strip */
   .coll-header__cover {
     position: absolute;
     inset: 0;
   }
 
   .coll-header__cover-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: saturate(0.75) contrast(1.1) brightness(0.72);
+    width:         100%;
+    height:        100%;
+    object-fit:    cover;
+    object-position: center 30%;
+    filter:        saturate(0.6) contrast(1.1) brightness(0.55);
     border-radius: 0 !important;
   }
 
   .coll-header__grain {
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    position:   absolute;
+    inset:      0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
     background-size: 200px;
-    mix-blend-mode: overlay;
-    pointer-events: none;
+    mix-blend-mode:  overlay;
+    pointer-events:  none;
   }
 
+  /* soft gradient so text stays readable over the image */
   .coll-header__vignette {
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(to top,  rgba(10,10,9,.95) 0%, rgba(10,10,9,0) 55%),
-      linear-gradient(to right, rgba(10,10,9,.55) 0%, rgba(10,10,9,0) 60%);
+    position:   absolute;
+    inset:      0;
+    background: linear-gradient(
+      to right,
+      rgba(10,10,9,.85) 0%,
+      rgba(10,10,9,.45) 50%,
+      rgba(10,10,9,.15) 100%
+    );
     pointer-events: none;
   }
 
   .coll-header__body {
-    position: relative;
-    z-index: 1;
-    padding: clamp(2rem, 5vw, 4.5rem) clamp(1.5rem, 6vw, 6rem);
-    max-width: 72rem;
+    position:   relative;
+    z-index:    1;
+    padding:    0 clamp(1.5rem, 5vw, 5rem);
+    display:    flex;
+    align-items: baseline;
+    gap:        1.2rem;
+    flex-wrap:  wrap;
   }
 
+  /* no image — simpler dark strip, still respects fixed header */
   .coll-header__body--bare {
-    /* no image — add top padding so title clears the fixed nav */
-    padding-top: clamp(8rem, 18vw, 14rem);
+    padding-top: 0;
   }
 
   .coll-header__eyebrow {
-    font-family: var(--sans);
-    font-size: 0.64rem;
-    letter-spacing: 0.3em;
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--muted);
-    margin: 0 0 1rem;
+    color:          var(--muted);
+    margin:         0;
+    white-space:    nowrap;
   }
 
   .coll-header__title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(2.8rem, 8vw, 7rem);
-    line-height: 0.92;
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-size:      clamp(1.6rem, 3.5vw, 3rem);
+    line-height:    1;
     letter-spacing: -0.02em;
-    color: var(--cream);
-    margin: 0;
+    color:          var(--cream);
+    margin:         0;
   }
 
-  .coll-header__desc {
-    margin: 1.4rem 0 0;
-    max-width: 48ch;
-    font-family: var(--sans);
-    font-size: 0.88rem;
-    line-height: 1.75;
-    color: rgba(240, 237, 229, 0.65);
-  }
+  /* description hidden in compact mode — not enough room */
+  .coll-header__desc { display: none; }
 
   /* ─── PRODUCT GRID ────────────────────────────────────────────── */
   .coll-grid {
-    background: var(--bg) !important;
+    background:    var(--bg) !important;
     background-color: var(--bg) !important;
-    display: grid !important;
-    grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)) !important;
-    gap: var(--gap-row, 4.5rem) var(--gap-col, 2.5rem) !important;
-    padding: var(--gap-row, 4.5rem) var(--pad, 4vw) calc(var(--gap-row, 4.5rem) * 1.5) !important;
-    align-items: start;
+    display:       grid !important;
+    /* 4 cols desktop, overridden at smaller breakpoints */
+    grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)) !important;
+    gap:           var(--gap-row, 1.8rem) var(--gap-col, 1.2rem) !important;
+    padding:       2rem var(--pad, 3vw) 4rem !important;
+    align-items:   start;
   }
 
-  /* ─── NUKE any base-theme card styling inside the grid ───────── */
+  /* kill any base-theme card styling */
   .coll-grid *,
   .coll-grid *::before,
-  .coll-grid *::after {
-    box-sizing: border-box;
-  }
+  .coll-grid *::after { box-sizing: border-box; }
 
   .coll-grid .card,
   .coll-grid .card-wrapper,
@@ -193,62 +197,61 @@
   .coll-grid [class*="card"],
   .coll-grid [class*="product-card"] {
     background:    transparent !important;
-    background-color: transparent !important;
     border:        none !important;
     border-radius: 0 !important;
     box-shadow:    none !important;
-    color: var(--cream) !important;
+    color:         var(--cream) !important;
   }
 
   /* ─── EMPTY STATE ─────────────────────────────────────────────── */
   .coll-empty {
     background: var(--bg) !important;
     min-height: 40vh;
-    display: flex;
+    display:    flex;
     align-items: center;
     justify-content: center;
-    padding: 5rem 2rem;
+    padding:    5rem 2rem;
   }
 
   .coll-empty__msg {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(1.6rem, 4vw, 2.8rem);
-    color: var(--muted);
-    text-align: center;
-    margin: 0;
+    font-family:  var(--serif);
+    font-weight:  300;
+    font-style:   italic;
+    font-size:    clamp(1.4rem, 3vw, 2.4rem);
+    color:        var(--muted);
+    text-align:   center;
+    margin:       0;
   }
 
   /* ─── PAGINATION ──────────────────────────────────────────────── */
   .coll-pagination {
     background: var(--bg) !important;
-    padding: 0 clamp(1.5rem, 6vw, 6rem) clamp(4rem, 7vw, 7rem);
+    padding:    0 clamp(1.5rem, 5vw, 5rem) clamp(3rem, 6vw, 5rem);
   }
 
   .coll-pagination .pagination {
-    display: flex;
-    flex-wrap: wrap;
+    display:         flex;
+    flex-wrap:       wrap;
     justify-content: center;
-    gap: 1.5rem;
-    list-style: none;
-    padding: 2rem 0 0;
-    margin: 0;
-    border-top: 1px solid rgba(240, 237, 229, 0.12);
+    gap:             1.5rem;
+    list-style:      none;
+    padding:         2rem 0 0;
+    margin:          0;
+    border-top:      1px solid rgba(240, 237, 229, 0.12);
   }
 
   .coll-pagination a,
   .coll-pagination span {
-    font-family: var(--sans);
-    font-size: 0.64rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+    font-family:     var(--sans);
+    font-size:       0.64rem;
+    letter-spacing:  0.22em;
+    text-transform:  uppercase;
     text-decoration: none;
-    color: var(--cream);
-    opacity: 0.5;
-    padding-bottom: 2px;
-    border-bottom: 1px solid transparent;
-    transition: opacity 220ms ease, border-color 220ms ease;
+    color:           var(--cream);
+    opacity:         0.5;
+    padding-bottom:  2px;
+    border-bottom:   1px solid transparent;
+    transition:      opacity 220ms ease, border-color 220ms ease;
   }
 
   .coll-pagination a:hover { opacity: 1; border-bottom-color: rgba(240,237,229,.4); }
@@ -256,25 +259,40 @@
   .coll-pagination .current span { opacity: 1; border-bottom-color: var(--cream); }
 
   /* ─── RESPONSIVE ──────────────────────────────────────────────── */
+  /* tablet: 3 cols */
   @media (max-width: 1100px) {
-    .coll-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+    .coll-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
   }
 
+  /* large mobile: 2 cols so a full card row is visible */
   @media (max-width: 767px) {
-    .coll-header { min-height: clamp(240px, 65vw, 400px); }
-    .coll-header__body { padding: clamp(3.5rem, 14vw, 6rem) 1.1rem 1.8rem; }
-    .coll-header__eyebrow { font-size: 0.58rem; }
-    .coll-header__title { font-size: clamp(2rem, 11vw, 3.2rem); line-height: 1; }
-    .coll-header__desc { font-size: 0.78rem; }
-
-    .coll-grid {
-      grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
-      gap: 2.5rem !important;
-      padding: 2.5rem 1.1rem 4rem !important;
+    .coll-header {
+      height:       clamp(120px, 22vh, 200px);
+      padding-top:  4.5rem;
     }
 
-    .coll-pagination { padding: 0 1.1rem 3rem; }
+    .coll-header__eyebrow { display: none; }
+
+    .coll-header__title {
+      font-size: clamp(1.3rem, 6vw, 2rem);
+    }
+
+    .coll-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap:     1.2rem 0.8rem !important;
+      padding: 1.2rem 0.8rem 3rem !important;
+    }
+
+    .coll-pagination { padding: 0 1rem 2.5rem; }
     .coll-pagination .pagination { gap: 1rem; }
+  }
+
+  /* very small phones: stay on 2 cols but tiny padding */
+  @media (max-width: 390px) {
+    .coll-grid {
+      gap:     1rem 0.5rem !important;
+      padding: 1rem 0.5rem 2.5rem !important;
+    }
   }
 {% endstylesheet %}
 
@@ -286,40 +304,40 @@
       "type": "range",
       "id": "columns_desktop",
       "label": "t:collection.columns_desktop",
-      "min": 1,
-      "max": 3,
+      "min": 2,
+      "max": 5,
       "step": 1,
-      "default": 2
+      "default": 4
     },
     {
       "type": "range",
       "id": "grid_gap",
       "label": "t:collection.grid_gap",
-      "min": 2,
-      "max": 8,
+      "min": 1,
+      "max": 5,
       "step": 0.5,
       "unit": "rem",
-      "default": 4
+      "default": 1.5
     },
     {
       "type": "range",
       "id": "stagger_offset",
       "label": "t:collection.stagger_offset",
       "min": 0,
-      "max": 8,
+      "max": 6,
       "step": 0.5,
       "unit": "rem",
-      "default": 3
+      "default": 0
     },
     {
       "type": "range",
       "id": "side_padding",
       "label": "t:collection.side_padding",
-      "min": 2,
-      "max": 12,
+      "min": 1,
+      "max": 8,
       "step": 1,
       "unit": "vw",
-      "default": 5
+      "default": 3
     }
   ]
 }
