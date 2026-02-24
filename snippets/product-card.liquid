@@ -174,10 +174,13 @@
     line-height:     1.4 !important;
   }
 
-  /* ─── INFO — flush with photo edge ──────────────────────── */
+  /* ─── INFO — breathing room below photo ─────────────────── */
   .coll-grid .pc__info {
-    padding:          0.6rem 0 0 !important;
-    margin:           0 !important;
+    padding:          0 !important;
+    margin-top:       1.2rem !important;
+    margin-right:     0 !important;
+    margin-bottom:    0 !important;
+    margin-left:      0 !important;
     background:       #0a0a09 !important;
     background-color: #0a0a09 !important;
     border:           none !important;
@@ -185,18 +188,18 @@
     border-radius:    0 !important;
     display:          flex !important;
     flex-direction:   column !important;
-    gap:              0.2rem !important;
+    gap:              0 !important;
   }
 
   /* ─── TITLE — uppercase sans-serif ──────────────────────── */
   .coll-grid .pc__name {
     font-family:    var(--sans) !important;
-    font-size:      0.58rem !important;
+    font-size:      0.85rem !important;
     font-weight:    400 !important;
-    letter-spacing: 0.16em !important;
+    letter-spacing: 0.12em !important;
     text-transform: uppercase !important;
-    color:          #f0ede5 !important;
-    line-height:    1.4 !important;
+    color:          #e6e1d6 !important;
+    line-height:    1.45 !important;
     margin:         0 !important;
     padding:        0 !important;
     background:     transparent !important;
@@ -206,17 +209,20 @@
     text-overflow:  ellipsis;
   }
 
-  /* ─── PRICE — serif italic ───────────────────────────────── */
+  /* ─── PRICE — serif italic, separated from title ────────── */
   .coll-grid .pc__price {
     font-family:  var(--serif) !important;
     font-style:   italic !important;
-    font-size:    0.82rem !important;
+    font-size:    1rem !important;
     font-weight:  400 !important;
-    color:        #f0ede5 !important;
+    color:        rgba(230, 225, 214, 0.7) !important;
     display:      flex !important;
     align-items:  baseline !important;
     gap:          0.4rem !important;
-    margin:       0 !important;
+    margin-top:   0.5rem !important;
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+    margin-left:  0 !important;
     padding:      0 !important;
     background:   transparent !important;
     border:       none !important;
@@ -224,8 +230,8 @@
 
   .coll-grid .pc__price-was {
     font-style:      normal !important;
-    font-size:       0.66rem !important;
-    color:           rgba(240, 237, 229, 0.42) !important;
+    font-size:       0.75rem !important;
+    color:           rgba(240, 237, 229, 0.35) !important;
     text-decoration: line-through !important;
   }
 
@@ -233,14 +239,16 @@
   @media (max-width: 767px) {
     .coll-grid .pc--offset { margin-top: 0 !important; }
 
+    .coll-grid .pc__info   { margin-top: 0.9rem !important; }
+
     .coll-grid .pc__name {
-      font-size:      0.6rem !important;
-      letter-spacing: 0.14em !important;
+      font-size:      0.78rem !important;
+      letter-spacing: 0.1em !important;
       white-space:    normal !important;
       overflow:       visible !important;
       text-overflow:  clip !important;
     }
 
-    .coll-grid .pc__price  { font-size: 0.78rem !important; }
+    .coll-grid .pc__price  { font-size: 0.9rem !important; margin-top: 0.35rem !important; }
   }
 {% endstylesheet %}
