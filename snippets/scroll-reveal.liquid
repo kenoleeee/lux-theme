@@ -1,0 +1,150 @@
+{% doc %}
+  Global scroll-reveal animation (Intersection Observer).
+  Automatically assigns .reveal to key editorial elements across all pages,
+  staggers grid children, and activates on scroll.
+
+  @example
+  {% render 'scroll-reveal' %}
+{% enddoc %}
+
+{% stylesheet %}
+  /* ─── Base hidden state ──────────────────────────────────── */
+  .reveal {
+    opacity:    0;
+    transform:  translateY(24px);
+    transition:
+      opacity   0.82s cubic-bezier(0.215, 0.61, 0.355, 1),
+      transform 0.82s cubic-bezier(0.215, 0.61, 0.355, 1);
+    /* transition-delay comes from JS stagger */
+  }
+
+  /* ─── Active / visible state ─────────────────────────────── */
+  .reveal.active {
+    opacity:   1;
+    transform: translateY(0);
+  }
+
+  /* ─── Respect user's motion preference ───────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .reveal.active {
+      opacity:    1 !important;
+      transform:  none !important;
+      transition: none !important;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    'use strict';
+
+    /* ── Selector groups ──────────────────────────────────────
+       stagger: true  → siblings in the same parent get
+                        incrementing delays (0, 100, 200 ms …)
+       stagger: false → animate independently, no delay
+    ──────────────────────────────────────────────────────── */
+    var GROUPS = [
+      /* Product grid cards */
+      { sel: '.coll-grid .pc',           stagger: true  },
+      /* Blog article cards */
+      { sel: '.blg-card',                stagger: true  },
+      /* Collections list cards */
+      { sel: '.colls-card',              stagger: true  },
+      /* Homepage category tiles */
+      { sel: '.editorial-cat',           stagger: true  },
+      /* Cart items */
+      { sel: '.cart-item',               stagger: true  },
+      /* Product gallery frames */
+      { sel: '.pd__gallery .pd__frame',  stagger: true  },
+      /* Section / page headings */
+      { sel: '.coll-header__body',       stagger: false },
+      { sel: '.colls-page-header',       stagger: false },
+      { sel: '.blg-header',              stagger: false },
+      { sel: '.art-hero__body',          stagger: false },
+      { sel: '.art-body__content',       stagger: false },
+      { sel: '.srch-hero',               stagger: false },
+      /* Product info panel */
+      { sel: '.pd__info',                stagger: false },
+      /* Contact page */
+      { sel: '.ctc__info',               stagger: false },
+      { sel: '.ctc__form-wrap',          stagger: false },
+      /* Footer columns */
+      { sel: '.site-footer__brand',      stagger: false },
+      { sel: '.site-footer__nav',        stagger: false },
+      { sel: '.site-footer__legal',      stagger: false },
+    ];
+
+    /* ms per stagger step, capped at MAX_DELAY */
+    var STEP      = 90;
+    var MAX_DELAY = 450;
+
+    /* ── Skip if reduced-motion ──────────────────────────── */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    /* ── Mark elements + assign stagger delays ─────────────
+       We track which elements are already marked so selectors
+       that overlap don't double-count.
+    ─────────────────────────────────────────────────────── */
+    var seen = new WeakSet();
+
+    GROUPS.forEach(function (group) {
+      var nodes = Array.from(document.querySelectorAll(group.sel));
+      if (!nodes.length) return;
+
+      if (group.stagger) {
+        /* Group siblings by their direct parent so stagger
+           applies per grid/flex container, not globally */
+        var parentMap = new Map();
+        nodes.forEach(function (el) {
+          var parent = el.parentElement;
+          if (!parentMap.has(parent)) parentMap.set(parent, []);
+          parentMap.get(parent).push(el);
+        });
+
+        parentMap.forEach(function (siblings) {
+          siblings.forEach(function (el, i) {
+            if (seen.has(el)) return;
+            seen.add(el);
+            el.classList.add('reveal');
+            var delay = Math.min(i * STEP, MAX_DELAY);
+            if (delay > 0) el.style.transitionDelay = delay + 'ms';
+          });
+        });
+
+      } else {
+        nodes.forEach(function (el) {
+          if (seen.has(el)) return;
+          seen.add(el);
+          el.classList.add('reveal');
+        });
+      }
+    });
+
+    /* ── Intersection Observer ─────────────────────────────── */
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('active');
+          /* fire only once */
+          io.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('.reveal').forEach(function (el) {
+      io.observe(el);
+    });
+
+    /* ── Re-run after Shopify section renders (Theme Editor) ─ */
+    document.addEventListener('shopify:section:load', function () {
+      document.querySelectorAll('.reveal').forEach(function (el) {
+        io.unobserve(el);
+        io.observe(el);
+      });
+    });
+
+  })();
+{% endjavascript %}
