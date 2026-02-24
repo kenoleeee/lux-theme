@@ -50,8 +50,9 @@
       aria-label="{{ collection.title | escape }}"
     >
       {% for product in collection.products %}
+        {%- assign card_remainder = forloop.index | modulo: 2 -%}
         {%- assign card_offset = false -%}
-        {%- if forloop.index | modulo: 2 == 0 -%}
+        {%- if card_remainder == 0 -%}
           {%- assign card_offset = true -%}
         {%- endif -%}
         {% render 'product-card', product: product, offset: card_offset %}
