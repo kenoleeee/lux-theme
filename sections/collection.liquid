@@ -1,120 +1,113 @@
 {% comment %}
-  Collection page — High-End Editorial / Dark theme
-  Wrapper class .coll-section is used to scope all overrides with high specificity.
+  Collection page — High-End Editorial Fashion / Dark theme
+  Each child is a direct .shopify-section descendant so full-width works correctly.
 {% endcomment %}
 
-{% comment %} ── resolve nav_links for stagger logic ─────────────────────── {% endcomment %}
-<div class="coll-section full-width">
-
-  {% comment %} ── COLLECTION HEADER ────────────────────────────────────── {% endcomment %}
-  <header class="coll-header">
-    {% if collection.image %}
-      <div class="coll-header__cover" aria-hidden="true">
-        {{ collection.image | image_url: width: 2400 | image_tag:
-          class: 'coll-header__cover-img',
-          loading: 'eager',
-          widths: '800, 1200, 2000, 2400',
-          sizes: '100vw'
-        }}
-        <div class="coll-header__grain"></div>
-        <div class="coll-header__vignette"></div>
-      </div>
-    {% endif %}
-
-    <div class="coll-header__body{% unless collection.image %} coll-header__body--bare{% endunless %}">
-      <p class="coll-header__eyebrow">{{ 'collections.editorial_eyebrow' | t }}</p>
-      <h1 class="coll-header__title">{{ collection.title | escape }}</h1>
-      {% if collection.description != blank %}
-        <p class="coll-header__desc">{{ collection.description | strip_html | truncate: 220 }}</p>
-      {% endif %}
+{% comment %} ── COLLECTION HEADER ─────────────────────────────────────────── {% endcomment %}
+<header class="coll-header full-width">
+  {% if collection.image %}
+    <div class="coll-header__cover" aria-hidden="true">
+      {{ collection.image | image_url: width: 2400 | image_tag:
+        class: 'coll-header__cover-img',
+        loading: 'eager',
+        widths: '800, 1200, 2000, 2400',
+        sizes: '100vw'
+      }}
+      <div class="coll-header__grain"></div>
+      <div class="coll-header__vignette"></div>
     </div>
-  </header>
+  {% endif %}
 
-  {% comment %} ── PRODUCT GRID ─────────────────────────────────────────── {% endcomment %}
-  {% paginate collection.products by 12 %}
+  <div class="coll-header__body{% unless collection.image %} coll-header__body--bare{% endunless %}">
+    <p class="coll-header__eyebrow">{{ 'collections.editorial_eyebrow' | t }}</p>
+    <h1 class="coll-header__title">{{ collection.title | escape }}</h1>
+    {% if collection.description != blank %}
+      <p class="coll-header__desc">{{ collection.description | strip_html | truncate: 220 }}</p>
+    {% endif %}
+  </div>
+</header>
 
-    {% if collection.products.size == 0 %}
+{% comment %} ── PRODUCT GRID ──────────────────────────────────────────────── {% endcomment %}
+{% paginate collection.products by 12 %}
 
-      <div class="coll-empty">
-        <p class="coll-empty__msg">{{ 'collections.empty' | t }}</p>
-      </div>
+  {% if collection.products.size == 0 %}
 
-    {% else %}
+    <div class="coll-empty full-width">
+      <p class="coll-empty__msg">{{ 'collections.empty' | t }}</p>
+    </div>
 
-      <section
-        class="coll-grid"
-        style="
-          --gap-row: {{ section.settings.grid_gap }}rem;
-          --gap-col: {{ section.settings.grid_gap | times: 0.65 }}rem;
-          --cols:    {{ section.settings.columns_desktop }};
-          --offset:  {{ section.settings.stagger_offset }}rem;
-          --pad:     clamp(1.5rem, {{ section.settings.side_padding }}vw, {{ section.settings.side_padding | times: 0.6 }}rem);
-        "
-        aria-label="{{ collection.title | escape }}"
-      >
-        {% for product in collection.products %}
-          {%- assign card_offset = false -%}
-          {%- if forloop.index | modulo: 2 == 0 -%}
-            {%- assign card_offset = true -%}
-          {%- endif -%}
-          {% render 'product-card', product: product, offset: card_offset %}
-        {% endfor %}
-      </section>
+  {% else %}
 
-      {% if paginate.pages > 1 %}
-        <nav class="coll-pagination" aria-label="{{ 'collections.pagination_aria' | t }}">
-          {{ paginate | default_pagination }}
-        </nav>
-      {% endif %}
+    <section
+      class="coll-grid full-width"
+      style="
+        --gap-row: {{ section.settings.grid_gap }}rem;
+        --gap-col: {{ section.settings.grid_gap | times: 0.65 }}rem;
+        --cols:    {{ section.settings.columns_desktop }};
+        --offset:  {{ section.settings.stagger_offset }}rem;
+        --pad:     clamp(1.2rem, {{ section.settings.side_padding }}vw, {{ section.settings.side_padding | times: 0.6 }}rem);
+      "
+      aria-label="{{ collection.title | escape }}"
+    >
+      {% for product in collection.products %}
+        {%- assign card_offset = false -%}
+        {%- if forloop.index | modulo: 2 == 0 -%}
+          {%- assign card_offset = true -%}
+        {%- endif -%}
+        {% render 'product-card', product: product, offset: card_offset %}
+      {% endfor %}
+    </section>
 
+    {% if paginate.pages > 1 %}
+      <nav class="coll-pagination full-width" aria-label="{{ 'collections.pagination_aria' | t }}">
+        {{ paginate | default_pagination }}
+      </nav>
     {% endif %}
 
-  {% endpaginate %}
+  {% endif %}
 
-</div>{% comment %} /.coll-section {% endcomment %}
+{% endpaginate %}
 
 {% stylesheet %}
-  /* ─── TOKENS + SECTION SHELL ──────────────────────────────────── */
-  .coll-section {
+  /* ─── TOKENS ──────────────────────────────────────────────────── */
+  .coll-header,
+  .coll-grid,
+  .coll-empty,
+  .coll-pagination {
     --bg:    #0a0a09;
     --dim:   #111110;
     --cream: #f0ede5;
-    --muted: rgba(240, 237, 229, 0.48);
+    --muted: rgba(240, 237, 229, 0.45);
     --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
     --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
-
-    /* full-width means Shopify places it in grid-col 1/-1 (100vw).
-       We switch to block so inner elements stack normally. */
-    display: block !important;
-    width: 100%;
-    background: var(--bg);
-    color: var(--cream);
   }
 
   /* ─── COLLECTION HEADER ───────────────────────────────────────── */
-  .coll-section .coll-header {
+  .coll-header {
     position: relative;
-    min-height: clamp(300px, 50vw, 660px);
+    min-height: clamp(320px, 52vw, 680px);
     overflow: hidden;
     display: flex;
     align-items: flex-end;
-    background: var(--bg);
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
     color: var(--cream);
   }
 
-  .coll-section .coll-header__cover {
+  .coll-header__cover {
     position: absolute;
     inset: 0;
   }
 
-  .coll-section .coll-header__cover-img {
+  .coll-header__cover-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     filter: saturate(0.75) contrast(1.1) brightness(0.72);
+    border-radius: 0 !important;
   }
 
-  .coll-section .coll-header__grain {
+  .coll-header__grain {
     position: absolute;
     inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
@@ -123,7 +116,7 @@
     pointer-events: none;
   }
 
-  .coll-section .coll-header__vignette {
+  .coll-header__vignette {
     position: absolute;
     inset: 0;
     background:
@@ -132,97 +125,105 @@
     pointer-events: none;
   }
 
-  .coll-section .coll-header__body {
+  .coll-header__body {
     position: relative;
     z-index: 1;
     padding: clamp(2rem, 5vw, 4.5rem) clamp(1.5rem, 6vw, 6rem);
     max-width: 72rem;
   }
 
-  .coll-section .coll-header__body--bare {
-    padding-block: clamp(6rem, 14vw, 11rem);
+  .coll-header__body--bare {
+    /* no image — add top padding so title clears the fixed nav */
+    padding-top: clamp(8rem, 18vw, 14rem);
   }
 
-  .coll-section .coll-header__eyebrow {
+  .coll-header__eyebrow {
     font-family: var(--sans);
     font-size: 0.64rem;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--muted);
     margin: 0 0 1rem;
   }
 
-  .coll-section .coll-header__title {
+  .coll-header__title {
     font-family: var(--serif);
     font-weight: 300;
-    font-size: clamp(2.6rem, 7vw, 6rem);
-    line-height: 0.95;
+    font-size: clamp(2.8rem, 8vw, 7rem);
+    line-height: 0.92;
     letter-spacing: -0.02em;
-    margin: 0;
     color: var(--cream);
+    margin: 0;
   }
 
-  .coll-section .coll-header__desc {
+  .coll-header__desc {
     margin: 1.4rem 0 0;
     max-width: 48ch;
     font-family: var(--sans);
     font-size: 0.88rem;
     line-height: 1.75;
-    color: rgba(240, 237, 229, 0.7);
+    color: rgba(240, 237, 229, 0.65);
   }
 
   /* ─── PRODUCT GRID ────────────────────────────────────────────── */
-  .coll-section .coll-grid {
-    background: var(--bg);
-    display: grid;
-    grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
-    gap: var(--gap-row, 5rem) var(--gap-col, 3rem);
-    padding: var(--gap-row, 5rem) var(--pad, 5vw) calc(var(--gap-row, 5rem) * 1.4);
+  .coll-grid {
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+    display: grid !important;
+    grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)) !important;
+    gap: var(--gap-row, 4.5rem) var(--gap-col, 2.5rem) !important;
+    padding: var(--gap-row, 4.5rem) var(--pad, 4vw) calc(var(--gap-row, 4.5rem) * 1.5) !important;
     align-items: start;
   }
 
-  /* ─── AGGRESSIVE RESET: kill any base-theme card styling ─────── */
-  .coll-section .coll-grid article,
-  .coll-section .coll-grid .card,
-  .coll-section .coll-grid .card-wrapper,
-  .coll-section .coll-grid .product-card-wrapper,
-  .coll-section .coll-grid .card__inner,
-  .coll-section .coll-grid [class*="card"],
-  .coll-section .coll-grid [class*="product-card"] {
-    background: transparent !important;
+  /* ─── NUKE any base-theme card styling inside the grid ───────── */
+  .coll-grid *,
+  .coll-grid *::before,
+  .coll-grid *::after {
+    box-sizing: border-box;
+  }
+
+  .coll-grid .card,
+  .coll-grid .card-wrapper,
+  .coll-grid .card__inner,
+  .coll-grid .card__media,
+  .coll-grid [class*="card"],
+  .coll-grid [class*="product-card"] {
+    background:    transparent !important;
     background-color: transparent !important;
-    border: none !important;
+    border:        none !important;
     border-radius: 0 !important;
-    box-shadow: none !important;
+    box-shadow:    none !important;
+    color: var(--cream) !important;
   }
 
   /* ─── EMPTY STATE ─────────────────────────────────────────────── */
-  .coll-section .coll-empty {
-    background: var(--bg);
-    min-height: 44vh;
+  .coll-empty {
+    background: var(--bg) !important;
+    min-height: 40vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6rem 2rem;
+    padding: 5rem 2rem;
   }
 
-  .coll-section .coll-empty__msg {
+  .coll-empty__msg {
     font-family: var(--serif);
     font-weight: 300;
     font-style: italic;
-    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
     color: var(--muted);
     text-align: center;
     margin: 0;
   }
 
   /* ─── PAGINATION ──────────────────────────────────────────────── */
-  .coll-section .coll-pagination {
-    background: var(--bg);
+  .coll-pagination {
+    background: var(--bg) !important;
     padding: 0 clamp(1.5rem, 6vw, 6rem) clamp(4rem, 7vw, 7rem);
   }
 
-  .coll-section .coll-pagination .pagination {
+  .coll-pagination .pagination {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -233,8 +234,8 @@
     border-top: 1px solid rgba(240, 237, 229, 0.12);
   }
 
-  .coll-section .coll-pagination a,
-  .coll-section .coll-pagination span {
+  .coll-pagination a,
+  .coll-pagination span {
     font-family: var(--sans);
     font-size: 0.64rem;
     letter-spacing: 0.22em;
@@ -247,54 +248,30 @@
     transition: opacity 220ms ease, border-color 220ms ease;
   }
 
-  .coll-section .coll-pagination a:hover { opacity: 1; border-bottom-color: rgba(240,237,229,.4); }
-  .coll-section .coll-pagination .current a,
-  .coll-section .coll-pagination .current span { opacity: 1; border-bottom-color: var(--cream); }
+  .coll-pagination a:hover { opacity: 1; border-bottom-color: rgba(240,237,229,.4); }
+  .coll-pagination .current a,
+  .coll-pagination .current span { opacity: 1; border-bottom-color: var(--cream); }
 
   /* ─── RESPONSIVE ──────────────────────────────────────────────── */
   @media (max-width: 1100px) {
-    .coll-section .coll-grid { --cols: 2; }
+    .coll-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   }
 
   @media (max-width: 767px) {
-    .coll-section .coll-header {
-      min-height: clamp(220px, 65vw, 380px);
+    .coll-header { min-height: clamp(240px, 65vw, 400px); }
+    .coll-header__body { padding: clamp(3.5rem, 14vw, 6rem) 1.1rem 1.8rem; }
+    .coll-header__eyebrow { font-size: 0.58rem; }
+    .coll-header__title { font-size: clamp(2rem, 11vw, 3.2rem); line-height: 1; }
+    .coll-header__desc { font-size: 0.78rem; }
+
+    .coll-grid {
+      grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+      gap: 2.5rem !important;
+      padding: 2.5rem 1.1rem 4rem !important;
     }
 
-    .coll-section .coll-header__body {
-      padding: clamp(3.5rem, 14vw, 6rem) 1.1rem 1.8rem;
-    }
-
-    .coll-section .coll-header__eyebrow {
-      font-size: 0.58rem;
-      margin-bottom: 0.6rem;
-    }
-
-    .coll-section .coll-header__title {
-      font-size: clamp(2rem, 11vw, 3.2rem);
-      line-height: 1;
-    }
-
-    .coll-section .coll-header__desc {
-      font-size: 0.78rem;
-      margin-top: 0.85rem;
-    }
-
-    /* 1 column, no stagger, tight padding */
-    .coll-section .coll-grid {
-      --cols: 1;
-      --offset: 0rem;
-      gap: 3rem;
-      padding: 2.5rem 1.1rem 4rem;
-    }
-
-    .coll-section .coll-pagination {
-      padding: 0 1.1rem 3rem;
-    }
-
-    .coll-section .coll-pagination .pagination {
-      gap: 1rem;
-    }
+    .coll-pagination { padding: 0 1.1rem 3rem; }
+    .coll-pagination .pagination { gap: 1rem; }
   }
 {% endstylesheet %}
 
@@ -319,7 +296,7 @@
       "max": 8,
       "step": 0.5,
       "unit": "rem",
-      "default": 5
+      "default": 4
     },
     {
       "type": "range",
@@ -329,7 +306,7 @@
       "max": 8,
       "step": 0.5,
       "unit": "rem",
-      "default": 4
+      "default": 3
     },
     {
       "type": "range",
@@ -339,7 +316,7 @@
       "max": 12,
       "step": 1,
       "unit": "vw",
-      "default": 6
+      "default": 5
     }
   ]
 }
