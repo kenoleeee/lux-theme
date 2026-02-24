@@ -4,10 +4,10 @@
 {% endcomment %}
 
 {% comment %} ── resolve nav_links for stagger logic ─────────────────────── {% endcomment %}
-<div class="coll-section">
+<div class="coll-section full-width">
 
   {% comment %} ── COLLECTION HEADER ────────────────────────────────────── {% endcomment %}
-  <header class="coll-header full-width">
+  <header class="coll-header">
     {% if collection.image %}
       <div class="coll-header__cover" aria-hidden="true">
         {{ collection.image | image_url: width: 2400 | image_tag:
@@ -35,14 +35,14 @@
 
     {% if collection.products.size == 0 %}
 
-      <div class="coll-empty full-width">
+      <div class="coll-empty">
         <p class="coll-empty__msg">{{ 'collections.empty' | t }}</p>
       </div>
 
     {% else %}
 
       <section
-        class="coll-grid full-width"
+        class="coll-grid"
         style="
           --gap-row: {{ section.settings.grid_gap }}rem;
           --gap-col: {{ section.settings.grid_gap | times: 0.65 }}rem;
@@ -62,7 +62,7 @@
       </section>
 
       {% if paginate.pages > 1 %}
-        <nav class="coll-pagination full-width" aria-label="{{ 'collections.pagination_aria' | t }}">
+        <nav class="coll-pagination" aria-label="{{ 'collections.pagination_aria' | t }}">
           {{ paginate | default_pagination }}
         </nav>
       {% endif %}
@@ -74,7 +74,7 @@
 </div>{% comment %} /.coll-section {% endcomment %}
 
 {% stylesheet %}
-  /* ─── TOKENS ──────────────────────────────────────────────────── */
+  /* ─── TOKENS + SECTION SHELL ──────────────────────────────────── */
   .coll-section {
     --bg:    #0a0a09;
     --dim:   #111110;
@@ -82,9 +82,13 @@
     --muted: rgba(240, 237, 229, 0.48);
     --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
     --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
+
+    /* full-width means Shopify places it in grid-col 1/-1 (100vw).
+       We switch to block so inner elements stack normally. */
+    display: block !important;
+    width: 100%;
     background: var(--bg);
     color: var(--cream);
-    display: block;
   }
 
   /* ─── COLLECTION HEADER ───────────────────────────────────────── */

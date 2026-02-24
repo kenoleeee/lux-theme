@@ -9,10 +9,10 @@
  */
 {
   "current": {
-    "background_color": "#f0ede5",
-    "foreground_color": "#1a1a18",
-    "accent_color": "#1a1a18",
-    "line_color": "rgba(26,26,24,0.12)",
+    "background_color": "#0a0a09",
+    "foreground_color": "#f0ede5",
+    "accent_color": "#f0ede5",
+    "line_color": "rgba(240,237,229,0.12)",
     "input_corner_radius": 0,
     "type_heading_font": "playfair_display_n4",
     "type_body_font": "work_sans_n3",
