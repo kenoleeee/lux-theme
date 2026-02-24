@@ -32,10 +32,22 @@
     "articles_per_page": "Articles per page"
   },
   "cart": {
-    "checkout": "Checkout",
-    "title": "Cart",
+    "eyebrow": "Your selection",
+    "title": "Bag",
+    "piece": "piece",
+    "pieces": "pieces",
+    "checkout": "Proceed to checkout",
     "update": "Update",
-    "remove": "Remove"
+    "remove": "Remove",
+    "empty": "Your bag is empty.",
+    "continue_shopping": "Continue shopping",
+    "subtotal": "Subtotal",
+    "taxes_note": "Taxes and shipping calculated at checkout.",
+    "or": "or",
+    "decrease_qty": "Decrease quantity",
+    "increase_qty": "Increase quantity",
+    "qty_label": "Quantity",
+    "remove_item": "Remove {{ title }} from bag"
   },
   "customers": {
     "login": {
