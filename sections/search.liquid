@@ -1,64 +1,338 @@
 {% comment %}
-  This section is used in the search template to render search results for
-  products, articles, and pages.
-
+  Search page — High-End Editorial Fashion / Dark theme
   https://shopify.dev/docs/storefronts/themes/architecture/templates/search
 {% endcomment %}
 
-<h1>{{ 'search.title' | t }}</h1>
+{% comment %} ── SEARCH HEADER + FORM ──────────────────────────────────────── {% endcomment %}
+<div class="srch-hero full-width">
+  <p class="srch-hero__eyebrow">{{ 'search.eyebrow' | t }}</p>
 
-<form action="{{ routes.search_url }}" method="get" role="search">
-  <input
-    type="search"
-    size="50"
-    name="q"
-    value="{{ search.terms | escape }}"
-    placeholder="{{ 'search.placeholder' | t }}"
+  <form
+    class="srch-form"
+    action="{{ routes.search_url }}"
+    method="get"
+    role="search"
   >
-  <button type="submit">{{ 'search.submit' | t }}</button>
-</form>
+    <input
+      class="srch-form__input"
+      type="search"
+      name="q"
+      value="{{ search.terms | escape }}"
+      placeholder="{{ 'search.placeholder' | t }}"
+      autocomplete="off"
+      aria-label="{{ 'search.placeholder' | t }}"
+    >
+    <button class="srch-form__btn" type="submit">
+      {{ 'search.submit' | t }}
+    </button>
+  </form>
 
-{% if search.performed %}
-  {% if search.results_count == 0 %}
-    <p>{{ 'search.no_results_html' | t: terms: search.terms }}</p>
-  {% else %}
-    <p>{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
-
-    <div class="search-results">
-      {% paginate search.results by 20 %}
-        {% # Search result items may be an article, a page, or a product. %}
-        {% for result in search.results %}
-          <div class="search-result">
-            {% assign featured_image = result.featured_image | default: result.image %}
-            {% if featured_image %}
-              {% render 'image', class: 'search-result__image', image: featured_image, url: result.url, width: 400 %}
-            {% endif %}
-            <div class="search-result__content">
-              <p>
-                {{ result.title | link_to: result.url }}
-                {% if result.price %}
-                  {{ result.price | money_with_currency }}
-                {% endif %}
-              </p>
-            </div>
-          </div>
-        {% endfor %}
-
-        {{ paginate | default_pagination }}
-      {% endpaginate %}
-    </div>
+  {% if search.performed %}
+    {% if search.results_count == 0 %}
+      <p class="srch-no-results">
+        {{ 'search.no_results_html' | t: terms: search.terms }}
+      </p>
+    {% else %}
+      <p class="srch-count">
+        {{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}
+      </p>
+    {% endif %}
   {% endif %}
+</div>
+
+{% comment %} ── RESULTS GRID ─────────────────────────────────────────────── {% endcomment %}
+{% if search.performed and search.results_count > 0 %}
+  {% paginate search.results by 12 %}
+    <section class="srch-grid full-width" aria-label="{{ 'search.results_aria' | t }}">
+      {% for result in search.results %}
+        {% if result.object_type == 'product' %}
+          {%- assign srch_eager = false -%}
+          {%- if forloop.index <= 4 -%}{%- assign srch_eager = true -%}{%- endif -%}
+          {% render 'product-card', product: result, eager: srch_eager %}
+        {% else %}
+          {% comment %} Articles and pages — simple editorial card {% endcomment %}
+          <article class="srch-article">
+            <a class="srch-article__link" href="{{ result.url }}">
+              {% if result.image %}
+                <div class="srch-article__media">
+                  {{ result.image
+                    | image_url: width: 800, height: 600, crop: 'center'
+                    | image_tag:
+                      class: 'srch-article__img',
+                      loading: 'lazy',
+                      widths: '400, 600, 800'
+                  }}
+                </div>
+              {% endif %}
+              <div class="srch-article__info">
+                <p class="srch-article__type">{{ result.object_type | capitalize }}</p>
+                <h2 class="srch-article__title">{{ result.title | upcase | escape }}</h2>
+              </div>
+            </a>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </section>
+
+    {% if paginate.pages > 1 %}
+      <nav class="srch-pagination full-width" aria-label="{{ 'collections.pagination_aria' | t }}">
+        {{ paginate | default_pagination }}
+      </nav>
+    {% endif %}
+  {% endpaginate %}
 {% endif %}
 
 {% stylesheet %}
-  .search-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  /* ─── TOKENS ──────────────────────────────────────────────────── */
+  .srch-hero,
+  .srch-grid,
+  .srch-pagination {
+    --bg:    #0a0a09;
+    --cream: #f0ede5;
+    --muted: rgba(240, 237, 229, 0.45);
+    --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
+    --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
   }
-  .search-results .prev,
-  .search-results .page,
-  .search-results .next {
-    grid-column: 1 / -1;
+
+  /* ─── HERO (form area) ────────────────────────────────────────── */
+  .srch-hero {
+    background:    var(--bg) !important;
+    background-color: var(--bg) !important;
+    /* large top padding clears the fixed header */
+    padding:       clamp(10rem, 20vw, 16rem) clamp(1.5rem, 8vw, 10rem) clamp(5rem, 8vw, 8rem);
+    display:       flex;
+    flex-direction: column;
+    align-items:   center;
+    text-align:    center;
+    color:         var(--cream);
+  }
+
+  /* ─── EYEBROW ─────────────────────────────────────────────────── */
+  .srch-hero__eyebrow {
+    font-family:    var(--sans);
+    font-size:      0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 1.8rem;
+  }
+
+  /* ─── FORM ────────────────────────────────────────────────────── */
+  .srch-form {
+    display:     flex;
+    align-items: baseline;
+    gap:         0;
+    width:       100%;
+    max-width:   56rem;
+    border-bottom: 1px solid rgba(240, 237, 229, 0.28);
+    padding-bottom: 0.6rem;
+  }
+
+  /* ─── INPUT ───────────────────────────────────────────────────── */
+  .srch-form__input {
+    flex:           1;
+    background:     transparent !important;
+    background-color: transparent !important;
+    border:         none !important;
+    border-radius:  0 !important;
+    box-shadow:     none !important;
+    outline:        none !important;
+    padding:        0 !important;
+    font-family:    var(--serif) !important;
+    font-size:      clamp(1.6rem, 4vw, 3rem) !important;
+    font-weight:    300 !important;
+    color:          var(--cream) !important;
+    caret-color:    var(--cream);
+    appearance:     none;
+    -webkit-appearance: none;
+  }
+
+  .srch-form__input::placeholder {
+    color:   rgba(240, 237, 229, 0.3) !important;
+    opacity: 1;
+  }
+
+  /* remove browser default search cancel button */
+  .srch-form__input::-webkit-search-cancel-button,
+  .srch-form__input::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /* ─── SUBMIT BUTTON ───────────────────────────────────────────── */
+  .srch-form__btn {
+    flex-shrink:    0;
+    background:     transparent !important;
+    background-color: transparent !important;
+    border:         none !important;
+    border-radius:  0 !important;
+    box-shadow:     none !important;
+    padding:        0 0 0 1.5rem !important;
+    cursor:         pointer;
+    font-family:    var(--sans) !important;
+    font-size:      0.6rem !important;
+    font-weight:    400 !important;
+    letter-spacing: 0.26em !important;
+    text-transform: uppercase !important;
+    color:          var(--muted) !important;
+    transition:     color 200ms ease;
+  }
+
+  .srch-form__btn:hover { color: var(--cream) !important; }
+
+  /* ─── COUNT / NO-RESULTS ──────────────────────────────────────── */
+  .srch-count,
+  .srch-no-results {
+    margin:         3rem 0 0;
+    font-family:    var(--sans);
+    font-size:      0.64rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color:          var(--muted);
+  }
+
+  .srch-no-results {
+    font-family:  var(--serif);
+    font-size:    clamp(1rem, 2vw, 1.5rem);
+    font-style:   italic;
+    font-weight:  300;
+    text-transform: none;
+    letter-spacing: 0;
+    color:        var(--muted);
+    margin-top:   4rem;
+  }
+
+  /* ─── RESULTS GRID ────────────────────────────────────────────── */
+  .srch-grid {
+    background:    var(--bg) !important;
+    background-color: var(--bg) !important;
+    display:       grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap:           4rem 2.5rem !important;
+    padding:       0 clamp(1.5rem, 5vw, 6rem) clamp(5rem, 8vw, 8rem) !important;
+    align-items:   start;
+  }
+
+  /* kill any base-theme card overrides inside grid */
+  .srch-grid .card,
+  .srch-grid .card-wrapper,
+  .srch-grid [class*="card"],
+  .srch-grid [class*="product-card"] {
+    background:    transparent !important;
+    border:        none !important;
+    border-radius: 0 !important;
+    box-shadow:    none !important;
+  }
+
+  /* ─── ARTICLE RESULT CARD ─────────────────────────────────────── */
+  .srch-article {
+    background:    #0a0a09 !important;
+    border:        none !important;
+    border-radius: 0 !important;
+  }
+
+  .srch-article__link {
+    display:        block !important;
+    text-decoration: none !important;
+    color:          var(--cream) !important;
+  }
+
+  .srch-article__media {
+    overflow:      hidden;
+    aspect-ratio:  3 / 4;
+    background:    #1c1b19;
+  }
+
+  .srch-article__img {
+    width:         100% !important;
+    height:        100% !important;
+    object-fit:    cover !important;
+    border-radius: 0 !important;
+    transition:    transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .srch-article__link:hover .srch-article__img { transform: scale(1.04); }
+
+  .srch-article__info {
+    padding:       0.85rem 0 0;
+    background:    #0a0a09 !important;
+  }
+
+  .srch-article__type {
+    font-family:    var(--sans);
+    font-size:      0.55rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 0.25rem;
+  }
+
+  .srch-article__title {
+    font-family:    var(--sans);
+    font-size:      0.62rem;
+    font-weight:    400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color:          var(--cream);
+    margin:         0;
+  }
+
+  /* ─── PAGINATION ──────────────────────────────────────────────── */
+  .srch-pagination {
+    background:    var(--bg) !important;
+    padding:       0 clamp(1.5rem, 6vw, 6rem) clamp(4rem, 7vw, 7rem);
+  }
+
+  .srch-pagination .pagination {
+    display:         flex;
+    flex-wrap:       wrap;
+    justify-content: center;
+    gap:             1.5rem;
+    list-style:      none;
+    padding:         2rem 0 0;
+    margin:          0;
+    border-top:      1px solid rgba(240, 237, 229, 0.12);
+  }
+
+  .srch-pagination a,
+  .srch-pagination span {
+    font-family:    var(--sans);
+    font-size:      0.64rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color:          var(--cream);
+    opacity:        0.5;
+    padding-bottom: 2px;
+    border-bottom:  1px solid transparent;
+    transition:     opacity 220ms ease, border-color 220ms ease;
+  }
+
+  .srch-pagination a:hover { opacity: 1; border-bottom-color: rgba(240,237,229,.4); }
+  .srch-pagination .current a,
+  .srch-pagination .current span { opacity: 1; border-bottom-color: var(--cream); }
+
+  /* ─── RESPONSIVE ──────────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .srch-hero {
+      padding: clamp(8rem, 24vw, 12rem) 1.2rem 3.5rem;
+    }
+
+    .srch-form {
+      max-width: 100%;
+    }
+
+    .srch-form__input {
+      font-size: clamp(1.4rem, 7vw, 2rem) !important;
+    }
+
+    .srch-grid {
+      grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+      gap:     2.5rem !important;
+      padding: 0 1.1rem 4rem !important;
+    }
+
+    .srch-pagination { padding: 0 1.1rem 3rem; }
   }
 {% endstylesheet %}
 
