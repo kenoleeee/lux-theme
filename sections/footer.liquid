@@ -1,157 +1,259 @@
-<footer class="site-footer full-width">
-  <div class="site-footer__inner">
-    <div class="site-footer__brand">
-      <a class="site-footer__logo" href="{{ routes.root_url }}">{{ shop.name }}</a>
-      <p class="site-footer__tagline">{{ 'footer.tagline' | t }}</p>
+{% comment %}
+  Footer — Dark Brutalist Luxury
+{% endcomment %}
+
+<footer class="ft full-width" role="contentinfo">
+
+  {% comment %} ── TOP GRID ──────────────────────────────────────────────── {% endcomment %}
+  <div class="ft__grid">
+
+    {% comment %} Col 1 — Brand + tagline + established {% endcomment %}
+    <div class="ft__brand">
+      <a class="ft__logo" href="{{ routes.root_url }}">{{ shop.name | upcase }}</a>
+      {% if section.settings.tagline != blank %}
+        <p class="ft__tagline">{{ section.settings.tagline | escape }}</p>
+      {% endif %}
+      <p class="ft__estd">{{ section.settings.estd_text | escape }}</p>
     </div>
 
-    <nav class="site-footer__nav" aria-label="{{ 'footer.nav_aria' | t }}">
-      {% for link in section.settings.menu.links %}
-        <a class="site-footer__link" href="{{ link.url }}">{{ link.title }}</a>
-      {% endfor %}
+    {% comment %} Col 2 — Navigation {% endcomment %}
+    {% if section.settings.nav_menu != blank %}
+      <nav class="ft__col" aria-label="{{ 'footer.nav_aria' | t }}">
+        <p class="ft__col-heading">{{ section.settings.nav_label | escape }}</p>
+        {% for link in section.settings.nav_menu.links %}
+          <a class="ft__link" href="{{ link.url }}">{{ link.title }}</a>
+        {% endfor %}
+      </nav>
+    {% endif %}
+
+    {% comment %} Col 3 — Social (text links) {% endcomment %}
+    <div class="ft__col">
+      <p class="ft__col-heading">{{ section.settings.social_label | escape }}</p>
+      {% if section.settings.social_instagram != blank %}
+        <a class="ft__link" href="{{ section.settings.social_instagram }}" target="_blank" rel="noopener">Instagram</a>
+      {% endif %}
+      {% if section.settings.social_tiktok != blank %}
+        <a class="ft__link" href="{{ section.settings.social_tiktok }}" target="_blank" rel="noopener">TikTok</a>
+      {% endif %}
+      {% if section.settings.social_twitter != blank %}
+        <a class="ft__link" href="{{ section.settings.social_twitter }}" target="_blank" rel="noopener">X / Twitter</a>
+      {% endif %}
+      {% if section.settings.social_pinterest != blank %}
+        <a class="ft__link" href="{{ section.settings.social_pinterest }}" target="_blank" rel="noopener">Pinterest</a>
+      {% endif %}
+    </div>
+
+    {% comment %} Col 4 — Contact {% endcomment %}
+    <div class="ft__col">
+      <p class="ft__col-heading">{{ section.settings.contact_label | escape }}</p>
+      {% if section.settings.contact_email != blank %}
+        <a class="ft__link" href="mailto:{{ section.settings.contact_email | escape }}">
+          {{ section.settings.contact_email | escape }}
+        </a>
+      {% endif %}
+      {% if section.settings.contact_address != blank %}
+        <p class="ft__address">{{ section.settings.contact_address | newline_to_br }}</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+  {% comment %} ── BOTTOM BAR ────────────────────────────────────────────── {% endcomment %}
+  <div class="ft__bar">
+
+    <p class="ft__copy">
+      &copy; {{ 'now' | date: '%Y' }} {{ shop.name | upcase | escape }}.
+      {{ 'footer.rights' | t }}
+    </p>
+
+    {% comment %} Legal links {% endcomment %}
+    <nav class="ft__legal-links" aria-label="{{ 'footer.legal_aria' | t }}">
+      {% if section.settings.legal_menu != blank %}
+        {% for link in section.settings.legal_menu.links %}
+          <a class="ft__legal-link" href="{{ link.url }}">{{ link.title | upcase }}</a>
+        {% endfor %}
+      {% endif %}
     </nav>
 
-    <div class="site-footer__legal">
-      <p class="site-footer__copyright">
-        &copy; {{ 'now' | date: '%Y' }} {{ shop.name | escape }}
-      </p>
-
-      {% if section.settings.show_payment_icons %}
-        <div class="site-footer__payment">
-          {% for type in shop.enabled_payment_types %}
-            {{ type | payment_type_svg_tag }}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <p class="site-footer__powered">{{ powered_by_link }}</p>
-    </div>
   </div>
+
 </footer>
 
 {% stylesheet %}
-  .site-footer {
-    background: #0f0f0e;
-    color: rgba(240, 237, 229, 0.85);
-    padding-block: 5rem 3rem;
+  /* ── Tokens ──────────────────────────────────────────────── */
+  .ft {
+    --bg:    #0a0a09;
+    --cream: #e6e1d6;
+    --muted: rgba(230, 225, 214, 0.42);
+    --line:  rgba(230, 225, 214, 0.1);
+    --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
+    --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
   }
 
-  .site-footer__inner {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr;
-    align-items: start;
-    gap: 3rem;
-    max-width: var(--page-width, 90rem);
-    margin-inline: auto;
-    padding-inline: clamp(1.5rem, 4vw, 4rem);
+  /* ── Shell ───────────────────────────────────────────────── */
+  .ft {
+    background:  var(--bg) !important;
+    color:       var(--cream);
+    border-top:  1px solid var(--line);
+    padding:     6rem clamp(1.5rem, 6vw, 6rem) 0;
+    box-sizing:  border-box;
   }
 
-  .site-footer__logo {
-    display: inline-block;
-    font-family: var(--font-heading--family, Georgia, serif);
-    font-size: 1.3rem;
-    font-weight: 400;
-    letter-spacing: 0.14em;
+  /* ── TOP GRID ────────────────────────────────────────────── */
+  .ft__grid {
+    display:               grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap:                   3rem 4rem;
+    align-items:           start;
+    padding-bottom:        5rem;
+  }
+
+  /* ── Brand col ───────────────────────────────────────────── */
+  .ft__logo {
+    display:        block;
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-size:      clamp(1.1rem, 1.8vw, 1.5rem);
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(240, 237, 229, 0.95);
+    color:          var(--cream);
     text-decoration: none;
+    transition:     opacity 220ms;
+    margin-bottom:  1.2rem;
   }
 
-  .site-footer__tagline {
-    margin-top: 0.75rem;
-    font-family: var(--font-body--family, system-ui);
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    color: rgba(240, 237, 229, 0.45);
-    max-width: 28ch;
-    line-height: 1.7;
+  .ft__logo:hover { opacity: 0.7; }
+
+  .ft__tagline {
+    font-family:  var(--sans);
+    font-size:    0.72rem;
+    line-height:  1.75;
+    color:        var(--muted);
+    max-width:    26ch;
+    margin:       0 0 2rem;
   }
 
-  .site-footer__nav {
-    display: flex;
+  .ft__estd {
+    font-family:    var(--sans);
+    font-size:      0.5rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color:          rgba(230, 225, 214, 0.22);
+    margin:         0;
+  }
+
+  /* ── Generic column ──────────────────────────────────────── */
+  .ft__col {
+    display:        flex;
     flex-direction: column;
-    gap: 0.85rem;
-    padding-top: 0.2rem;
+    gap:            0.7rem;
   }
 
-  .site-footer__link {
-    font-family: var(--font-body--family, system-ui);
-    font-size: 0.7rem;
+  .ft__col-heading {
+    font-family:    var(--sans);
+    font-size:      0.5rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color:          rgba(230, 225, 214, 0.3);
+    margin:         0 0 0.6rem;
+  }
+
+  /* Nav / social / contact links */
+  .ft__link {
+    font-family:     var(--serif);
+    font-style:      italic;
+    font-weight:     300;
+    font-size:       0.9rem;
+    line-height:     1.4;
+    color:           rgba(230, 225, 214, 0.58);
+    text-decoration: none;
+    width:           fit-content;
+    transition:      color 220ms;
+  }
+
+  .ft__link:hover { color: #fff; }
+
+  /* Address (non-link) */
+  .ft__address {
+    font-family:  var(--sans);
+    font-size:    0.68rem;
+    line-height:  1.7;
+    color:        var(--muted);
+    margin:       0.2rem 0 0;
+  }
+
+  /* ── BOTTOM BAR ──────────────────────────────────────────── */
+  .ft__bar {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    flex-wrap:       wrap;
+    gap:             1.2rem;
+    border-top:      1px solid var(--line);
+    padding:         1.8rem 0 2.8rem;
+  }
+
+  .ft__copy {
+    font-family:    var(--sans);
+    font-size:      0.52rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    text-decoration: none;
-    color: rgba(240, 237, 229, 0.55);
-    transition: color 200ms ease;
-    width: fit-content;
+    color:          rgba(230, 225, 214, 0.28);
+    margin:         0;
   }
 
-  .site-footer__link:hover {
-    color: rgba(240, 237, 229, 0.95);
-  }
-
-  .site-footer__legal {
+  .ft__legal-links {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 1rem;
-    padding-top: 0.2rem;
-  }
-
-  .site-footer__copyright,
-  .site-footer__powered {
-    font-family: var(--font-body--family, system-ui);
-    font-size: 0.65rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(240, 237, 229, 0.35);
-  }
-
-  .site-footer__powered a {
-    color: rgba(240, 237, 229, 0.35);
-    text-decoration: none;
-    border-bottom: 1px solid rgba(240, 237, 229, 0.2);
-    transition: border-color 200ms ease;
-  }
-
-  .site-footer__powered a:hover {
-    border-color: rgba(240, 237, 229, 0.6);
-  }
-
-  .site-footer__payment {
-    display: flex;
-    gap: 0.5rem;
+    gap:     2.2rem;
     flex-wrap: wrap;
-    justify-content: flex-end;
-    opacity: 0.45;
   }
 
-  .site-footer__payment svg {
-    height: 1.4rem;
-    width: auto;
+  .ft__legal-link {
+    font-family:     var(--sans);
+    font-size:       0.5rem;
+    letter-spacing:  0.24em;
+    text-transform:  uppercase;
+    color:           rgba(230, 225, 214, 0.3);
+    text-decoration: none;
+    transition:      color 220ms;
   }
 
-  @media (max-width: 840px) {
-    .site-footer__inner {
+  .ft__legal-link:hover { color: rgba(230, 225, 214, 0.75); }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────── */
+  @media (max-width: 1100px) {
+    .ft__grid { grid-template-columns: 1fr 1fr; }
+    .ft__brand { grid-column: span 2; }
+  }
+
+  @media (max-width: 640px) {
+    .ft {
+      padding-top: 4rem;
+      padding-left: 1.1rem;
+      padding-right: 1.1rem;
+    }
+
+    .ft__grid {
       grid-template-columns: 1fr 1fr;
+      gap: 2.5rem 2rem;
+      padding-bottom: 3.5rem;
     }
 
-    .site-footer__brand {
-      grid-column: span 2;
+    .ft__brand { grid-column: span 2; }
+
+    .ft__bar {
+      flex-direction: column;
+      align-items:    flex-start;
+      gap:            1rem;
+      padding-bottom: 2rem;
     }
+
+    .ft__legal-links { gap: 1.4rem; }
   }
 
-  @media (max-width: 560px) {
-    .site-footer__inner {
-      grid-template-columns: 1fr;
-    }
-
-    .site-footer__brand {
-      grid-column: span 1;
-    }
-
-    .site-footer__legal {
-      align-items: flex-start;
-    }
+  @media (max-width: 380px) {
+    .ft__grid { grid-template-columns: 1fr; }
+    .ft__brand { grid-column: span 1; }
   }
 {% endstylesheet %}
 
@@ -160,15 +262,96 @@
   "name": "t:general.footer",
   "settings": [
     {
+      "type": "header",
+      "content": "t:footer.header_brand"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "t:footer.tagline_label",
+      "default": "Refined essentials for the considered wardrobe."
+    },
+    {
+      "type": "text",
+      "id": "estd_text",
+      "label": "t:footer.estd_label",
+      "default": "Established in archive"
+    },
+    {
+      "type": "header",
+      "content": "t:footer.header_nav"
+    },
+    {
+      "type": "text",
+      "id": "nav_label",
+      "label": "t:footer.col_heading_label",
+      "default": "Navigate"
+    },
+    {
       "type": "link_list",
-      "id": "menu",
+      "id": "nav_menu",
       "label": "t:labels.menu"
     },
     {
-      "type": "checkbox",
-      "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
-      "default": true
+      "type": "header",
+      "content": "t:footer.header_social"
+    },
+    {
+      "type": "text",
+      "id": "social_label",
+      "label": "t:footer.col_heading_label",
+      "default": "Follow"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "Instagram"
+    },
+    {
+      "type": "url",
+      "id": "social_tiktok",
+      "label": "TikTok"
+    },
+    {
+      "type": "url",
+      "id": "social_twitter",
+      "label": "X / Twitter"
+    },
+    {
+      "type": "url",
+      "id": "social_pinterest",
+      "label": "Pinterest"
+    },
+    {
+      "type": "header",
+      "content": "t:footer.header_contact"
+    },
+    {
+      "type": "text",
+      "id": "contact_label",
+      "label": "t:footer.col_heading_label",
+      "default": "Contact"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "t:footer.email_label",
+      "default": "info@kenoldev.com"
+    },
+    {
+      "type": "textarea",
+      "id": "contact_address",
+      "label": "t:footer.address_label",
+      "default": "Paris, France"
+    },
+    {
+      "type": "header",
+      "content": "t:footer.header_legal"
+    },
+    {
+      "type": "link_list",
+      "id": "legal_menu",
+      "label": "t:footer.legal_menu_label"
     }
   ]
 }

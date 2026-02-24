@@ -158,6 +158,8 @@
   },
   "footer": {
     "tagline": "Refined essentials for the considered wardrobe.",
-    "nav_aria": "Footer navigation"
+    "nav_aria": "Footer navigation",
+    "legal_aria": "Legal links",
+    "rights": "All rights reserved."
   }
 }

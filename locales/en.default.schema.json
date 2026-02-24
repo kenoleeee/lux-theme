@@ -99,6 +99,19 @@
   "errors": {
     "background_image": "Background image (optional)"
   },
+  "footer": {
+    "header_brand": "Brand",
+    "tagline_label": "Tagline",
+    "estd_label": "Established text",
+    "header_nav": "Navigation column",
+    "header_social": "Social column",
+    "header_contact": "Contact column",
+    "header_legal": "Legal bar",
+    "col_heading_label": "Column heading",
+    "email_label": "Email",
+    "address_label": "Address",
+    "legal_menu_label": "Legal links menu"
+  },
   "contact": {
     "section_name": "Contact page",
     "header_studio": "Studio identity",
