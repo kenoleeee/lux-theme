@@ -62,7 +62,7 @@
       {% endif %}
 
       {% comment %} Form {% endcomment %}
-      {% form 'product', product, class: 'pd__form' %}
+      {% form 'product', product, class: 'pd__form pd__form--atc', id: 'pd-form-atc' %}
 
         {% comment %} Variant select {% endcomment %}
         {% if product.variants.size > 1 %}
@@ -113,13 +113,19 @@
           type="submit"
           name="add"
           class="pd__btn pd__btn--outline"
+          data-atc-btn
+          data-atc-label="{{ 'product.add_to_cart' | t }}"
+          data-atc-adding="{{ 'product.adding' | t }}"
+          data-atc-added="{{ 'product.added' | t }}"
           {% unless current_variant.available %}disabled{% endunless %}
         >
-          {% if current_variant.available %}
-            {{ 'product.add_to_cart' | t }}
-          {% else %}
-            {{ 'product.sold_out' | t }}
-          {% endif %}
+          <span class="pd__btn-text">
+            {% if current_variant.available %}
+              {{ 'product.add_to_cart' | t }}
+            {% else %}
+              {{ 'product.sold_out' | t }}
+            {% endif %}
+          </span>
         </button>
 
         {% comment %} Dynamic checkout (Buy it now) {% endcomment %}

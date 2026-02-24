@@ -53,7 +53,8 @@
     "decrease_qty": "Decrease quantity",
     "increase_qty": "Increase quantity",
     "qty_label": "Quantity",
-    "remove_item": "Remove {{ title }} from bag"
+    "remove_item": "Remove {{ title }} from bag",
+    "view_cart": "View bag"
   },
   "customers": {
     "login": {
@@ -98,6 +99,8 @@
     "choose_variant": "Choose size",
     "quantity": "Quantity",
     "add_to_cart": "Add to bag",
+    "adding": "Adding…",
+    "added": "Added ✓",
     "sold_out": "Sold out"
   },
   "home": {

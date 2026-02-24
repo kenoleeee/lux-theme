@@ -42,19 +42,27 @@
         {% if shop.customer_accounts_enabled %}
           <a class="site-header__action-link" href="{{ routes.account_url }}">{{ 'header.account' | t }}</a>
         {% endif %}
-        <a class="site-header__action-link site-header__cart" href="{{ routes.cart_url }}">
-          {{ 'header.cart' | t }}
-          {% if cart.item_count > 0 %}
-            <span class="site-header__cart-count">({{ cart.item_count }})</span>
-          {% endif %}
+        <a
+          class="site-header__action-link site-header__cart"
+          href="{{ routes.cart_url }}"
+          data-cart-trigger
+          aria-label="{{ 'header.cart' | t }}"
+        >{{ 'header.cart' | t }}<span
+            class="site-header__cart-count"
+            data-cart-count
+          >{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</span>
         </a>
       </div>
 
-      <a class="site-header__mobile-cart" href="{{ routes.cart_url }}">
-        {{ 'header.cart' | t }}
-        {% if cart.item_count > 0 %}
-          <span class="site-header__cart-count">({{ cart.item_count }})</span>
-        {% endif %}
+      <a
+        class="site-header__mobile-cart"
+        href="{{ routes.cart_url }}"
+        data-cart-trigger
+        aria-label="{{ 'header.cart' | t }}"
+      >{{ 'header.cart' | t }}<span
+          class="site-header__cart-count"
+          data-cart-count
+        >{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</span>
       </a>
     </div>
 

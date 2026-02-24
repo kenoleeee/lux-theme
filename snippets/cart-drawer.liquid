@@ -1,0 +1,707 @@
+{% doc %}
+  Cart drawer — AJAX slide-in panel.
+  Render once in layout/theme.liquid before </body>.
+  Intercepts .pd__form--atc form submissions, calls /cart/add.js,
+  then renders updated cart and opens the drawer.
+
+  @example
+  {% render 'cart-drawer' %}
+{% enddoc %}
+
+{% comment %} ── Runtime config (Liquid → JS) ───────────────────────────── {% endcomment %}
+<script>
+window.__cartCfg = {
+  moneyFormat:     {{ shop.money_format | json }},
+  cartUrl:         {{ routes.cart_url | json }},
+  checkoutUrl:     {{ routes.cart_url | append: '/checkout' | json }},
+  collectionsUrl:  {{ routes.collections_url | json }},
+  labels: {
+    eyebrow:   {{ 'cart.eyebrow'            | t | json }},
+    title:     {{ 'cart.title'              | t | json }},
+    subtotal:  {{ 'cart.subtotal'           | t | json }},
+    taxes:     {{ 'cart.taxes_note'         | t | json }},
+    checkout:  {{ 'cart.checkout'           | t | json }},
+    viewCart:  {{ 'cart.view_cart'          | t | json }},
+    empty:     {{ 'cart.empty'              | t | json }},
+    shop:      {{ 'cart.continue_shopping'  | t | json }},
+    close:     {{ 'header.close_label'      | t | json }},
+    remove:    {{ 'cart.remove'             | t | json }}
+  }
+};
+</script>
+
+{% comment %} ── Backdrop ──────────────────────────────────────────────── {% endcomment %}
+<div id="cart-backdrop" class="cdrw-backdrop" aria-hidden="true"></div>
+
+{% comment %} ── Drawer panel ──────────────────────────────────────────── {% endcomment %}
+<aside
+  id="cart-drawer"
+  class="cdrw"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-label="{{ 'cart.title' | t }}"
+  data-drawer
+>
+  <div class="cdrw__panel">
+
+    <div class="cdrw__head">
+      <div class="cdrw__head-meta">
+        <p class="cdrw__eyebrow">{{ 'cart.eyebrow' | t }}</p>
+        <h2 class="cdrw__title">
+          {{ 'cart.title' | t }}<span class="cdrw__count" id="cdrw-count" data-cart-count></span>
+        </h2>
+      </div>
+      <button
+        class="cdrw__close-btn"
+        id="cdrw-close-btn"
+        aria-label="{{ 'header.close_label' | t }}"
+      >{{ 'header.close_label' | t }}</button>
+    </div>
+
+    <div class="cdrw__body" id="cdrw-body" aria-live="polite"></div>
+
+    <div class="cdrw__foot" id="cdrw-foot"></div>
+
+  </div>
+</aside>
+
+{% stylesheet %}
+  /* ─── Backdrop ───────────────────────────────────────────── */
+  .cdrw-backdrop {
+    position:   fixed;
+    inset:      0;
+    z-index:    199;
+    background: rgba(0, 0, 0, 0.72);
+    opacity:    0;
+    pointer-events: none;
+    transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    /* the blur is applied to everything behind the drawer */
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+
+  .cdrw-backdrop--visible {
+    opacity:    1;
+    pointer-events: auto;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+
+  /* ─── Drawer shell ───────────────────────────────────────── */
+  .cdrw {
+    position:   fixed;
+    top:        0;
+    right:      0;
+    bottom:     0;
+    z-index:    200;
+    width:      min(480px, 100vw);
+    transform:  translateX(100%);
+    transition: transform 0.62s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .cdrw--open { transform: translateX(0); }
+
+  /* ─── Inner panel ────────────────────────────────────────── */
+  .cdrw__panel {
+    display:        flex;
+    flex-direction: column;
+    height:         100%;
+    background:     #0a0a09;
+    border-left:    1px solid rgba(240, 237, 229, 0.1);
+    overflow:       hidden;
+    --cream:  #f0ede5;
+    --muted:  rgba(240, 237, 229, 0.45);
+    --line:   rgba(240, 237, 229, 0.1);
+    --serif:  var(--font-heading--family, "Playfair Display", Georgia, serif);
+    --sans:   var(--font-body--family,    "Work Sans", system-ui, sans-serif);
+  }
+
+  /* ─── Head ───────────────────────────────────────────────── */
+  .cdrw__head {
+    flex-shrink:     0;
+    display:         flex;
+    align-items:     flex-end;
+    justify-content: space-between;
+    padding:         2rem 1.8rem 1.4rem;
+    border-bottom:   1px solid var(--line);
+  }
+
+  .cdrw__eyebrow {
+    font-family:    var(--sans);
+    font-size:      0.54rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 0.3rem;
+  }
+
+  .cdrw__title {
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-size:      1.65rem;
+    line-height:    1;
+    letter-spacing: -0.02em;
+    color:          var(--cream);
+    margin:         0;
+  }
+
+  .cdrw__count {
+    font-family:    var(--sans);
+    font-size:      0.72rem;
+    font-weight:    400;
+    font-style:     normal;
+    letter-spacing: 0.06em;
+    color:          var(--muted);
+    margin-left:    0.35em;
+  }
+
+  .cdrw__close-btn {
+    background:     transparent;
+    border:         none;
+    font-family:    var(--sans);
+    font-size:      0.56rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    cursor:         pointer;
+    padding:        0.3rem 0;
+    border-bottom:  1px solid transparent;
+    transition:     color 200ms, border-color 200ms;
+  }
+
+  .cdrw__close-btn:hover { color: var(--cream); border-color: rgba(240,237,229,.3); }
+
+  /* ─── Scrollable items area ──────────────────────────────── */
+  .cdrw__body {
+    flex:       1 1 auto;
+    overflow-y: auto;
+    padding:    0 1.8rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(240,237,229,.15) transparent;
+  }
+
+  .cdrw__body::-webkit-scrollbar { width: 3px; }
+  .cdrw__body::-webkit-scrollbar-thumb { background: rgba(240,237,229,.15); }
+
+  /* ─── Empty state ────────────────────────────────────────── */
+  .cdrw__empty {
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    gap:            1.8rem;
+    text-align:     center;
+    padding:        4rem 0;
+  }
+
+  .cdrw__empty-msg {
+    font-family:  var(--serif);
+    font-style:   italic;
+    font-weight:  300;
+    font-size:    1.1rem;
+    color:        var(--muted);
+    margin:       0;
+  }
+
+  .cdrw__empty-cta {
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color:          var(--cream);
+    text-decoration: none;
+    border-bottom:  1px solid rgba(240,237,229,.3);
+    padding-bottom: 2px;
+    transition:     border-color 220ms, color 220ms;
+  }
+
+  .cdrw__empty-cta:hover { border-color: var(--cream); color: #fff; }
+
+  /* ─── Cart item ──────────────────────────────────────────── */
+  .cdrw-item {
+    display:       grid;
+    grid-template-columns: 72px 1fr auto;
+    gap:           0 1.2rem;
+    align-items:   start;
+    padding:       1.4rem 0;
+    border-bottom: 1px solid var(--line);
+    /* base state for animation */
+    opacity:       1;
+    transform:     translateY(0);
+  }
+
+  /* New-item entrance animation */
+  .cdrw-item--enter {
+    animation: cdrw-item-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+  }
+
+  @keyframes cdrw-item-in {
+    from { opacity: 0; transform: translateY(-14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .cdrw-item__media {
+    display:      block;
+    aspect-ratio: 3 / 4;
+    overflow:     hidden;
+    background:   #1c1b19;
+  }
+
+  .cdrw-item__img {
+    display:       block;
+    width:         100%;
+    height:        100%;
+    object-fit:    cover;
+    border-radius: 0 !important;
+    filter:        saturate(0.8);
+  }
+
+  .cdrw-item__info {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.2rem;
+    padding-top:    0.1rem;
+  }
+
+  .cdrw-item__name {
+    font-family:    var(--sans);
+    font-size:      0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color:          var(--cream);
+    line-height:    1.45;
+    margin:         0;
+  }
+
+  .cdrw-item__variant {
+    font-family:    var(--sans);
+    font-size:      0.56rem;
+    letter-spacing: 0.08em;
+    color:          var(--muted);
+    margin:         0;
+  }
+
+  .cdrw-item__qty {
+    font-family:    var(--sans);
+    font-size:      0.6rem;
+    color:          var(--muted);
+    margin:         0.3rem 0 0;
+  }
+
+  .cdrw-item__remove {
+    background:     transparent;
+    border:         none;
+    font-family:    var(--sans);
+    font-size:      0.52rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    padding:        0;
+    cursor:         pointer;
+    margin-top:     0.5rem;
+    border-bottom:  1px solid transparent;
+    padding-bottom: 1px;
+    transition:     color 200ms, border-color 200ms;
+  }
+
+  .cdrw-item__remove:hover { color: var(--cream); border-color: rgba(240,237,229,.3); }
+
+  .cdrw-item__price {
+    font-family:  var(--serif);
+    font-style:   italic;
+    font-size:    0.92rem;
+    color:        var(--cream);
+    white-space:  nowrap;
+    margin:       0.1rem 0 0;
+    text-align:   right;
+  }
+
+  /* ─── Footer ─────────────────────────────────────────────── */
+  .cdrw__foot {
+    flex-shrink: 0;
+    padding:     1.4rem 1.8rem 2rem;
+    border-top:  1px solid var(--line);
+  }
+
+  .cdrw__subtotal {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     baseline;
+    margin-bottom:   0.5rem;
+  }
+
+  .cdrw__subtotal-label {
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color:          var(--muted);
+  }
+
+  .cdrw__subtotal-amount {
+    font-family:  var(--serif);
+    font-style:   italic;
+    font-size:    1.3rem;
+    color:        var(--cream);
+  }
+
+  .cdrw__note {
+    font-family: var(--sans);
+    font-size:   0.55rem;
+    color:       var(--muted);
+    margin:      0 0 1.4rem;
+    line-height: 1.5;
+  }
+
+  /* Checkout — inverted */
+  .cdrw__checkout {
+    display:         block;
+    width:           100%;
+    padding:         0.95rem 1rem;
+    background:      var(--cream);
+    border:          1px solid var(--cream);
+    border-radius:   0;
+    font-family:     var(--sans);
+    font-size:       0.58rem;
+    letter-spacing:  0.26em;
+    text-transform:  uppercase;
+    color:           #0a0a09;
+    text-decoration: none;
+    text-align:      center;
+    transition:      background 220ms, color 220ms, border-color 220ms;
+    box-sizing:      border-box;
+  }
+
+  .cdrw__checkout:hover {
+    background:  transparent;
+    color:       var(--cream);
+  }
+
+  /* View bag link */
+  .cdrw__view-cart {
+    display:         block;
+    margin-top:      0.9rem;
+    font-family:     var(--sans);
+    font-size:       0.54rem;
+    letter-spacing:  0.2em;
+    text-transform:  uppercase;
+    color:           var(--muted);
+    text-decoration: none;
+    text-align:      center;
+    border-bottom:   1px solid transparent;
+    padding-bottom:  1px;
+    transition:      color 200ms, border-color 200ms;
+  }
+
+  .cdrw__view-cart:hover { color: var(--cream); border-color: rgba(240,237,229,.25); }
+
+  /* ─── ATC button animation states ────────────────────────── */
+  /* progress line that sweeps across the bottom of the button */
+  .pd__btn[data-atc-btn] {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pd__btn[data-atc-btn]::after {
+    content:    '';
+    position:   absolute;
+    left:       0;
+    bottom:     0;
+    height:     1px;
+    width:      0;
+    background: var(--cream, #f0ede5);
+    opacity:    0;
+    transition: none;
+  }
+
+  .pd__btn[data-atc-btn][data-state="adding"]::after {
+    opacity:   0.7;
+    width:     100%;
+    transition: width 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.1s ease;
+  }
+
+  .pd__btn[data-atc-btn][data-state="added"]::after {
+    opacity: 0;
+    width:   100%;
+  }
+
+  /* text cross-fade */
+  .pd__btn-text {
+    display:    inline-block;
+    transition: opacity 0.15s ease;
+  }
+
+  /* ─── Cart icon pulse ─────────────────────────────────────── */
+  @keyframes cart-pulse {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(1.22); }
+    65%  { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+
+  .cart-icon--pulse {
+    display:        inline-block;
+    animation:      cart-pulse 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    'use strict';
+
+    var cfg  = window.__cartCfg || {};
+    var lbl  = cfg.labels || {};
+
+    /* ─── Money formatter ─────────────────────────────────── */
+    var fmt = cfg.moneyFormat || '${{amount}}';
+
+    function money(cents) {
+      var v  = (cents / 100).toFixed(2);
+      var vc = v.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      var vn = String(Math.round(cents / 100));
+      var vnc = vn.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return fmt
+        .replace('{{amount}}',                                v)
+        .replace('{{amount_with_comma_separator}}',           vc)
+        .replace('{{amount_no_decimals}}',                    vn)
+        .replace('{{amount_no_decimals_with_comma_separator}}', vnc);
+    }
+
+    /* ─── HTML escape ────────────────────────────────────── */
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,  '&amp;')
+        .replace(/</g,  '&lt;')
+        .replace(/>/g,  '&gt;')
+        .replace(/"/g,  '&quot;')
+        .replace(/'/g,  '&#39;');
+    }
+
+    /* ─── DOM refs ───────────────────────────────────────── */
+    var backdrop = document.getElementById('cart-backdrop');
+    var drawer   = document.getElementById('cart-drawer');
+    var bodyEl   = document.getElementById('cdrw-body');
+    var footEl   = document.getElementById('cdrw-foot');
+    var countEls = document.querySelectorAll('[data-cart-count]');
+    var closeBtn = document.getElementById('cdrw-close-btn');
+
+    /* ─── Open / Close ───────────────────────────────────── */
+    function openDrawer() {
+      if (!drawer) return;
+      drawer.setAttribute('aria-hidden', 'false');
+      drawer.classList.add('cdrw--open');
+      backdrop.classList.add('cdrw-backdrop--visible');
+      document.body.style.overflow = 'hidden';
+      if (closeBtn) closeBtn.focus();
+    }
+
+    function closeDrawer() {
+      if (!drawer) return;
+      drawer.setAttribute('aria-hidden', 'true');
+      drawer.classList.remove('cdrw--open');
+      backdrop.classList.remove('cdrw-backdrop--visible');
+      document.body.style.overflow = '';
+    }
+
+    if (closeBtn)  closeBtn.addEventListener('click', closeDrawer);
+    if (backdrop)  backdrop.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    /* ─── Header cart trigger ────────────────────────────── */
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest('[data-cart-trigger]');
+      if (!el) return;
+      e.preventDefault();
+      fetchCart().then(function (cart) {
+        renderDrawer(cart, null);
+        openDrawer();
+      });
+    });
+
+    /* ─── Fetch cart JSON ────────────────────────────────── */
+    function fetchCart() {
+      return fetch('/cart.js', {
+        headers: { 'Content-Type': 'application/json' }
+      }).then(function (r) { return r.json(); });
+    }
+
+    /* ─── Update count badges ────────────────────────────── */
+    function updateCounts(n) {
+      countEls.forEach(function (el) {
+        el.textContent = n > 0 ? ' (' + n + ')' : '';
+      });
+    }
+
+    /* ─── Render a single item row ───────────────────────── */
+    function renderItem(item, isNew) {
+      var imgBase = item.featured_image && item.featured_image.url
+        ? item.featured_image.url
+        : '';
+
+      /* Shopify CDN: add size param */
+      var imgSrc = imgBase
+        ? imgBase + (imgBase.indexOf('?') > -1 ? '&' : '?') + 'width=200&height=266&crop=center'
+        : '';
+
+      var variant = (item.variant_title && item.variant_title !== 'Default Title')
+        ? '<p class="cdrw-item__variant">' + esc(item.variant_title) + '</p>'
+        : '';
+
+      return '<div class="cdrw-item' + (isNew ? ' cdrw-item--enter' : '')
+        + '" data-line-key="' + esc(item.key) + '">'
+        + '<a class="cdrw-item__media" href="' + esc(item.url) + '">'
+        + (imgSrc
+          ? '<img class="cdrw-item__img" src="' + esc(imgSrc) + '" alt="' + esc(item.title) + '" loading="lazy">'
+          : '')
+        + '</a>'
+        + '<div class="cdrw-item__info">'
+        + '<p class="cdrw-item__name">' + esc(item.product_title) + '</p>'
+        + variant
+        + '<p class="cdrw-item__qty">&times; ' + item.quantity + '</p>'
+        + '<button class="cdrw-item__remove" type="button"'
+        + ' data-remove-key="' + esc(item.key) + '">'
+        + esc(lbl.remove || 'Remove')
+        + '</button>'
+        + '</div>'
+        + '<p class="cdrw-item__price">' + money(item.final_line_price) + '</p>'
+        + '</div>';
+    }
+
+    /* ─── Render full drawer content ─────────────────────── */
+    function renderDrawer(cart, newVariantId) {
+      if (!bodyEl || !footEl) return;
+
+      updateCounts(cart.item_count);
+
+      if (cart.item_count === 0) {
+        bodyEl.innerHTML = '<div class="cdrw__empty">'
+          + '<p class="cdrw__empty-msg">' + esc(lbl.empty || 'Your bag is empty.') + '</p>'
+          + '<a class="cdrw__empty-cta" href="' + esc(cfg.collectionsUrl || '/collections') + '">'
+          + esc(lbl.shop || 'Continue shopping')
+          + '</a></div>';
+        footEl.innerHTML = '';
+        return;
+      }
+
+      bodyEl.innerHTML = cart.items.map(function (item) {
+        var isNew = newVariantId !== null
+          && String(item.variant_id) === String(newVariantId);
+        return renderItem(item, isNew);
+      }).join('');
+
+      footEl.innerHTML = '<div class="cdrw__subtotal">'
+        + '<span class="cdrw__subtotal-label">' + esc(lbl.subtotal || 'Subtotal') + '</span>'
+        + '<span class="cdrw__subtotal-amount">' + money(cart.total_price) + '</span>'
+        + '</div>'
+        + '<p class="cdrw__note">' + esc(lbl.taxes || '') + '</p>'
+        + '<a href="' + esc(cfg.checkoutUrl || '/checkout') + '" class="cdrw__checkout">'
+        + esc(lbl.checkout || 'Proceed to checkout')
+        + '</a>'
+        + '<a href="' + esc(cfg.cartUrl || '/cart') + '" class="cdrw__view-cart">'
+        + esc(lbl.viewCart || 'View bag')
+        + '</a>';
+    }
+
+    /* ─── Remove item from drawer ────────────────────────── */
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-remove-key]');
+      if (!btn) return;
+      e.preventDefault();
+      var key = btn.dataset.removeKey;
+      fetch('/cart/change.js', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ id: key, quantity: 0 })
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (cart) { renderDrawer(cart, null); });
+    });
+
+    /* ─── Intercept ATC form submit ──────────────────────── */
+    document.addEventListener('submit', function (e) {
+      var form = e.target.closest('.pd__form--atc');
+      if (!form) return;
+      e.preventDefault();
+
+      var btn           = form.querySelector('[data-atc-btn]');
+      var textEl        = btn  ? btn.querySelector('.pd__btn-text') : null;
+      var labelDefault  = btn  ? (btn.dataset.atcLabel   || '') : '';
+      var labelAdding   = btn  ? (btn.dataset.atcAdding  || '…') : '';
+      var labelAdded    = btn  ? (btn.dataset.atcAdded   || '✓') : '';
+      var variantInput  = form.querySelector('[name="id"]');
+      var variantId     = variantInput ? variantInput.value : null;
+
+      /* Button → ADDING */
+      if (btn) {
+        btn.disabled = true;
+        btn.setAttribute('data-state', 'adding');
+      }
+      if (textEl) {
+        textEl.style.opacity = '0';
+        setTimeout(function () {
+          textEl.textContent  = labelAdding;
+          textEl.style.opacity = '1';
+        }, 140);
+      }
+
+      /* Cart icon micro-animation */
+      document.querySelectorAll('[data-cart-trigger]').forEach(function (el) {
+        el.classList.remove('cart-icon--pulse');
+        void el.offsetWidth;
+        el.classList.add('cart-icon--pulse');
+        el.addEventListener('animationend', function h() {
+          el.classList.remove('cart-icon--pulse');
+          el.removeEventListener('animationend', h);
+        });
+      });
+
+      /* POST /cart/add.js */
+      fetch('/cart/add.js', {
+        method:  'POST',
+        headers: { 'Accept': 'application/json' },
+        body:    new FormData(form)
+      })
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (d) { throw new Error(d.description || 'error'); });
+        return r.json();
+      })
+      .then(function () { return fetchCart(); })
+      .then(function (cart) {
+        renderDrawer(cart, variantId);
+        openDrawer();
+
+        /* Button → ADDED */
+        if (btn) btn.setAttribute('data-state', 'added');
+        if (textEl) {
+          textEl.style.opacity = '0';
+          setTimeout(function () {
+            textEl.textContent  = labelAdded;
+            textEl.style.opacity = '1';
+          }, 140);
+        }
+
+        /* Reset button after 2.5 s */
+        setTimeout(function () {
+          if (btn) { btn.disabled = false; btn.setAttribute('data-state', ''); }
+          if (textEl) {
+            textEl.style.opacity = '0';
+            setTimeout(function () {
+              textEl.textContent  = labelDefault;
+              textEl.style.opacity = '1';
+            }, 140);
+          }
+        }, 2500);
+      })
+      .catch(function (err) {
+        console.error('[cart-drawer] add error:', err);
+        if (btn) { btn.disabled = false; btn.setAttribute('data-state', ''); }
+        if (textEl) textEl.textContent = labelDefault;
+      });
+    });
+
+  })();
+{% endjavascript %}
