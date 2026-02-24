@@ -1,35 +1,300 @@
 {% comment %}
-  This section is used in the blog template to render the blog page listing all
-  articles within a blog.
-
+  Blog page — High-End Editorial Fashion / Dark theme
   https://shopify.dev/docs/storefronts/themes/architecture/templates/blog
 {% endcomment %}
 
-<h1>{{ blog.title }}</h1>
+{% comment %} ── PAGE HEADER ─────────────────────────────────────────────── {% endcomment %}
+<header class="blg-header full-width">
+  <p class="blg-header__eyebrow">{{ 'blog.eyebrow' | t }}</p>
+  <h1 class="blg-header__title">{{ blog.title | escape }}</h1>
+</header>
 
-{% paginate blog.articles by 5 %}
-  {% for article in blog.articles %}
-    <div>
-      {% if article.image %}
-        {{ article.image | image_url: width: 1000 | image_tag }}
-      {% endif %}
-      <h2>
-        {{ article.title | link_to: article.url }}
-      </h2>
-      {% assign date = article.published_at | time_tag: format: 'date' %}
-      <p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
-      <p>{{ article.excerpt }}</p>
-    </div>
-  {% endfor %}
+{% comment %} ── ARTICLES GRID ────────────────────────────────────────────── {% endcomment %}
+<section class="blg-grid full-width" aria-label="{{ blog.title | escape }}">
+  {% paginate blog.articles by section.settings.articles_per_page %}
 
-  {%- if paginate.pages > 1 -%}
-    {{- paginate | default_pagination -}}
-  {%- endif -%}
-{% endpaginate %}
+        {% for article in blog.articles %}
+          {%- assign blg_loading = 'lazy' -%}
+          {%- if forloop.index <= 3 -%}{%- assign blg_loading = 'eager' -%}{%- endif -%}
+      <a class="blg-card" href="{{ article.url }}">
+
+        <div class="blg-card__media">
+          {% if article.image %}
+            {{ article.image
+              | image_url: width: 1200, height: 1500, crop: 'center'
+              | image_tag:
+                class: 'blg-card__img',
+                loading: blg_loading,
+                widths: '480, 720, 1000, 1200',
+                sizes: '(max-width: 640px) 100vw, 33vw'
+            }}
+          {% else %}
+            {{ 'image' | placeholder_svg_tag: 'blg-card__img blg-card__img--placeholder' }}
+          {% endif %}
+          <div class="blg-card__overlay" aria-hidden="true"></div>
+        </div>
+
+        <div class="blg-card__body">
+          {% if article.tags.size > 0 %}
+            <p class="blg-card__tag">{{ article.tags | first | escape }}</p>
+          {% endif %}
+          <h2 class="blg-card__title">{{ article.title | escape }}</h2>
+          <p class="blg-card__meta">
+            {{ article.published_at | date: '%B %d, %Y' }}
+            &nbsp;·&nbsp;
+            {{ article.author | escape }}
+          </p>
+          {% if article.excerpt != blank %}
+            <p class="blg-card__excerpt">{{ article.excerpt | strip_html | truncatewords: 18 }}</p>
+          {% endif %}
+          <span class="blg-card__cta">{{ 'blog.read_more' | t }}</span>
+        </div>
+
+      </a>
+    {% endfor %}
+
+    {% if paginate.pages > 1 %}
+      <nav class="blg-pagination full-width" aria-label="{{ 'blog.pagination_aria' | t }}">
+        {{ paginate | default_pagination }}
+      </nav>
+    {% endif %}
+
+  {% endpaginate %}
+</section>
+
+{% stylesheet %}
+  /* ── Tokens ──────────────────────────────────────────────── */
+  .blg-header, .blg-grid, .blg-pagination {
+    --bg:    #0a0a09;
+    --cream: #f0ede5;
+    --muted: rgba(240, 237, 229, 0.5);
+    --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
+    --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
+  }
+
+  /* ── PAGE HEADER ─────────────────────────────────────────── */
+  .blg-header {
+    background: var(--bg);
+    color:      var(--cream);
+    padding:    clamp(7rem, 15vw, 12rem) clamp(1.5rem, 6vw, 6rem) clamp(2.5rem, 4vw, 3.5rem);
+  }
+
+  .blg-header__eyebrow {
+    font-family:    var(--sans);
+    font-size:      0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 1rem;
+  }
+
+  .blg-header__title {
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-size:      clamp(3rem, 8vw, 7.5rem);
+    line-height:    0.92;
+    letter-spacing: -0.025em;
+    color:          var(--cream);
+    margin:         0;
+  }
+
+  /* ── GRID ────────────────────────────────────────────────── */
+  .blg-grid {
+    background:            var(--bg);
+    display:               grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:                   4rem 2.5rem;
+    padding:               0 clamp(1.5rem, 6vw, 6rem) clamp(5rem, 9vw, 8rem);
+    align-items:           start;
+  }
+
+  /* ── CARD ────────────────────────────────────────────────── */
+  .blg-card {
+    display:         flex;
+    flex-direction:  column;
+    text-decoration: none;
+    color:           var(--cream);
+    background:      transparent;
+  }
+
+  /* ── PHOTO ───────────────────────────────────────────────── */
+  .blg-card__media {
+    position:    relative;
+    overflow:    hidden;
+    aspect-ratio: 4 / 5;
+    flex-shrink:  0;
+    background:   #1c1b19;
+  }
+
+  .blg-card__img {
+    display:       block;
+    width:         100%;
+    height:        100%;
+    object-fit:    cover;
+    border-radius: 0 !important;
+    filter:        saturate(0.78) contrast(1.08);
+    transition:    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+                   filter 500ms ease;
+  }
+
+  .blg-card:hover .blg-card__img {
+    transform: scale(1.04);
+    filter:    saturate(0.95) contrast(1.02);
+  }
+
+  .blg-card__img--placeholder {
+    width:   100%;
+    height:  100%;
+    opacity: 0.12;
+  }
+
+  .blg-card__img--placeholder svg {
+    width:  100%;
+    height: 100%;
+  }
+
+  .blg-card__overlay {
+    position:   absolute;
+    inset:      0;
+    background: linear-gradient(to top, rgba(10,10,9,.55) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  /* ── BODY ────────────────────────────────────────────────── */
+  .blg-card__body {
+    padding:        1.4rem 0 0;
+    display:        flex;
+    flex-direction: column;
+    gap:            0;
+  }
+
+  .blg-card__tag {
+    font-family:    var(--sans);
+    font-size:      0.56rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 0.6rem;
+  }
+
+  .blg-card__title {
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-size:      clamp(1.1rem, 1.8vw, 1.55rem);
+    line-height:    1.2;
+    letter-spacing: -0.01em;
+    color:          var(--cream);
+    margin:         0 0 0.6rem;
+  }
+
+  .blg-card__meta {
+    font-family: var(--sans);
+    font-size:   0.6rem;
+    letter-spacing: 0.08em;
+    color:       var(--muted);
+    margin:      0 0 0.85rem;
+  }
+
+  .blg-card__excerpt {
+    font-family: var(--sans);
+    font-size:   0.82rem;
+    line-height: 1.7;
+    color:       rgba(240, 237, 229, 0.62);
+    margin:      0 0 1rem;
+  }
+
+  .blg-card__cta {
+    display:        inline-block;
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color:          var(--cream);
+    border-bottom:  1px solid rgba(240,237,229,.3);
+    padding-bottom: 2px;
+    width:          fit-content;
+    transition:     border-color 250ms, color 250ms;
+  }
+
+  .blg-card:hover .blg-card__cta {
+    border-color: var(--cream);
+    color:        #fff;
+  }
+
+  /* ── PAGINATION ──────────────────────────────────────────── */
+  .blg-pagination {
+    background: var(--bg);
+    grid-column: 1 / -1;
+    padding:    0 0 clamp(3rem, 6vw, 5rem);
+    margin-top: 1rem;
+  }
+
+  .blg-pagination .pagination {
+    display:         flex;
+    flex-wrap:       wrap;
+    justify-content: center;
+    gap:             1.5rem;
+    list-style:      none;
+    padding:         2rem 0 0;
+    margin:          0;
+    border-top:      1px solid rgba(240,237,229,.12);
+  }
+
+  .blg-pagination a,
+  .blg-pagination span {
+    font-family:     var(--sans);
+    font-size:       0.62rem;
+    letter-spacing:  0.22em;
+    text-transform:  uppercase;
+    text-decoration: none;
+    color:           var(--cream);
+    opacity:         0.5;
+    padding-bottom:  2px;
+    border-bottom:   1px solid transparent;
+    transition:      opacity 200ms, border-color 200ms;
+  }
+
+  .blg-pagination a:hover { opacity: 1; border-bottom-color: rgba(240,237,229,.4); }
+  .blg-pagination .current a,
+  .blg-pagination .current span { opacity: 1; border-bottom-color: var(--cream); }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .blg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem 2rem; }
+  }
+
+  @media (max-width: 767px) {
+    .blg-header { padding: clamp(5rem, 16vw, 7.5rem) 1.1rem 1.6rem; }
+    .blg-header__title { font-size: clamp(2.5rem, 11vw, 3.6rem); }
+
+    .blg-grid {
+      grid-template-columns: 1fr;
+      gap:     2.5rem;
+      padding: 0 1.1rem 3.5rem;
+    }
+
+    .blg-card__media { aspect-ratio: 3 / 4; }
+
+    .blg-card__body { padding-top: 1.1rem; }
+
+    .blg-card__title { font-size: clamp(1.1rem, 5.5vw, 1.5rem); }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.blog",
-  "settings": []
+  "settings": [
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "t:blog.articles_per_page",
+      "min": 3,
+      "max": 12,
+      "step": 3,
+      "default": 9
+    }
+  ],
+  "presets": [{ "name": "t:general.blog" }]
 }
 {% endschema %}

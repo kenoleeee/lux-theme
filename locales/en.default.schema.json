@@ -90,6 +90,9 @@
     "side_padding": "Side padding",
     "shop_url_label": "Shop button URL"
   },
+  "blog": {
+    "articles_per_page": "Articles per page"
+  },
   "home": {
     "hero": {
       "section_name": "Hero banner",

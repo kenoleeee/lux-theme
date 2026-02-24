@@ -1,64 +1,421 @@
 {% comment %}
-  This section is used in the article template to render the article page, which
-  displays the full content of the blog post and can optionally include a
-  comments section for customers (not shown in this example).
-
+  Article page — High-End Editorial Fashion / Dark theme
   https://shopify.dev/docs/storefronts/themes/architecture/templates/article
 {% endcomment %}
 
-{% if article.image %}
-  {{ article.image | image_url: width: 1000 | image_tag }}
-{% endif %}
-
-<h1>{{ article.title }}</h1>
-
-{% assign date = article.published_at | time_tag: format: 'date' %}
-<p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
-
-{{ article.content }}
-
-{% if blog.comments_enabled? %}
-  <h2>{{ 'blog.article_comments' | t }}</h2>
-
-  <div id="comments">
-    {% paginate article.comments by 10 %}
-      {% for comment in article.comments %}
-        <div>
-          <p>{{ comment.author }}</p>
-          <p>
-            {{- comment.created_at | time_tag: format: 'date' -}}
-          </p>
-          <p>{{ comment.content }}</p>
-        </div>
-      {% endfor %}
-
-      {{ paginate | default_pagination: anchor: 'comments' }}
-    {% endpaginate %}
+{% comment %} ── HERO BANNER ──────────────────────────────────────────────── {% endcomment %}
+<header class="art-hero full-width">
+  <div class="art-hero__media" aria-hidden="true">
+    {% if article.image %}
+      {{ article.image
+        | image_url: width: 2400
+        | image_tag:
+          class: 'art-hero__img',
+          loading: 'eager',
+          widths: '768, 1200, 1800, 2400',
+          sizes: '100vw'
+      }}
+    {% else %}
+      {{ 'image' | placeholder_svg_tag: 'art-hero__img art-hero__img--placeholder' }}
+    {% endif %}
+    <div class="art-hero__vignette" aria-hidden="true"></div>
   </div>
 
-  {% form 'new_comment', article %}
-    <h2>{{ 'blog.comment_form_title' | t }}</h2>
+  <div class="art-hero__body">
+    <p class="art-hero__eyebrow">
+      <a class="art-hero__blog-link" href="{{ blog.url }}">{{ blog.title | escape }}</a>
+    </p>
+    <h1 class="art-hero__title">{{ article.title | escape }}</h1>
+    <p class="art-hero__meta">
+      {%- assign pub_date = article.published_at | time_tag: format: 'date' -%}
+      {{ 'blog.article_metadata_html' | t: date: pub_date, author: article.author }}
+    </p>
+  </div>
+</header>
 
-    {{ form.errors | default_errors }}
+{% comment %} ── ARTICLE BODY ─────────────────────────────────────────────── {% endcomment %}
+<div class="art-body full-width">
+  <div class="art-body__content rte">
+    {{ article.content }}
+  </div>
+</div>
 
-    <div>
-      <label for="author">{{ 'blog.comment_form_name' | t }}</label>
-      <input type="text" name="comment[author]" id="author" value="{{ form.author }}" required>
+{% comment %} ── COMMENTS ─────────────────────────────────────────────────── {% endcomment %}
+{% if blog.comments_enabled? %}
+  <section class="art-comments full-width" aria-label="{{ 'blog.article_comments' | t }}">
+    {% if article.comments_count > 0 %}
+      <h2 class="art-comments__heading">{{ 'blog.article_comments' | t }}</h2>
+      <div id="comments" class="art-comments__list">
+        {% paginate article.comments by 10 %}
+          {% for comment in article.comments %}
+            <div class="art-comment">
+              <p class="art-comment__author">{{ comment.author | escape }}</p>
+              <p class="art-comment__date">{{- comment.created_at | time_tag: format: 'date' -}}</p>
+              <p class="art-comment__body">{{ comment.content }}</p>
+            </div>
+          {% endfor %}
+          {% if paginate.pages > 1 %}
+            <div class="art-comments__pagination">
+              {{ paginate | default_pagination: anchor: 'comments' }}
+            </div>
+          {% endif %}
+        {% endpaginate %}
+      </div>
+    {% endif %}
+
+    <div class="art-comment-form">
+      <h2 class="art-comment-form__heading">{{ 'blog.comment_form_title' | t }}</h2>
+      {% form 'new_comment', article %}
+        {{ form.errors | default_errors }}
+
+        <div class="art-comment-form__row">
+          <label class="art-comment-form__label" for="author">{{ 'blog.comment_form_name' | t }}</label>
+          <input
+            class="art-comment-form__input"
+            type="text"
+            name="comment[author]"
+            id="author"
+            value="{{ form.author }}"
+            required
+          >
+        </div>
+
+        <div class="art-comment-form__row">
+          <label class="art-comment-form__label" for="email">{{ 'blog.comment_form_email' | t }}</label>
+          <input
+            class="art-comment-form__input"
+            type="email"
+            name="comment[email]"
+            id="email"
+            value="{{ form.email }}"
+            required
+          >
+        </div>
+
+        <div class="art-comment-form__row">
+          <label class="art-comment-form__label" for="body">{{ 'blog.comment_form_body' | t }}</label>
+          <textarea
+            class="art-comment-form__input art-comment-form__input--textarea"
+            name="comment[body]"
+            id="body"
+            required
+          >{{ form.body }}</textarea>
+        </div>
+
+        <button type="submit" class="art-comment-form__submit">
+          {{ 'blog.comment_form_submit' | t }}
+        </button>
+      {% endform %}
     </div>
-
-    <div>
-      <label for="email">{{ 'blog.comment_form_email' | t }}</label>
-      <input type="email" name="comment[email]" id="email" value="{{ form.email }}" required>
-    </div>
-
-    <div>
-      <label for="body">{{ 'blog.comment_form_body' | t }}</label>
-      <textarea name="comment[body]" id="body" required>{{ form.body }}</textarea>
-    </div>
-
-    <input type="submit" value="{{ 'blog.comment_form_submit' | t }}">
-  {% endform %}
+  </section>
 {% endif %}
+
+{% stylesheet %}
+  /* ── Tokens ──────────────────────────────────────────────── */
+  .art-hero, .art-body, .art-comments {
+    --bg:    #0a0a09;
+    --cream: #f0ede5;
+    --muted: rgba(240, 237, 229, 0.5);
+    --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
+    --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
+  }
+
+  /* ── HERO ────────────────────────────────────────────────── */
+  .art-hero {
+    position:   relative;
+    height:     clamp(340px, 55vh, 680px);
+    overflow:   hidden;
+    background: var(--bg);
+    color:      var(--cream);
+    display:    flex;
+    align-items: flex-end;
+  }
+
+  .art-hero__media {
+    position: absolute;
+    inset:    0;
+  }
+
+  .art-hero__img {
+    width:         100%;
+    height:        100%;
+    object-fit:    cover;
+    object-position: center 25%;
+    filter:        saturate(0.7) contrast(1.1) brightness(0.65);
+    border-radius: 0 !important;
+    display:       block;
+  }
+
+  .art-hero__img--placeholder {
+    width:      100%;
+    height:     100%;
+    background: linear-gradient(160deg, #1a1a18 0%, #2d2d2a 55%, #1a1a18 100%);
+  }
+
+  /* SVG placeholder reset */
+  .art-hero__img--placeholder svg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.15;
+  }
+
+  .art-hero__vignette {
+    position:   absolute;
+    inset:      0;
+    background:
+      linear-gradient(to top,  rgba(10,10,9,.92) 0%,  rgba(10,10,9,.1) 55%),
+      linear-gradient(to right, rgba(10,10,9,.5) 0%, rgba(10,10,9,0)   60%);
+    pointer-events: none;
+  }
+
+  .art-hero__body {
+    position: relative;
+    z-index:  1;
+    padding:  0 clamp(1.5rem, 6vw, 6rem) clamp(2.5rem, 4vw, 4rem);
+    max-width: 72rem;
+  }
+
+  .art-hero__eyebrow {
+    font-family:    var(--sans);
+    font-size:      0.6rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin-bottom:  0.75rem;
+  }
+
+  .art-hero__blog-link {
+    color:           inherit;
+    text-decoration: none;
+    border-bottom:   1px solid rgba(240,237,229,.25);
+    padding-bottom:  1px;
+    transition:      border-color 200ms;
+  }
+
+  .art-hero__blog-link:hover { border-color: var(--cream); }
+
+  .art-hero__title {
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-size:      clamp(2rem, 5vw, 4.5rem);
+    line-height:    1.05;
+    letter-spacing: -0.02em;
+    color:          var(--cream);
+    margin:         0 0 1rem;
+    max-width:      22ch;
+  }
+
+  .art-hero__meta {
+    font-family:    var(--sans);
+    font-size:      0.68rem;
+    letter-spacing: 0.12em;
+    color:          var(--muted);
+    margin:         0;
+  }
+
+  .art-hero__meta a {
+    color:           var(--cream);
+    text-decoration: none;
+    border-bottom:   1px solid rgba(240,237,229,.3);
+    transition:      border-color 200ms;
+  }
+
+  .art-hero__meta a:hover { border-color: var(--cream); }
+
+  /* ── ARTICLE BODY ────────────────────────────────────────── */
+  .art-body {
+    background: var(--bg);
+    padding:    clamp(3rem, 6vw, 6rem) clamp(1.5rem, 6vw, 6rem);
+  }
+
+  .art-body__content {
+    max-width:    68ch;
+    margin:       0 auto;
+    font-family:  var(--sans);
+    font-size:    1.05rem;
+    line-height:  1.82;
+    color:        rgba(240, 237, 229, 0.88);
+  }
+
+  /* RTE content resets */
+  .art-body__content h1,
+  .art-body__content h2,
+  .art-body__content h3,
+  .art-body__content h4 {
+    font-family:    var(--serif);
+    font-weight:    300;
+    color:          var(--cream);
+    line-height:    1.15;
+    margin-top:     2.5em;
+    margin-bottom:  0.6em;
+    letter-spacing: -0.015em;
+  }
+
+  .art-body__content h2 { font-size: clamp(1.5rem, 2.5vw, 2.2rem); }
+  .art-body__content h3 { font-size: clamp(1.2rem, 2vw, 1.6rem); }
+
+  .art-body__content p   { margin: 0 0 1.5em; }
+  .art-body__content img {
+    width:         100%;
+    height:        auto;
+    display:       block;
+    margin:        2.5em 0;
+    border-radius: 0;
+    filter:        saturate(0.85) contrast(1.05);
+  }
+
+  .art-body__content a {
+    color:           var(--cream);
+    border-bottom:   1px solid rgba(240,237,229,.35);
+    text-decoration: none;
+    transition:      border-color 200ms;
+  }
+
+  .art-body__content a:hover { border-color: var(--cream); }
+
+  .art-body__content blockquote {
+    border-left:  2px solid rgba(240,237,229,.25);
+    margin:       2em 0;
+    padding:      0.5em 0 0.5em 2em;
+    font-family:  var(--serif);
+    font-style:   italic;
+    font-size:    1.2em;
+    color:        rgba(240,237,229,.75);
+  }
+
+  .art-body__content ul,
+  .art-body__content ol {
+    padding-left: 1.6em;
+    margin-bottom: 1.5em;
+  }
+
+  /* ── COMMENTS ────────────────────────────────────────────── */
+  .art-comments {
+    background:  var(--bg);
+    padding:     0 clamp(1.5rem, 6vw, 6rem) clamp(4rem, 8vw, 7rem);
+    border-top:  1px solid rgba(240,237,229,.1);
+    max-width:   72rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .art-comments__heading,
+  .art-comment-form__heading {
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-size:      clamp(1.4rem, 2.5vw, 2rem);
+    color:          var(--cream);
+    letter-spacing: -0.01em;
+    margin:         2.5rem 0 1.5rem;
+  }
+
+  .art-comment {
+    padding:       1.5rem 0;
+    border-bottom: 1px solid rgba(240,237,229,.08);
+  }
+
+  .art-comment__author {
+    font-family:    var(--sans);
+    font-size:      0.64rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color:          var(--cream);
+    margin:         0 0 0.3rem;
+  }
+
+  .art-comment__date {
+    font-family: var(--sans);
+    font-size:   0.6rem;
+    color:       var(--muted);
+    margin:      0 0 0.75rem;
+  }
+
+  .art-comment__body {
+    font-family: var(--sans);
+    font-size:   0.9rem;
+    line-height: 1.7;
+    color:       rgba(240,237,229,.8);
+    margin:      0;
+  }
+
+  /* Comment form */
+  .art-comment-form { padding-top: 1rem; }
+
+  .art-comment-form__row {
+    display:       flex;
+    flex-direction: column;
+    gap:           0.4rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .art-comment-form__label {
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color:          var(--muted);
+  }
+
+  .art-comment-form__input {
+    background:    transparent;
+    border:        none;
+    border-bottom: 1px solid rgba(240,237,229,.22);
+    border-radius: 0;
+    padding:       0.6rem 0;
+    font-family:   var(--sans);
+    font-size:     0.92rem;
+    color:         var(--cream);
+    width:         100%;
+    outline:       none;
+    transition:    border-color 200ms;
+    -webkit-appearance: none;
+    appearance:    none;
+  }
+
+  .art-comment-form__input:focus { border-bottom-color: rgba(240,237,229,.6); }
+
+  .art-comment-form__input--textarea {
+    resize:     vertical;
+    min-height: 7rem;
+    padding:    0.6rem 0;
+  }
+
+  .art-comment-form__submit {
+    margin-top:     1rem;
+    padding:        0.8rem 2.4rem;
+    background:     transparent;
+    border:         1px solid rgba(240,237,229,.35);
+    border-radius:  0;
+    font-family:    var(--sans);
+    font-size:      0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color:          var(--cream);
+    cursor:         pointer;
+    transition:     border-color 220ms, color 220ms;
+  }
+
+  .art-comment-form__submit:hover {
+    border-color: var(--cream);
+    color:        #fff;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .art-hero { height: clamp(260px, 55vw, 420px); }
+
+    .art-hero__body {
+      padding: 0 1.1rem clamp(1.8rem, 8vw, 2.5rem);
+    }
+
+    .art-hero__title { font-size: clamp(1.6rem, 8vw, 2.4rem); }
+
+    .art-body { padding: 2.5rem 1.1rem 3rem; }
+    .art-body__content { font-size: 0.98rem; }
+
+    .art-comments { padding: 0 1.1rem 3rem; }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
