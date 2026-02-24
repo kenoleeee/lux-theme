@@ -2,24 +2,29 @@
   Renders a single product card — High-End Editorial dark theme.
   Must be rendered inside .coll-grid for CSS scoping.
 
-  @param {product} product - The product object
+  @param {product} product  - The product object
   @param {boolean} [offset] - Adds vertical stagger margin on even cards (desktop)
+  @param {boolean} [eager]  - Load primary image eagerly (pass true for first 4 cards)
 
   @example
-  {% render 'product-card', product: product %}
+  {% render 'product-card', product: product, eager: true %}
   {% render 'product-card', product: product, offset: true %}
 {% enddoc %}
+
+{%- assign img_loading = 'lazy' -%}
+{%- if eager -%}{%- assign img_loading = 'eager' -%}{%- endif -%}
 
 <article class="pc{% if offset %} pc--offset{% endif %}">
   <a class="pc__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
 
     <div class="pc__media">
+
       {% if product.featured_image %}
         {{ product.featured_image
           | image_url: width: 1200, height: 1600, crop: 'center'
           | image_tag:
             class: 'pc__img pc__img--primary',
-            loading: 'lazy',
+            loading: img_loading,
             widths: '480, 720, 960, 1200',
             sizes: '(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw'
         }}
@@ -42,6 +47,7 @@
       {% if product.compare_at_price_max > product.price %}
         <span class="pc__badge">{{ 'collections.sale_badge' | t }}</span>
       {% endif %}
+
     </div>
 
     <div class="pc__info">
@@ -63,14 +69,14 @@
     --cream:  #f0ede5;
     --muted:  rgba(240, 237, 229, 0.45);
     --dark:   #0a0a09;
-    --dim:    #111110;
+    --dim:    #141412;
     --serif:  var(--font-heading--family, "Playfair Display", Georgia, serif);
     --sans:   var(--font-body--family,    "Work Sans", system-ui, sans-serif);
   }
 
-  /* ─── CARD — kill ALL base-theme overrides ────────────────── */
+  /* ─── CARD — kill all base-theme overrides ────────────────── */
   .coll-grid .pc {
-    display: block !important;
+    display:          block !important;
     background:       #0a0a09 !important;
     background-color: #0a0a09 !important;
     border:           none !important;
@@ -89,7 +95,7 @@
   .coll-grid .pc__link {
     display:          block !important;
     text-decoration:  none !important;
-    color:            var(--cream) !important;
+    color:            #f0ede5 !important;
     background:       #0a0a09 !important;
     background-color: #0a0a09 !important;
     border:           none !important;
@@ -103,7 +109,8 @@
     position:      relative !important;
     overflow:      hidden !important;
     aspect-ratio:  3 / 4 !important;
-    background:    var(--dim) !important;
+    /* slightly lighter bg so card is visible even before image loads */
+    background:    #1c1b19 !important;
     border-radius: 0 !important;
     border:        none !important;
     box-shadow:    none !important;
@@ -142,32 +149,33 @@
   }
 
   .coll-grid .pc__img-placeholder {
-    position: absolute; inset: 0;
-    background: var(--dim);
+    position:   absolute;
+    inset:      0;
+    background: #1c1b19;
   }
 
   /* ─── SALE BADGE ─────────────────────────────────────────── */
   .coll-grid .pc__badge {
-    position:      absolute !important;
-    top:           1rem !important;
-    left:          0 !important;
-    z-index:       2 !important;
-    background:    var(--cream) !important;
-    color:         var(--dark) !important;
-    font-family:   var(--sans) !important;
-    font-size:     0.52rem !important;
+    position:       absolute !important;
+    top:            1rem !important;
+    left:           0 !important;
+    z-index:        2 !important;
+    background:     #f0ede5 !important;
+    color:          #0a0a09 !important;
+    font-family:    var(--sans) !important;
+    font-size:      0.52rem !important;
     letter-spacing: 0.26em !important;
     text-transform: uppercase !important;
-    padding:       0.25rem 0.55rem !important;
-    border-radius: 0 !important;
-    border:        none !important;
-    box-shadow:    none !important;
-    line-height:   1.4 !important;
+    padding:        0.25rem 0.55rem !important;
+    border-radius:  0 !important;
+    border:         none !important;
+    box-shadow:     none !important;
+    line-height:    1.4 !important;
   }
 
-  /* ─── INFO BLOCK — flush with photo ─────────────────────── */
+  /* ─── INFO — flush with photo edge ──────────────────────── */
   .coll-grid .pc__info {
-    padding:          0.85rem 0 0 !important;  /* top gap only, zero sides */
+    padding:          0.85rem 0 0 !important;
     margin:           0 !important;
     background:       #0a0a09 !important;
     background-color: #0a0a09 !important;
@@ -176,15 +184,15 @@
     border-radius:    0 !important;
     display:          flex !important;
     flex-direction:   column !important;
-    gap:              0.3rem !important;
+    gap:              0.28rem !important;
   }
 
   /* ─── TITLE — uppercase sans-serif ──────────────────────── */
   .coll-grid .pc__name {
     font-family:    var(--sans) !important;
-    font-size:      0.6rem !important;
+    font-size:      0.62rem !important;
     font-weight:    400 !important;
-    letter-spacing: 0.22em !important;
+    letter-spacing: 0.2em !important;
     text-transform: uppercase !important;
     color:          #f0ede5 !important;
     line-height:    1.5 !important;
@@ -204,7 +212,7 @@
     display:      flex !important;
     align-items:  baseline !important;
     gap:          0.5rem !important;
-    margin:       0.2rem 0 0 !important;
+    margin:       0.18rem 0 0 !important;
     padding:      0 !important;
     background:   transparent !important;
     border:       none !important;
@@ -213,19 +221,14 @@
   .coll-grid .pc__price-was {
     font-style:      normal !important;
     font-size:       0.72rem !important;
-    color:           rgba(240, 237, 229, 0.45) !important;
+    color:           rgba(240, 237, 229, 0.42) !important;
     text-decoration: line-through !important;
   }
 
   /* ─── MOBILE ─────────────────────────────────────────────── */
   @media (max-width: 767px) {
     .coll-grid .pc--offset { margin-top: 0 !important; }
-
-    .coll-grid .pc__name {
-      font-size:      0.65rem !important;
-      letter-spacing: 0.2em !important;
-    }
-
-    .coll-grid .pc__price { font-size: 0.9rem !important; }
+    .coll-grid .pc__name   { font-size: 0.65rem !important; letter-spacing: 0.18em !important; }
+    .coll-grid .pc__price  { font-size: 0.9rem !important; }
   }
 {% endstylesheet %}

@@ -52,10 +52,12 @@
       {% for product in collection.products %}
         {%- assign card_remainder = forloop.index | modulo: 2 -%}
         {%- assign card_offset = false -%}
-        {%- if card_remainder == 0 -%}
-          {%- assign card_offset = true -%}
-        {%- endif -%}
-        {% render 'product-card', product: product, offset: card_offset %}
+        {%- if card_remainder == 0 -%}{%- assign card_offset = true -%}{%- endif -%}
+
+        {%- assign card_eager = false -%}
+        {%- if forloop.index <= 4 -%}{%- assign card_eager = true -%}{%- endif -%}
+
+        {% render 'product-card', product: product, offset: card_offset, eager: card_eager %}
       {% endfor %}
     </section>
 
