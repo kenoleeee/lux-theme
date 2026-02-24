@@ -30,4 +30,23 @@
     --reveal-duration: {{ settings.reveal_duration }}ms;
     --reveal-easing: {{ settings.reveal_easing }};
   }
+
+  /* ── High-End Editorial Brand — force dark palette ──────────
+     critical.css uses var(--color-background) for body bg.
+     This second :root block wins the cascade and locks the
+     editorial dark colours regardless of what the theme editor
+     has saved in settings_data.json.                          */
+  :root {
+    --color-background: #0a0a09;
+    --color-foreground: #f0ede5;
+    --color-accent:     #f0ede5;
+    --color-lines:      rgba(240, 237, 229, 0.12);
+    --style-border-radius-inputs: 0px;
+  }
+
+  /* Explicit body override — belt-and-suspenders approach */
+  html, body {
+    background-color: #0a0a09;
+    color: #f0ede5;
+  }
 {% endstyle %}
