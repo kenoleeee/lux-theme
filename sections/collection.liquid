@@ -45,54 +45,24 @@
 
     <section
       class="coll-grid full-width"
-      style="--pad: clamp(1.2rem, {{ section.settings.side_padding }}vw, {{ section.settings.side_padding | times: 0.55 }}rem);"
+      style="
+        --gap-row: {{ section.settings.grid_gap }}rem;
+        --gap-col: {{ section.settings.grid_gap | times: 0.65 }}rem;
+        --cols:    {{ section.settings.columns_desktop }};
+        --offset:  {{ section.settings.stagger_offset }}rem;
+        --pad:     clamp(1.2rem, {{ section.settings.side_padding }}vw, {{ section.settings.side_padding | times: 0.6 }}rem);
+      "
       aria-label="{{ collection.title | escape }}"
     >
       {% for product in collection.products %}
-
-        {%- comment -%}
-          6-position cycle → asymmetric column spans + vertical offsets
-          Row A: [7] [5]   — wide + narrow
-          Row B: [5] [7]   — narrow + wide (mirrored)
-          Row C: [6] [6]   — balanced with stagger
-        {%- endcomment -%}
-        {%- assign card_pos = forloop.index0 | modulo: 6 -%}
-
-        {%- if card_pos == 0 -%}
-          {%- assign cell_span = 'coll-cell--7' -%}
-          {%- assign cell_mt   = '0' -%}
-        {%- elsif card_pos == 1 -%}
-          {%- assign cell_span = 'coll-cell--5' -%}
-          {%- assign cell_mt   = '4rem' -%}
-        {%- elsif card_pos == 2 -%}
-          {%- assign cell_span = 'coll-cell--5' -%}
-          {%- assign cell_mt   = '0' -%}
-        {%- elsif card_pos == 3 -%}
-          {%- assign cell_span = 'coll-cell--7' -%}
-          {%- assign cell_mt   = '2.5rem' -%}
-        {%- elsif card_pos == 4 -%}
-          {%- assign cell_span = 'coll-cell--6' -%}
-          {%- assign cell_mt   = '0' -%}
-        {%- else -%}
-          {%- assign cell_span = 'coll-cell--6' -%}
-          {%- assign cell_mt   = '3.5rem' -%}
-        {%- endif -%}
-
-        {%- comment -%} Stagger delay: 0–5 then hold at 600ms {%- endcomment -%}
-        {%- assign delay_idx = forloop.index0 -%}
-        {%- if delay_idx > 5 -%}{%- assign delay_idx = 5 -%}{%- endif -%}
-        {%- assign anim_delay = delay_idx | times: 110 -%}
+        {%- assign card_remainder = forloop.index | modulo: 2 -%}
+        {%- assign card_offset = false -%}
+        {%- if card_remainder == 0 -%}{%- assign card_offset = true -%}{%- endif -%}
 
         {%- assign card_eager = false -%}
         {%- if forloop.index <= 4 -%}{%- assign card_eager = true -%}{%- endif -%}
 
-        <div
-          class="coll-cell {{ cell_span }}"
-          style="margin-top: {{ cell_mt }}; --delay: {{ anim_delay }}ms;"
-        >
-          {% render 'product-card', product: product, eager: card_eager %}
-        </div>
-
+        {% render 'product-card', product: product, offset: card_offset, eager: card_eager %}
       {% endfor %}
     </section>
 
@@ -114,154 +84,117 @@
   .coll-pagination {
     --bg:    #0a0a09;
     --cream: #f0ede5;
-    --muted: rgba(240, 237, 229, 0.42);
-    --line:  rgba(240, 237, 229, 0.09);
+    --muted: rgba(240, 237, 229, 0.45);
     --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
     --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     COLLECTION HEADER — editorial title strip
-  ═══════════════════════════════════════════════════════════════ */
+  /* ─── COLLECTION HEADER — compact banner strip ────────────────── */
   .coll-header {
-    position:        relative;
-    min-height:      clamp(200px, 36vh, 420px);
-    overflow:        hidden;
-    display:         flex;
-    align-items:     flex-end;
-    background:      var(--bg) !important;
-    color:           var(--cream);
-    padding-top:     7rem;
-    padding-bottom:  2.5rem;
+    position:    relative;
+    /* max ~28vh — short banner, not a full-screen poster */
+    height:      clamp(160px, 28vh, 320px);
+    overflow:    hidden;
+    display:     flex;
+    align-items: center;
+    background:  var(--bg) !important;
+    color:       var(--cream);
+    /* top padding accounts for fixed header (~5rem) */
+    padding-top: 5rem;
   }
 
+  /* background image fills the strip */
   .coll-header__cover {
     position: absolute;
     inset: 0;
   }
 
   .coll-header__cover-img {
-    width:           100%;
-    height:          100%;
-    object-fit:      cover;
-    object-position: center 25%;
-    filter:          saturate(0.4) contrast(1.15) brightness(0.35);
-    border-radius:   0 !important;
+    width:         100%;
+    height:        100%;
+    object-fit:    cover;
+    object-position: center 30%;
+    filter:        saturate(0.6) contrast(1.1) brightness(0.55);
+    border-radius: 0 !important;
   }
 
   .coll-header__grain {
-    position:         absolute;
-    inset:            0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
-    background-size:  200px;
-    mix-blend-mode:   overlay;
-    pointer-events:   none;
+    position:   absolute;
+    inset:      0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px;
+    mix-blend-mode:  overlay;
+    pointer-events:  none;
   }
 
+  /* soft gradient so text stays readable over the image */
   .coll-header__vignette {
     position:   absolute;
     inset:      0;
     background: linear-gradient(
-      to top,
-      rgba(10,10,9,.95) 0%,
-      rgba(10,10,9,.45) 60%,
+      to right,
+      rgba(10,10,9,.85) 0%,
+      rgba(10,10,9,.45) 50%,
       rgba(10,10,9,.15) 100%
     );
     pointer-events: none;
   }
 
   .coll-header__body {
-    position:    relative;
-    z-index:     1;
-    padding:     0 clamp(1.5rem, 7vw, 7rem);
-    width:       100%;
+    position:   relative;
+    z-index:    1;
+    padding:    0 clamp(1.5rem, 5vw, 5rem);
+    display:    flex;
+    align-items: baseline;
+    gap:        1.2rem;
+    flex-wrap:  wrap;
+  }
+
+  /* no image — simpler dark strip, still respects fixed header */
+  .coll-header__body--bare {
+    padding-top: 0;
   }
 
   .coll-header__eyebrow {
     font-family:    var(--sans);
-    font-size:      0.55rem;
-    letter-spacing: 0.32em;
+    font-size:      0.58rem;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     color:          var(--muted);
-    margin:         0 0 1rem;
+    margin:         0;
+    white-space:    nowrap;
   }
 
-  /* HUGE editorial title — ultra-thin weight, deep left indent */
   .coll-header__title {
     font-family:    var(--serif);
-    font-weight:    100;
-    font-size:      clamp(3.2rem, 9vw, 10rem);
-    line-height:    0.9;
-    letter-spacing: -0.03em;
+    font-weight:    300;
+    font-size:      clamp(1.6rem, 3.5vw, 3rem);
+    line-height:    1;
+    letter-spacing: -0.02em;
     color:          var(--cream);
     margin:         0;
-    /* extra left push for the editorial off-axis look */
-    padding-left:   clamp(0rem, 3vw, 3.5rem);
   }
 
-  .coll-header__desc {
-    font-family:    var(--sans);
-    font-size:      0.72rem;
-    letter-spacing: 0.1em;
-    color:          var(--muted);
-    margin:         1.2rem 0 0;
-    padding-left:   clamp(0rem, 3vw, 3.5rem);
-    max-width:      48ch;
-    line-height:    1.7;
-  }
+  /* description hidden in compact mode — not enough room */
+  .coll-header__desc { display: none; }
 
-  /* ═══════════════════════════════════════════════════════════════
-     EDITORIAL 12-COL ASYMMETRIC GRID
-  ═══════════════════════════════════════════════════════════════ */
+  /* ─── PRODUCT GRID ────────────────────────────────────────────── */
   .coll-grid {
-    background:            var(--bg) !important;
-    background-color:      var(--bg) !important;
-    display:               grid !important;
-    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
-    column-gap:            clamp(1rem, 2vw, 2rem) !important;
-    row-gap:               clamp(2rem, 4vw, 3.5rem) !important;
-    padding:               3rem var(--pad, 4vw) 5rem !important;
-    align-items:           start;
+    background:    var(--bg) !important;
+    background-color: var(--bg) !important;
+    display:       grid !important;
+    /* 4 cols desktop, overridden at smaller breakpoints */
+    grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)) !important;
+    gap:           var(--gap-row, 1.8rem) var(--gap-col, 1.2rem) !important;
+    padding:       2rem var(--pad, 3vw) 4rem !important;
+    align-items:   start;
   }
 
-  /* grid cell — each wraps one product card */
-  .coll-cell {
-    grid-column: span 6; /* fallback: half-width */
-    transition:  opacity 420ms cubic-bezier(0.23, 1, 0.32, 1);
-  }
+  /* kill any base-theme card styling */
+  .coll-grid *,
+  .coll-grid *::before,
+  .coll-grid *::after { box-sizing: border-box; }
 
-  /* asymmetric span classes */
-  .coll-cell--5 { grid-column: span 5 !important; }
-  .coll-cell--6 { grid-column: span 6 !important; }
-  .coll-cell--7 { grid-column: span 7 !important; }
-
-  /* ─── PAGE-LOAD STAGGER ANIMATION ────────────────────────────── */
-  @keyframes coll-in {
-    from { opacity: 0; transform: translateY(22px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .coll-cell {
-    animation: coll-in 0.85s cubic-bezier(0.23, 1, 0.32, 1) var(--delay, 0ms) both;
-  }
-
-  /* ─── GROUP HOVER — dim siblings, focus on hovered card ──────── */
-  .coll-grid:has(.coll-cell:hover) .coll-cell {
-    opacity: 0.55;
-  }
-  .coll-grid:has(.coll-cell:hover) .coll-cell:hover {
-    opacity: 1 !important;
-  }
-
-  /* scale on hovered image */
-  .coll-cell:hover .pc__img--primary:only-child,
-  .coll-cell:hover .pc__img--primary {
-    transform: scale(1.05) !important;
-    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1) !important;
-    transition-duration: 750ms !important;
-  }
-
-  /* kill any base-theme card overrides */
   .coll-grid .card,
   .coll-grid .card-wrapper,
   .coll-grid .card__inner,
@@ -277,12 +210,12 @@
 
   /* ─── EMPTY STATE ─────────────────────────────────────────────── */
   .coll-empty {
-    background:      var(--bg) !important;
-    min-height:      40vh;
-    display:         flex;
-    align-items:     center;
+    background: var(--bg) !important;
+    min-height: 40vh;
+    display:    flex;
+    align-items: center;
     justify-content: center;
-    padding:         5rem 2rem;
+    padding:    5rem 2rem;
   }
 
   .coll-empty__msg {
@@ -309,18 +242,18 @@
     list-style:      none;
     padding:         2rem 0 0;
     margin:          0;
-    border-top:      1px solid var(--line);
+    border-top:      1px solid rgba(240, 237, 229, 0.12);
   }
 
   .coll-pagination a,
   .coll-pagination span {
     font-family:     var(--sans);
-    font-size:       0.62rem;
+    font-size:       0.64rem;
     letter-spacing:  0.22em;
     text-transform:  uppercase;
     text-decoration: none;
     color:           var(--cream);
-    opacity:         0.45;
+    opacity:         0.5;
     padding-bottom:  2px;
     border-bottom:   1px solid transparent;
     transition:      opacity 220ms ease, border-color 220ms ease;
@@ -330,72 +263,41 @@
   .coll-pagination .current a,
   .coll-pagination .current span { opacity: 1; border-bottom-color: var(--cream); }
 
-  /* ═══════════════════════════════════════════════════════════════
-     RESPONSIVE — tablet & mobile collapse editorial grid
-  ═══════════════════════════════════════════════════════════════ */
-
-  /* tablet (≤ 1024px): flatten to simple 2-col, keep feel */
-  @media (max-width: 1024px) {
-    .coll-header__title {
-      font-size: clamp(2.4rem, 7vw, 5rem);
-      padding-left: clamp(0rem, 2vw, 2rem);
-    }
-
-    .coll-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      column-gap: 1.2rem !important;
-      row-gap:    2rem !important;
-      padding:    2rem var(--pad, 3vw) 3.5rem !important;
-    }
-
-    /* override spans so they all become 1-of-2 on tablet */
-    .coll-cell,
-    .coll-cell--5,
-    .coll-cell--6,
-    .coll-cell--7 {
-      grid-column: span 1 !important;
-      margin-top: 0 !important;
-    }
-
-    /* restore subtle alternating stagger only */
-    .coll-cell:nth-child(even) {
-      margin-top: 1.8rem !important;
-    }
+  /* ─── RESPONSIVE ──────────────────────────────────────────────── */
+  /* tablet: 3 cols */
+  @media (max-width: 1100px) {
+    .coll-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
   }
 
-  /* mobile (≤ 640px): single column */
-  @media (max-width: 640px) {
+  /* large mobile: 2 cols so a full card row is visible */
+  @media (max-width: 767px) {
     .coll-header {
-      min-height:      clamp(160px, 30vh, 260px);
-      padding-top:     5.5rem;
-      padding-bottom:  2rem;
+      height:       clamp(120px, 22vh, 200px);
+      padding-top:  4.5rem;
     }
 
     .coll-header__eyebrow { display: none; }
 
     .coll-header__title {
-      font-size:    clamp(2.2rem, 11vw, 3.8rem);
-      padding-left: 0;
+      font-size: clamp(1.3rem, 6vw, 2rem);
     }
 
     .coll-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      column-gap: 0.8rem !important;
-      row-gap:    1.2rem !important;
-      padding:    1.2rem 1rem 3rem !important;
-    }
-
-    .coll-cell:nth-child(even) {
-      margin-top: 1.2rem !important;
+      gap:     1.2rem 0.8rem !important;
+      padding: 1.2rem 0.8rem 3rem !important;
     }
 
     .coll-pagination { padding: 0 1rem 2.5rem; }
     .coll-pagination .pagination { gap: 1rem; }
   }
 
-  /* ─── prefers-reduced-motion: kill entrance animation ────────── */
-  @media (prefers-reduced-motion: reduce) {
-    .coll-cell { animation: none; opacity: 1; }
+  /* very small phones: stay on 2 cols but tiny padding */
+  @media (max-width: 390px) {
+    .coll-grid {
+      gap:     1rem 0.5rem !important;
+      padding: 1rem 0.5rem 2.5rem !important;
+    }
   }
 {% endstylesheet %}
 
@@ -418,13 +320,42 @@
     },
     {
       "type": "range",
+      "id": "columns_desktop",
+      "label": "t:collection.columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "t:collection.grid_gap",
+      "min": 1,
+      "max": 5,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "stagger_offset",
+      "label": "t:collection.stagger_offset",
+      "min": 0,
+      "max": 6,
+      "step": 0.5,
+      "unit": "rem",
+      "default": 0
+    },
+    {
+      "type": "range",
       "id": "side_padding",
       "label": "t:collection.side_padding",
       "min": 1,
       "max": 8,
       "step": 1,
       "unit": "vw",
-      "default": 4
+      "default": 3
     }
   ]
 }
