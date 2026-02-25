@@ -38,17 +38,20 @@
   </div>
 
   <p class="editorial-hero__scroll-hint" aria-hidden="true">scroll</p>
-</section>
 
-{% comment %} ── EDITORIAL FEATURES / MARQUEE ─────────────────────────────── {% endcomment %}
-<div class="editorial-ticker full-width" aria-hidden="true">
-  <div class="editorial-ticker__track">
-    <span>{{ 'home.ticker.text' | t }}</span>
-    <span>{{ 'home.ticker.text' | t }}</span>
-    <span>{{ 'home.ticker.text' | t }}</span>
-    <span>{{ 'home.ticker.text' | t }}</span>
+  {% comment %} ── TICKER — anchored to hero bottom edge ─────────── {% endcomment %}
+  <div class="editorial-ticker" aria-hidden="true">
+    <div class="editorial-ticker__track">
+      <span>{{ 'home.ticker.text' | t }}</span>
+      <span aria-hidden="true">{{ 'home.ticker.text' | t }}</span>
+      <span aria-hidden="true">{{ 'home.ticker.text' | t }}</span>
+      <span aria-hidden="true">{{ 'home.ticker.text' | t }}</span>
+      <span aria-hidden="true">{{ 'home.ticker.text' | t }}</span>
+      <span aria-hidden="true">{{ 'home.ticker.text' | t }}</span>
+    </div>
   </div>
-</div>
+
+</section>
 
 {% comment %} ── CATEGORIES GRID ───────────────────────────────────────────── {% endcomment %}
 {% if section.blocks.size > 0 %}
@@ -210,24 +213,40 @@
     writing-mode: vertical-lr;
   }
 
-  /* ── TICKER ─────────────────────────────────────────────────── */
+  /* ── TICKER — anchored inside hero at its bottom edge ───────── */
   .editorial-ticker {
-    overflow: hidden;
-    white-space: nowrap;
-    padding: 1.1rem 0;
-    border-top: 1px solid rgba(26, 26, 24, 0.12);
-    border-bottom: 1px solid rgba(26, 26, 24, 0.12);
+    position:        absolute;
+    bottom:          0;
+    left:            0;
+    right:           0;
+    z-index:         3;
+    overflow:        hidden;
+    white-space:     nowrap;
+    padding:         0.95rem 0;
+    /* frosted-glass strip over the hero photo */
+    background:      rgba(10, 10, 9, 0.52);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-top:      1px solid rgba(240, 237, 229, 0.1);
   }
 
   .editorial-ticker__track {
-    display: inline-flex;
-    gap: 5rem;
-    animation: ticker-slide 28s linear infinite;
-    font-family: var(--sans);
-    font-size: 0.68rem;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
+    display:         inline-flex;
+    gap:             4rem;
+    /* seamless loop: duplicate spans cover two full widths */
+    animation:       ticker-slide 32s linear infinite;
+    font-family:     var(--sans);
+    font-size:       0.62rem;
+    letter-spacing:  0.28em;
+    text-transform:  uppercase;
+    /* cream text — visible on the dark hero */
+    color:           rgba(240, 237, 229, 0.52);
+  }
+
+  .editorial-ticker__track span::before {
+    content: '—';
+    margin-right: 4rem;
+    opacity: 0.3;
   }
 
   @keyframes ticker-slide {
@@ -373,11 +392,6 @@
 
     .editorial-hero__scroll-hint {
       display: none;
-    }
-
-    /* Ticker */
-    .editorial-ticker {
-      padding: 0.9rem 0;
     }
 
     /* Category grid: 1 column */
