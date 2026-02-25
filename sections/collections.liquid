@@ -3,6 +3,41 @@
   Layout: full-width index list, 2-col grid, text+small-thumb per row.
 {% endcomment %}
 
+{% comment %}
+  {% style %} is inlined in <head> via content_for_header — wins over async {% stylesheet %}.
+  Use it to lock critical colours that theme global CSS would otherwise override.
+{% endcomment %}
+{% style %}
+  .shopify-section:has(.clx),
+  .clx,
+  .clx__header,
+  .clx__top-rule,
+  .clx__index {
+    background-color: #121212 !important;
+    background:       #121212 !important;
+  }
+
+  .clx__title {
+    font-family:    sans-serif !important;
+    font-weight:    100 !important;
+    font-size:      clamp(3.8rem, 12vw, 13rem) !important;
+    line-height:    0.86 !important;
+    letter-spacing: -0.05em !important;
+    text-transform: uppercase !important;
+    color:          #e6e1d6 !important;
+  }
+
+  .clx,
+  .clx__row,
+  .clx__name,
+  .clx__num,
+  .clx__desc,
+  .clx__cta,
+  .clx__meta {
+    color: #e6e1d6 !important;
+  }
+{% endstyle %}
+
 {%- assign total_colls = collections | size -%}
 
 <div class="clx full-width">
