@@ -1,0 +1,456 @@
+/**
+ * KENOLDEV — Dark Luxury Editorial Checkout
+ * Targets Shopify's checkout page CSS classes (all plan tiers).
+ * File is auto-loaded by Shopify on all checkout pages.
+ *
+ * Palette:
+ *   bg:     #0a0a09   (matches global site dark)
+ *   input:  #141412
+ *   cream:  #e6e1d6
+ *   line:   rgba(230, 225, 214, 0.08)
+ *   serif:  Playfair Display, Georgia, serif
+ *   sans:   Work Sans, system-ui, sans-serif
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL RESET — whole checkout page
+═══════════════════════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  background-color: #0a0a09 !important;
+  color: #e6e1d6 !important;
+  font-family: "Work Sans", system-ui, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HEADER / LOGO
+═══════════════════════════════════════════════════════════════ */
+.main-header,
+.banner,
+.os-header {
+  background-color: #0a0a09 !important;
+  border-bottom: 1px solid rgba(230, 225, 214, 0.06) !important;
+  text-align: center !important;
+}
+
+/* Center & whiten the logo */
+.main-header__logo,
+.os-header__logo,
+.logo {
+  display: block !important;
+  margin: 0 auto !important;
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.9 !important;
+  max-height: 28px !important;
+}
+
+/* Logo text if image not set */
+.main-header__heading,
+.os-header__heading {
+  color: #e6e1d6 !important;
+  font-family: "Playfair Display", Georgia, serif !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  text-align: center !important;
+  font-size: 1.1rem !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BREADCRUMB / STEP NAVIGATION
+═══════════════════════════════════════════════════════════════ */
+.breadcrumb__item,
+.breadcrumb__chevron {
+  color: rgba(230, 225, 214, 0.38) !important;
+  font-family: "Work Sans", system-ui, sans-serif !important;
+  font-size: 0.65rem !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+}
+
+.breadcrumb__item--current,
+.breadcrumb__item.is-completed a {
+  color: #e6e1d6 !important;
+}
+
+.breadcrumb__item a { color: rgba(230, 225, 214, 0.55) !important; }
+.breadcrumb__item a:hover { color: #e6e1d6 !important; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN LAYOUT — left and right columns
+═══════════════════════════════════════════════════════════════ */
+.content,
+.main,
+.step,
+[data-main],
+.checkout-main {
+  background-color: #0a0a09 !important;
+  color: #e6e1d6 !important;
+}
+
+/* Right sidebar — order summary */
+.sidebar,
+.order-summary,
+.order-summary__scroll-container,
+[data-order-summary],
+.checkout-sidebar {
+  background-color: #0a0a09 !important;
+  color: #e6e1d6 !important;
+  border-left: 1px solid rgba(230, 225, 214, 0.06) !important;
+}
+
+/* remove any zebra/alternate row tints */
+.product,
+.product-table tr,
+.order-summary__section,
+.total-line-table__tbody,
+.total-line,
+.total-line__price,
+.total-line__name {
+  background: transparent !important;
+  color: #e6e1d6 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION HEADERS
+═══════════════════════════════════════════════════════════════ */
+.section__header,
+.section__title,
+.section__header-title,
+.section-header,
+.fieldset,
+legend,
+.shown-if-js .section__title {
+  font-family: "Playfair Display", Georgia, serif !important;
+  font-weight: 300 !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.28em !important;
+  text-transform: uppercase !important;
+  color: rgba(230, 225, 214, 0.55) !important;
+  border-bottom: 1px solid rgba(230, 225, 214, 0.06) !important;
+  padding-bottom: 0.85rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FORM FIELDS
+═══════════════════════════════════════════════════════════════ */
+.field__input,
+.select__select,
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="password"],
+select,
+textarea {
+  background-color: #141412 !important;
+  background:       #141412 !important;
+  color:            #e6e1d6 !important;
+  border:           1px solid rgba(230, 225, 214, 0.18) !important;
+  border-radius:    0 !important;
+  box-shadow:       none !important;
+  outline:          none !important;
+  font-family:      "Work Sans", system-ui, sans-serif !important;
+  font-size:        0.88rem !important;
+  padding:          0.85rem 1rem !important;
+  transition:       border-color 220ms ease !important;
+  -webkit-appearance: none !important;
+}
+
+.field__input:focus,
+.select__select:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(230, 225, 214, 0.75) !important;
+  box-shadow:   none !important;
+  outline:      none !important;
+}
+
+/* Field labels */
+.field__label,
+.optional-note,
+label {
+  color:          rgba(230, 225, 214, 0.52) !important;
+  font-family:    "Work Sans", system-ui, sans-serif !important;
+  font-size:      0.65rem !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+/* Placeholder */
+.field__input::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: rgba(230, 225, 214, 0.25) !important;
+}
+
+/* Checkbox / radio */
+.input-checkbox,
+.input-radio {
+  border-color: rgba(230, 225, 214, 0.28) !important;
+  background:   #141412 !important;
+  border-radius: 0 !important;
+}
+
+.input-checkbox:checked,
+.input-radio:checked {
+  background-color: #e6e1d6 !important;
+  border-color:     #e6e1d6 !important;
+}
+
+/* Select arrow */
+.select__icon path {
+  fill: rgba(230, 225, 214, 0.5) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════════════════════ */
+.btn,
+.step__footer__continue-btn,
+button[type="submit"],
+.btn--primary {
+  background-color: #e6e1d6 !important;
+  background:       #e6e1d6 !important;
+  color:            #0a0a09 !important;
+  border:           1px solid #e6e1d6 !important;
+  border-radius:    0 !important;
+  font-family:      "Work Sans", system-ui, sans-serif !important;
+  font-size:        0.65rem !important;
+  font-weight:      400 !important;
+  letter-spacing:   0.28em !important;
+  text-transform:   uppercase !important;
+  padding:          1.1rem 2rem !important;
+  box-shadow:       none !important;
+  transition:       background 280ms ease, color 280ms ease !important;
+  cursor:           pointer !important;
+}
+
+.btn:hover,
+.step__footer__continue-btn:hover,
+button[type="submit"]:hover,
+.btn--primary:hover {
+  background-color: transparent !important;
+  background:       transparent !important;
+  color:            #e6e1d6 !important;
+  border-color:     rgba(230, 225, 214, 0.6) !important;
+}
+
+/* Secondary / back buttons */
+.step__footer__previous-link,
+.btn--secondary,
+.previous-link {
+  color:          rgba(230, 225, 214, 0.45) !important;
+  font-family:    "Work Sans", system-ui, sans-serif !important;
+  font-size:      0.62rem !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  border-bottom:  1px solid transparent !important;
+  transition:     color 220ms ease, border-color 220ms ease !important;
+}
+
+.step__footer__previous-link:hover,
+.btn--secondary:hover {
+  color:        #e6e1d6 !important;
+  border-color: rgba(230, 225, 214, 0.35) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ORDER SUMMARY — product list
+═══════════════════════════════════════════════════════════════ */
+.product__description__name,
+.product__description__variant,
+.product__description__property,
+.order-summary__emphasis {
+  color: #e6e1d6 !important;
+  font-family: "Playfair Display", Georgia, serif !important;
+  font-style: italic !important;
+  font-weight: 300 !important;
+}
+
+.product__description__name {
+  font-size: 0.92rem !important;
+}
+
+.product__description__variant {
+  color: rgba(230, 225, 214, 0.42) !important;
+  font-family: "Work Sans", system-ui, sans-serif !important;
+  font-style: normal !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.08em !important;
+}
+
+/* Product image badge */
+.product__image,
+.thumbnail-wrapper {
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.product-thumbnail__wrapper {
+  border-radius: 0 !important;
+  border: 1px solid rgba(230, 225, 214, 0.1) !important;
+}
+
+/* Quantity badge on thumbnail */
+.product-thumbnail__quantity {
+  background-color: rgba(230, 225, 214, 0.15) !important;
+  color:            #e6e1d6 !important;
+  font-family:      "Work Sans", system-ui, sans-serif !important;
+  font-size:        0.6rem !important;
+  border-radius:    0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOTALS & PRICING
+═══════════════════════════════════════════════════════════════ */
+.total-line__name,
+.total-line__price,
+.reduction-code__text {
+  color: rgba(230, 225, 214, 0.6) !important;
+  font-family: "Work Sans", system-ui, sans-serif !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.08em !important;
+}
+
+.total-line--subtotal .total-line__name,
+.total-line--subtotal .total-line__price {
+  color: rgba(230, 225, 214, 0.75) !important;
+}
+
+.payment-due,
+.payment-due__price,
+.total-line--total .total-line__price {
+  color:       #e6e1d6 !important;
+  font-family: "Playfair Display", Georgia, serif !important;
+  font-style:  italic !important;
+  font-weight: 300 !important;
+  font-size:   1.5rem !important;
+}
+
+.payment-due__label,
+.total-line--total .total-line__name {
+  color:          rgba(230, 225, 214, 0.55) !important;
+  font-family:    "Work Sans", system-ui, sans-serif !important;
+  font-size:      0.6rem !important;
+  letter-spacing: 0.24em !important;
+  text-transform: uppercase !important;
+}
+
+/* Dividers */
+.total-line-table__footer,
+.order-summary__section + .order-summary__section,
+.order-summary__section--discount,
+.content-box + .content-box {
+  border-top: 1px solid rgba(230, 225, 214, 0.07) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DISCOUNT CODE FIELD
+═══════════════════════════════════════════════════════════════ */
+.reduction-code,
+.field--show-floating-label .field__label,
+.reduction-code__submit,
+.reduction-code__text-field {
+  border-color: rgba(230, 225, 214, 0.18) !important;
+  color: #e6e1d6 !important;
+}
+
+.reduction-code__submit {
+  background: transparent !important;
+  color: rgba(230, 225, 214, 0.55) !important;
+  font-size: 0.6rem !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  border: none !important;
+  border-left: 1px solid rgba(230, 225, 214, 0.18) !important;
+}
+
+.reduction-code__submit:hover {
+  color: #e6e1d6 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SHIPPING METHODS / PAYMENT OPTIONS
+═══════════════════════════════════════════════════════════════ */
+.radio-wrapper,
+.content-box,
+.content-box__row {
+  background-color: #0e0e0d !important;
+  border-color: rgba(230, 225, 214, 0.1) !important;
+  border-radius: 0 !important;
+}
+
+.content-box__row + .content-box__row {
+  border-top: 1px solid rgba(230, 225, 214, 0.07) !important;
+}
+
+.radio-wrapper .radio__label__primary,
+.content-box__emphasis {
+  color: #e6e1d6 !important;
+  font-family: "Work Sans", system-ui, sans-serif !important;
+  font-size: 0.85rem !important;
+}
+
+.radio-wrapper .radio__label__accessory,
+.content-box__small-text {
+  color: rgba(230, 225, 214, 0.42) !important;
+  font-size: 0.7rem !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════════ */
+.main-footer,
+.os-footer {
+  background: #0a0a09 !important;
+  border-top: 1px solid rgba(230, 225, 214, 0.06) !important;
+}
+
+.main-footer a,
+.os-footer a,
+.policy-separator,
+.policy-separator + a {
+  color: rgba(230, 225, 214, 0.3) !important;
+  font-size: 0.6rem !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+}
+
+.main-footer a:hover,
+.os-footer a:hover {
+  color: rgba(230, 225, 214, 0.75) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NOTIFICATION / ALERT BANNERS
+═══════════════════════════════════════════════════════════════ */
+.notice,
+.notice--warning,
+.notice--error {
+  background-color: rgba(230, 225, 214, 0.04) !important;
+  border: 1px solid rgba(230, 225, 214, 0.1) !important;
+  color: #e6e1d6 !important;
+  border-radius: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL BAR — webkit only, subtle cream
+═══════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #0a0a09; }
+::-webkit-scrollbar-thumb { background: rgba(230, 225, 214, 0.15); }
+::-webkit-scrollbar-thumb:hover { background: rgba(230, 225, 214, 0.3); }
