@@ -99,6 +99,7 @@
   },
   "product": {
     "choose_variant": "Choose size",
+    "color": "Color",
     "quantity": "Quantity",
     "add_to_cart": "Add to bag",
     "adding": "Adding…",
