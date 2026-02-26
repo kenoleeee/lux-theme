@@ -1,0 +1,44 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "about": {
+      "type": "about",
+      "settings": {
+        "hero_line1": "The art of",
+        "hero_line2": "considered form.",
+        "manifesto": "We make clothes for those who believe that getting dressed is an act of intention.\nNot a performance. Not a trend.\nAn archive built one piece at a time.",
+        "manifesto_cite": "KENOLDEV Studio, 2026",
+        "ch1_tag": "Origin",
+        "ch1_title": "Architecture of the everyday",
+        "ch1_text": "<p>KENOLDEV was founded on a single premise: that clothing should function as architecture—structures that frame the body without constraining it. Each piece begins not with mood boards, but with geometry.</p><p>We study proportion, fall of fabric, and the mechanics of how cloth moves through space. The result is a garment that belongs to both the wearer and the discipline of making.</p>",
+        "ch2_tag": "Philosophy",
+        "ch2_title": "Four pillars of the archive",
+        "ch2_text": "<p>Material, Form, Silence, Time. These four coordinates define every decision made in the studio. They are not categories. They are axes on which a garment is measured.</p>",
+        "p1_title": "Material",
+        "p1_text": "We source only fabrics that improve with age. Linen, heavy wool, washed silk. Nothing synthetic unless it exists for a structural reason.",
+        "p2_title": "Form",
+        "p2_text": "Every silhouette begins as a geometric problem. We solve it through proportion before we consider beauty. Beauty emerges from correctness.",
+        "p3_title": "Silence",
+        "p3_text": "We remove. We reduce. We resist the urge to add. A garment earns its presence through restraint, not decoration.",
+        "p4_title": "Time",
+        "p4_text": "We design for a decade, not a season. Each piece is intended to become more itself—more worn in, more personal—with every passing year.",
+        "ch3_tag": "Process",
+        "ch3_title": "From concept to archive",
+        "ch3_text": "<p>Each collection moves through five defined stages. The process is iterative, not linear—we return to earlier phases as often as necessary. The diagram is a map, not a calendar.</p><p>We never release a piece until it has passed through all five stages with conviction. This is why our output is small and deliberate.</p>",
+        "closing_eyebrow": "The archive is open",
+        "closing_statement": "Everything we make is an argument for slowness.",
+        "closing_cta_label": "Enter the archive",
+        "closing_cta_url": "/collections"
+      }
+    }
+  },
+  "order": ["about"]
+}

@@ -1,0 +1,1039 @@
+{% comment %}
+  About page — "Dark Luxury Editorial / Long-read"
+  SVG line-drawing animations triggered on scroll via IntersectionObserver.
+  All body text editable through Theme Editor.
+{% endcomment %}
+
+<div class="abt full-width">
+
+  {%- comment -%} ── 00 · OPENING STATEMENT ───────────────────────── {%- endcomment -%}
+  <section class="abt__opening">
+    <span class="abt__opening-index">00 — Studio</span>
+    <h1 class="abt__opening-title">
+      <span class="abt__opening-line1">{{ section.settings.hero_line1 }}</span>
+      <em  class="abt__opening-line2">{{ section.settings.hero_line2 }}</em>
+    </h1>
+    <div class="abt__opening-rule"></div>
+  </section>
+
+  {%- comment -%} ── MANIFESTO ────────────────────────────────────── {%- endcomment -%}
+  <section class="abt__manifesto">
+    <blockquote class="abt__manifesto-quote">
+      {{ section.settings.manifesto | newline_to_br }}
+    </blockquote>
+    <cite class="abt__manifesto-cite">{{ section.settings.manifesto_cite }}</cite>
+  </section>
+
+  {%- comment -%} ── 01 · ORIGIN — text + SVG garment diagram ──────── {%- endcomment -%}
+  <section class="abt__chapter abt__chapter--split" id="abt-origin">
+    <div class="abt__chapter-meta">
+      <span class="abt__chapter-num">01</span>
+      <span class="abt__chapter-tag">{{ section.settings.ch1_tag }}</span>
+    </div>
+
+    <div class="abt__chapter-body">
+      <h2 class="abt__chapter-title">{{ section.settings.ch1_title }}</h2>
+      <div class="abt__chapter-text">{{ section.settings.ch1_text }}</div>
+    </div>
+
+    <figure class="abt__diagram abt__diagram--right" aria-hidden="true">
+      <svg class="svg-animated" viewBox="0 0 480 620" fill="none"
+           xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Garment proportion diagram">
+
+        {%- comment -%} ── Background grid ── {%- endcomment -%}
+        <line x1="160" y1="0"   x2="160" y2="620" stroke="#e6e1d6" stroke-width="0.3" stroke-dasharray="4 6" class="svg-bg"/>
+        <line x1="320" y1="0"   x2="320" y2="620" stroke="#e6e1d6" stroke-width="0.3" stroke-dasharray="4 6" class="svg-bg"/>
+        <line x1="0"   y1="155" x2="480" y2="155" stroke="#e6e1d6" stroke-width="0.3" stroke-dasharray="4 6" class="svg-bg"/>
+        <line x1="0"   y1="310" x2="480" y2="310" stroke="#e6e1d6" stroke-width="0.3" stroke-dasharray="4 6" class="svg-bg"/>
+        <line x1="0"   y1="465" x2="480" y2="465" stroke="#e6e1d6" stroke-width="0.3" stroke-dasharray="4 6" class="svg-bg"/>
+
+        {%- comment -%} ── Central axis ── {%- endcomment -%}
+        <path d="M 240 30 L 240 590" stroke="#e6e1d6" stroke-width="0.6" stroke-dasharray="6 5"/>
+
+        {%- comment -%} ── Shoulder curve ── {%- endcomment -%}
+        <path d="M 80 155 Q 160 135 240 128 Q 320 135 400 155"
+              stroke="#e6e1d6" stroke-width="1.2"/>
+
+        {%- comment -%} ── Collar / neck ── {%- endcomment -%}
+        <path d="M 200 128 Q 225 100 240 95 Q 255 100 280 128"
+              stroke="#e6e1d6" stroke-width="1.2"/>
+
+        {%- comment -%} ── Side seams ── {%- endcomment -%}
+        <path d="M 80 155 C 70 240 90 330 110 465 L 130 590"
+              stroke="#e6e1d6" stroke-width="1.2"/>
+        <path d="M 400 155 C 410 240 390 330 370 465 L 350 590"
+              stroke="#e6e1d6" stroke-width="1.2"/>
+
+        {%- comment -%} ── Hem ── {%- endcomment -%}
+        <path d="M 130 590 L 350 590" stroke="#e6e1d6" stroke-width="1.2"/>
+
+        {%- comment -%} ── Waist line ── {%- endcomment -%}
+        <path d="M 100 310 L 380 310" stroke="#e6e1d6" stroke-width="0.8"/>
+
+        {%- comment -%} ── Hip line ── {%- endcomment -%}
+        <path d="M 95 385 L 385 385" stroke="#e6e1d6" stroke-width="0.8"/>
+
+        {%- comment -%} ── Left measurement bracket ── {%- endcomment -%}
+        <path d="M 38 155 L 28 155 L 28 590 L 38 590"
+              stroke="#e6e1d6" stroke-width="0.8"/>
+        <path d="M 28 372 L 18 372" stroke="#e6e1d6" stroke-width="0.8"/>
+
+        {%- comment -%} ── Right measurement bracket ── {%- endcomment -%}
+        <path d="M 442 155 L 452 155 L 452 310 L 442 310"
+              stroke="#e6e1d6" stroke-width="0.8"/>
+
+        {%- comment -%} ── Crosshair markers ── {%- endcomment -%}
+        <path d="M 230 95 L 250 95 M 240 85 L 240 105"
+              stroke="#e6e1d6" stroke-width="0.9"/>
+        <path d="M 230 128 L 250 128 M 240 118 L 240 138"
+              stroke="#e6e1d6" stroke-width="0.6"/>
+        <path d="M 230 310 L 250 310 M 240 300 L 240 320"
+              stroke="#e6e1d6" stroke-width="0.6"/>
+        <path d="M 230 590 L 250 590" stroke="#e6e1d6" stroke-width="0.6"/>
+
+        {%- comment -%} ── Sleeve hint (right) ── {%- endcomment -%}
+        <path d="M 400 155 Q 445 175 455 245 L 450 295 Q 445 300 438 295 L 432 245 Q 422 188 408 172"
+              stroke="#e6e1d6" stroke-width="1" stroke-dasharray="5 4"/>
+
+        {%- comment -%} ── SVG text labels ── {%- endcomment -%}
+        <text x="13"  y="374" fill="#e6e1d6" font-size="7" font-family="Work Sans, sans-serif"
+              letter-spacing="0.2" text-anchor="middle" transform="rotate(-90 13 374)" opacity="0.45">TOTAL LENGTH</text>
+        <text x="452" y="234" fill="#e6e1d6" font-size="7" font-family="Work Sans, sans-serif"
+              letter-spacing="0.2" text-anchor="middle" transform="rotate(90 452 234)" opacity="0.45">SHOULDER</text>
+        <text x="240" y="83"  fill="#e6e1d6" font-size="7" font-family="Work Sans, sans-serif"
+              letter-spacing="0.2" text-anchor="middle" opacity="0.45">NECKLINE</text>
+        <text x="380" y="306" fill="#e6e1d6" font-size="7" font-family="Work Sans, sans-serif"
+              letter-spacing="0.2" opacity="0.45">WAIST</text>
+        <text x="380" y="381" fill="#e6e1d6" font-size="7" font-family="Work Sans, sans-serif"
+              letter-spacing="0.2" opacity="0.45">HIP</text>
+
+        {%- comment -%} ── Corner index ── {%- endcomment -%}
+        <text x="12" y="16" fill="#e6e1d6" font-size="8" font-family="Work Sans, sans-serif"
+              letter-spacing="0.18" opacity="0.28">FIG.01</text>
+
+      </svg>
+      <figcaption class="abt__diagram-caption">
+        Fig.&thinsp;01 — Construction Grammar
+      </figcaption>
+    </figure>
+  </section>
+
+  {%- comment -%} ── 02 · PHILOSOPHY — full-width diamond SVG ─────── {%- endcomment -%}
+  <section class="abt__chapter abt__chapter--stacked" id="abt-philosophy">
+    <div class="abt__chapter-meta">
+      <span class="abt__chapter-num">02</span>
+      <span class="abt__chapter-tag">{{ section.settings.ch2_tag }}</span>
+    </div>
+
+    <figure class="abt__diagram abt__diagram--full" aria-hidden="true">
+      <svg class="svg-animated" viewBox="0 0 700 480" fill="none"
+           xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four-pillar concept diagram">
+
+        {%- comment -%} ── Outer diamond ── {%- endcomment -%}
+        <path d="M 350 40 L 650 240 L 350 440 L 50 240 Z"
+              stroke="#e6e1d6" stroke-width="0.9"/>
+
+        {%- comment -%} ── Inner diamond ── {%- endcomment -%}
+        <path d="M 350 110 L 580 240 L 350 370 L 120 240 Z"
+              stroke="#e6e1d6" stroke-width="0.5" stroke-dasharray="4 5" opacity="0.4"/>
+
+        {%- comment -%} ── Axes ── {%- endcomment -%}
+        <path d="M 50 240 L 650 240" stroke="#e6e1d6" stroke-width="0.7"/>
+        <path d="M 350 40 L 350 440" stroke="#e6e1d6" stroke-width="0.7"/>
+
+        {%- comment -%} ── Diagonal construction lines ── {%- endcomment -%}
+        <path d="M 350 40 L 650 240 M 650 240 L 350 440 M 350 440 L 50 240 M 50 240 L 350 40"
+              stroke="#e6e1d6" stroke-width="0.4" opacity="0.2"/>
+
+        {%- comment -%} ── Arc at top node ── {%- endcomment -%}
+        <path d="M 320 68 Q 350 52 380 68"
+              stroke="#e6e1d6" stroke-width="0.7" opacity="0.6"/>
+
+        {%- comment -%} ── Arc at right node ── {%- endcomment -%}
+        <path d="M 628 212 Q 644 240 628 268"
+              stroke="#e6e1d6" stroke-width="0.7" opacity="0.6"/>
+
+        {%- comment -%} ── Arc at bottom node ── {%- endcomment -%}
+        <path d="M 320 412 Q 350 428 380 412"
+              stroke="#e6e1d6" stroke-width="0.7" opacity="0.6"/>
+
+        {%- comment -%} ── Arc at left node ── {%- endcomment -%}
+        <path d="M 72 212 Q 56 240 72 268"
+              stroke="#e6e1d6" stroke-width="0.7" opacity="0.6"/>
+
+        {%- comment -%} ── Center circle ── {%- endcomment -%}
+        <circle cx="350" cy="240" r="22" stroke="#e6e1d6" stroke-width="0.9"/>
+        <circle cx="350" cy="240" r="5"  fill="#e6e1d6" opacity="0.7"/>
+
+        {%- comment -%} ── Node dots ── {%- endcomment -%}
+        <circle cx="350" cy="40"  r="5" stroke="#e6e1d6" stroke-width="1" fill="#0a0a09"/>
+        <circle cx="650" cy="240" r="5" stroke="#e6e1d6" stroke-width="1" fill="#0a0a09"/>
+        <circle cx="350" cy="440" r="5" stroke="#e6e1d6" stroke-width="1" fill="#0a0a09"/>
+        <circle cx="50"  cy="240" r="5" stroke="#e6e1d6" stroke-width="1" fill="#0a0a09"/>
+
+        {%- comment -%} ── Mid-edge small marks ── {%- endcomment -%}
+        <circle cx="500" cy="140" r="2.5" stroke="#e6e1d6" stroke-width="0.8" fill="#0a0a09" opacity="0.5"/>
+        <circle cx="500" cy="340" r="2.5" stroke="#e6e1d6" stroke-width="0.8" fill="#0a0a09" opacity="0.5"/>
+        <circle cx="200" cy="140" r="2.5" stroke="#e6e1d6" stroke-width="0.8" fill="#0a0a09" opacity="0.5"/>
+        <circle cx="200" cy="340" r="2.5" stroke="#e6e1d6" stroke-width="0.8" fill="#0a0a09" opacity="0.5"/>
+
+        {%- comment -%} ── Axis tick marks ── {%- endcomment -%}
+        <path d="M 200 234 L 200 246" stroke="#e6e1d6" stroke-width="0.7" opacity="0.4"/>
+        <path d="M 350 140 L 362 140" stroke="#e6e1d6" stroke-width="0.7" opacity="0.4"/>
+        <path d="M 500 234 L 500 246" stroke="#e6e1d6" stroke-width="0.7" opacity="0.4"/>
+        <path d="M 350 340 L 362 340" stroke="#e6e1d6" stroke-width="0.7" opacity="0.4"/>
+
+        {%- comment -%} ── Labels ── {%- endcomment -%}
+        <text x="350" y="20"  fill="#e6e1d6" font-size="9" font-family="Work Sans, sans-serif"
+              letter-spacing="0.3" text-anchor="middle" text-transform="uppercase" opacity="0.7">MATERIAL</text>
+        <text x="672" y="244" fill="#e6e1d6" font-size="9" font-family="Work Sans, sans-serif"
+              letter-spacing="0.3" text-anchor="start" opacity="0.7">FORM</text>
+        <text x="350" y="460" fill="#e6e1d6" font-size="9" font-family="Work Sans, sans-serif"
+              letter-spacing="0.3" text-anchor="middle" opacity="0.7">SILENCE</text>
+        <text x="28"  y="244" fill="#e6e1d6" font-size="9" font-family="Work Sans, sans-serif"
+              letter-spacing="0.3" text-anchor="end" opacity="0.7">TIME</text>
+
+        {%- comment -%} ── Figure index ── {%- endcomment -%}
+        <text x="14" y="16" fill="#e6e1d6" font-size="8" font-family="Work Sans, sans-serif"
+              letter-spacing="0.18" opacity="0.28">FIG.02</text>
+
+      </svg>
+      <figcaption class="abt__diagram-caption">
+        Fig.&thinsp;02 — Four Pillars of the Archive
+      </figcaption>
+    </figure>
+
+    <div class="abt__chapter-body abt__chapter-body--centered">
+      <h2 class="abt__chapter-title">{{ section.settings.ch2_title }}</h2>
+      <div class="abt__chapter-text abt__chapter-text--wide">{{ section.settings.ch2_text }}</div>
+    </div>
+  </section>
+
+  {%- comment -%} ── PILLARS — 4-column grid ──────────────────────── {%- endcomment -%}
+  <section class="abt__pillars">
+    <div class="abt__pillars-grid">
+      <div class="abt__pillar">
+        <span class="abt__pillar-index">I</span>
+        <h3 class="abt__pillar-title">{{ section.settings.p1_title }}</h3>
+        <p   class="abt__pillar-text">{{ section.settings.p1_text }}</p>
+      </div>
+      <div class="abt__pillar">
+        <span class="abt__pillar-index">II</span>
+        <h3 class="abt__pillar-title">{{ section.settings.p2_title }}</h3>
+        <p   class="abt__pillar-text">{{ section.settings.p2_text }}</p>
+      </div>
+      <div class="abt__pillar">
+        <span class="abt__pillar-index">III</span>
+        <h3 class="abt__pillar-title">{{ section.settings.p3_title }}</h3>
+        <p   class="abt__pillar-text">{{ section.settings.p3_text }}</p>
+      </div>
+      <div class="abt__pillar">
+        <span class="abt__pillar-index">IV</span>
+        <h3 class="abt__pillar-title">{{ section.settings.p4_title }}</h3>
+        <p   class="abt__pillar-text">{{ section.settings.p4_text }}</p>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ── 03 · PROCESS — text left + timeline SVG right ── {%- endcomment -%}
+  <section class="abt__chapter abt__chapter--split abt__chapter--reverse" id="abt-process">
+    <div class="abt__chapter-meta">
+      <span class="abt__chapter-num">03</span>
+      <span class="abt__chapter-tag">{{ section.settings.ch3_tag }}</span>
+    </div>
+
+    <div class="abt__chapter-body">
+      <h2 class="abt__chapter-title">{{ section.settings.ch3_title }}</h2>
+      <div class="abt__chapter-text">{{ section.settings.ch3_text }}</div>
+    </div>
+
+    <figure class="abt__diagram abt__diagram--right" aria-hidden="true">
+      <svg class="svg-animated" viewBox="0 0 380 580" fill="none"
+           xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Creative process timeline">
+
+        {%- comment -%} ── Vertical spine ── {%- endcomment -%}
+        <path d="M 90 50 L 90 530" stroke="#e6e1d6" stroke-width="1"/>
+
+        {%- comment -%} ── Step 01 ── {%- endcomment -%}
+        <circle cx="90" cy="80"  r="8"  stroke="#e6e1d6" stroke-width="1" fill="#0a0a09"/>
+        <circle cx="90" cy="80"  r="2.5" fill="#e6e1d6"/>
+        <path d="M 90 80 L 160 80" stroke="#e6e1d6" stroke-width="0.8"/>
+        <path d="M 160 80 L 360 80" stroke="#e6e1d6" stroke-width="0.5" stroke-dasharray="3 4" opacity="0.4"/>
+
+        {%- comment -%} ── Step 02 ── {%- endcomment -%}
+        <circle cx="90" cy="188" r="8"  stroke="#e6e1d6" stroke-width="1" fill="#0a0a09"/>
+        <circle cx="90" cy="188" r="2.5" fill="#e6e1d6" opacity="0.8"/>
+        <path d="M 90 188 L 160 188" stroke="#e6e1d6" stroke-width="0.8"/>
+        <path d="M 160 188 L 360 188" stroke="#e6e1d6" stroke-width="0.5" stroke-dasharray="3 4" opacity="0.4"/>
+
+        {%- comment -%} ── Step 03 (active) ── {%- endcomment -%}
+        <circle cx="90" cy="296" r="12" stroke="#e6e1d6" stroke-width="1.2" fill="#0a0a09"/>
+        <circle cx="90" cy="296" r="4"  fill="#e6e1d6"/>
+        <path d="M 90 296 L 160 296" stroke="#e6e1d6" stroke-width="1"/>
+        <path d="M 160 296 L 360 296" stroke="#e6e1d6" stroke-width="0.5" stroke-dasharray="3 4" opacity="0.4"/>
+        {%- comment -%} Active bracket ── {%- endcomment -%}
+        <path d="M 155 278 L 148 278 L 148 314 L 155 314"
+              stroke="#e6e1d6" stroke-width="0.8" opacity="0.5"/>
+
+        {%- comment -%} ── Step 04 ── {%- endcomment -%}
+        <circle cx="90" cy="404" r="8"  stroke="#e6e1d6" stroke-width="1" fill="#0a0a09"/>
+        <circle cx="90" cy="404" r="2.5" fill="#e6e1d6" opacity="0.6"/>
+        <path d="M 90 404 L 160 404" stroke="#e6e1d6" stroke-width="0.8"/>
+        <path d="M 160 404 L 360 404" stroke="#e6e1d6" stroke-width="0.5" stroke-dasharray="3 4" opacity="0.4"/>
+
+        {%- comment -%} ── Step 05 ── {%- endcomment -%}
+        <circle cx="90" cy="510" r="8"  stroke="#e6e1d6" stroke-width="1" fill="#0a0a09"/>
+        <path d="M 90 510 L 160 510" stroke="#e6e1d6" stroke-width="0.8"/>
+        <path d="M 160 510 L 360 510" stroke="#e6e1d6" stroke-width="0.5" stroke-dasharray="3 4" opacity="0.4"/>
+
+        {%- comment -%} ── Step labels ── {%- endcomment -%}
+        <text x="168" y="75" fill="#e6e1d6" font-size="7.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.25" opacity="0.35">01</text>
+        <text x="168" y="86" fill="#e6e1d6" font-size="9.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.15" opacity="0.82">CONCEPT</text>
+
+        <text x="168" y="183" fill="#e6e1d6" font-size="7.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.25" opacity="0.35">02</text>
+        <text x="168" y="194" fill="#e6e1d6" font-size="9.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.15" opacity="0.82">MATERIAL</text>
+
+        <text x="168" y="291" fill="#e6e1d6" font-size="7.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.25" opacity="0.35">03</text>
+        <text x="168" y="302" fill="#e6e1d6" font-size="9.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.15">PATTERN</text>
+        <text x="168" y="320" fill="#e6e1d6" font-size="7.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.12" opacity="0.38">Current phase</text>
+
+        <text x="168" y="399" fill="#e6e1d6" font-size="7.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.25" opacity="0.35">04</text>
+        <text x="168" y="410" fill="#e6e1d6" font-size="9.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.15" opacity="0.82">CRAFT</text>
+
+        <text x="168" y="505" fill="#e6e1d6" font-size="7.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.25" opacity="0.35">05</text>
+        <text x="168" y="516" fill="#e6e1d6" font-size="9.5" font-family="Work Sans, sans-serif"
+              letter-spacing="0.15" opacity="0.82">ARCHIVE</text>
+
+        {%- comment -%} ── Connection curve from last to first (loop) ── {%- endcomment -%}
+        <path d="M 90 510 Q 30 510 25 296 Q 20 80 90 80"
+              stroke="#e6e1d6" stroke-width="0.5" stroke-dasharray="3 5" opacity="0.2"/>
+
+        <text x="14" y="16" fill="#e6e1d6" font-size="8" font-family="Work Sans, sans-serif"
+              letter-spacing="0.18" opacity="0.28">FIG.03</text>
+
+      </svg>
+      <figcaption class="abt__diagram-caption">
+        Fig.&thinsp;03 — The Making Process
+      </figcaption>
+    </figure>
+  </section>
+
+  {%- comment -%} ── CLOSING STATEMENT ────────────────────────────── {%- endcomment -%}
+  <section class="abt__closing">
+    <div class="abt__closing-rule"></div>
+    <p  class="abt__closing-eyebrow">{{ section.settings.closing_eyebrow }}</p>
+    <blockquote class="abt__closing-statement">
+      {{ section.settings.closing_statement }}
+    </blockquote>
+    {% if section.settings.closing_cta_label != blank %}
+      <a href="{{ section.settings.closing_cta_url | default: routes.collections_url }}"
+         class="abt__closing-cta">
+        {{ section.settings.closing_cta_label }}
+      </a>
+    {% endif %}
+  </section>
+
+</div>
+
+{% stylesheet %}
+  /* ── Tokens ──────────────────────────────────────────────── */
+  .abt {
+    --bg:    #0a0a09;
+    --cream: #e6e1d6;
+    --muted: rgba(230, 225, 214, 0.42);
+    --line:  rgba(230, 225, 214, 0.08);
+    --serif: var(--font-heading--family, "Playfair Display", Georgia, serif);
+    --sans:  var(--font-body--family,    "Work Sans", system-ui, sans-serif);
+  }
+
+  /* ── Wrapper ──────────────────────────────────────────────── */
+  .abt {
+    background:    #0a0a09 !important;
+    color:         var(--cream);
+    padding:       0;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     00 · OPENING
+  ═══════════════════════════════════════════════════════════ */
+  .abt__opening {
+    padding:    clamp(7rem, 14vh, 11rem) clamp(1.5rem, 7vw, 8rem) clamp(4rem, 8vw, 6rem);
+    position:   relative;
+  }
+
+  .abt__opening-index {
+    display:        block;
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin-bottom:  2.5rem;
+  }
+
+  .abt__opening-title {
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-size:      clamp(4rem, 10vw, 11rem);
+    line-height:    0.88;
+    letter-spacing: -0.03em;
+    display:        flex;
+    flex-direction: column;
+    margin:         0;
+    color:          var(--cream);
+  }
+
+  .abt__opening-line1 { display: block; }
+  .abt__opening-line2 {
+    display:      block;
+    padding-left: clamp(2rem, 8vw, 9rem);
+    font-style:   italic;
+  }
+
+  .abt__opening-rule {
+    position:  absolute;
+    bottom:    0;
+    left:      clamp(1.5rem, 7vw, 8rem);
+    right:     clamp(1.5rem, 7vw, 8rem);
+    height:    1px;
+    background: var(--line);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     MANIFESTO
+  ═══════════════════════════════════════════════════════════ */
+  .abt__manifesto {
+    padding:    clamp(5rem, 10vw, 9rem) clamp(1.5rem, 14vw, 16rem);
+    text-align: center;
+  }
+
+  .abt__manifesto-quote {
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-style:     italic;
+    font-size:      clamp(1.5rem, 3.2vw, 3.2rem);
+    line-height:    1.4;
+    letter-spacing: -0.01em;
+    color:          var(--cream);
+    margin:         0 0 2rem;
+    quotes:         none;
+    border:         none;
+    padding:        0;
+  }
+
+  .abt__manifesto-cite {
+    display:        block;
+    font-family:    var(--sans);
+    font-size:      0.6rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    font-style:     normal;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     CHAPTERS — shared layout
+  ═══════════════════════════════════════════════════════════ */
+  .abt__chapter {
+    padding:    clamp(5rem, 10vw, 9rem) clamp(1.5rem, 7vw, 8rem);
+    border-top: 1px solid var(--line);
+    position:   relative;
+  }
+
+  .abt__chapter-meta {
+    display:        flex;
+    align-items:    baseline;
+    gap:            1rem;
+    margin-bottom:  3rem;
+  }
+
+  .abt__chapter-num {
+    font-family:    var(--sans);
+    font-size:      clamp(2.8rem, 6vw, 6rem);
+    font-weight:    100;
+    letter-spacing: -0.04em;
+    color:          var(--cream);
+    opacity:        0.12;
+    line-height:    1;
+  }
+
+  .abt__chapter-tag {
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color:          var(--muted);
+  }
+
+  .abt__chapter-title {
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-size:      clamp(2rem, 4.5vw, 5rem);
+    line-height:    1.05;
+    letter-spacing: -0.02em;
+    color:          var(--cream);
+    margin:         0 0 2rem;
+  }
+
+  .abt__chapter-text {
+    font-family:  var(--sans);
+    font-size:    clamp(0.9rem, 1.4vw, 1.08rem);
+    line-height:  1.9;
+    color:        var(--muted);
+    max-width:    50ch;
+  }
+
+  .abt__chapter-text--wide { max-width: 66ch; }
+  .abt__chapter-text p { margin: 0 0 1.2em; }
+
+  /* ── Split layout (text + diagram side by side) ──────────── */
+  .abt__chapter--split .abt__chapter-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  @media (min-width: 900px) {
+    .abt__chapter--split > :not(.abt__chapter-meta) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 7rem);
+      align-items: start;
+    }
+
+    .abt__chapter--reverse > :not(.abt__chapter-meta) {
+      direction: rtl;
+    }
+    .abt__chapter--reverse > :not(.abt__chapter-meta) > * {
+      direction: ltr;
+    }
+  }
+
+  /* ── Stacked layout (SVG above, text below) ─────────────── */
+  .abt__chapter--stacked .abt__chapter-body--centered {
+    max-width:  72ch;
+    margin:     4rem auto 0;
+    text-align: center;
+  }
+
+  .abt__chapter--stacked .abt__chapter-body--centered .abt__chapter-text {
+    max-width: 60ch;
+    margin: 0 auto;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     SVG DIAGRAMS
+  ═══════════════════════════════════════════════════════════ */
+  .abt__diagram {
+    margin: 0;
+  }
+
+  .abt__diagram--right {
+    flex-shrink: 0;
+  }
+
+  .abt__diagram--full svg {
+    width:  100%;
+    height: auto;
+    max-width: 700px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .abt__diagram--right svg {
+    width:  100%;
+    height: auto;
+  }
+
+  .abt__diagram-caption {
+    display:        block;
+    margin-top:     1.4rem;
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    opacity:        0.6;
+    text-align:     center;
+  }
+
+  /* ── Background grid lines: always visible (no draw anim) ── */
+  .svg-bg {
+    opacity: 0.15;
+    /* override JS animation setup for bg lines */
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+  }
+
+  /* ── Drawn paths — initial hidden state ──────────────────── */
+  .svg-animated path,
+  .svg-animated line,
+  .svg-animated polyline,
+  .svg-animated ellipse {
+    stroke-dasharray:  2000;
+    stroke-dashoffset: 2000;
+    transition: stroke-dashoffset 0s; /* JS will set duration */
+  }
+
+  /* circles need separate handling via JS (getTotalLength workaround) */
+  .svg-animated circle {
+    transition: opacity 0.4s ease, r 0.4s ease;
+    opacity: 0;
+  }
+
+  /* SVG text labels fade in together */
+  .svg-animated text {
+    opacity: 0 !important;
+    transition: opacity 0.6s ease;
+  }
+
+  /* active state — triggered by JS adding .is-drawn to the <svg> */
+  .svg-animated.is-drawn path,
+  .svg-animated.is-drawn line,
+  .svg-animated.is-drawn polyline,
+  .svg-animated.is-drawn ellipse {
+    stroke-dashoffset: 0;
+  }
+
+  .svg-animated.is-drawn circle { opacity: 1; }
+  .svg-animated.is-drawn text   { opacity: 1 !important; }
+
+  /* bg lines stay visible regardless of draw state */
+  .svg-animated.is-drawn .svg-bg,
+  .svg-animated:not(.is-drawn) .svg-bg {
+    opacity:           0.12 !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     PILLARS
+  ═══════════════════════════════════════════════════════════ */
+  .abt__pillars {
+    padding:    0 clamp(1.5rem, 7vw, 8rem) clamp(5rem, 10vw, 9rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .abt__pillars-grid {
+    display:               grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap:                   3rem 4rem;
+    padding-top:           4rem;
+  }
+
+  .abt__pillar-index {
+    display:        block;
+    font-family:    var(--serif);
+    font-style:     italic;
+    font-size:      1.8rem;
+    font-weight:    300;
+    color:          var(--cream);
+    opacity:        0.22;
+    margin-bottom:  1.2rem;
+    line-height:    1;
+  }
+
+  .abt__pillar-title {
+    font-family:    var(--sans);
+    font-size:      0.62rem;
+    font-weight:    400;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color:          var(--cream);
+    margin:         0 0 1rem;
+  }
+
+  .abt__pillar-text {
+    font-family: var(--sans);
+    font-size:   0.82rem;
+    line-height: 1.8;
+    color:       var(--muted);
+    margin:      0;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     CLOSING STATEMENT
+  ═══════════════════════════════════════════════════════════ */
+  .abt__closing {
+    padding:    clamp(6rem, 12vw, 11rem) clamp(1.5rem, 14vw, 16rem);
+    text-align: center;
+    border-top: 1px solid var(--line);
+  }
+
+  .abt__closing-rule {
+    width:      3rem;
+    height:     1px;
+    background: rgba(230, 225, 214, 0.25);
+    margin:     0 auto 3rem;
+  }
+
+  .abt__closing-eyebrow {
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 2.5rem;
+  }
+
+  .abt__closing-statement {
+    font-family:    var(--serif);
+    font-weight:    300;
+    font-style:     italic;
+    font-size:      clamp(1.8rem, 3.5vw, 4rem);
+    line-height:    1.3;
+    letter-spacing: -0.02em;
+    color:          var(--cream);
+    margin:         0 0 3rem;
+    quotes:         none;
+    border:         none;
+    padding:        0;
+  }
+
+  .abt__closing-cta {
+    display:        inline-block;
+    font-family:    var(--sans);
+    font-size:      0.62rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color:          var(--cream);
+    text-decoration: none;
+    border-bottom:  1px solid rgba(230, 225, 214, 0.35);
+    padding-bottom: 3px;
+    transition:     border-color 250ms ease, color 250ms ease;
+  }
+
+  .abt__closing-cta:hover {
+    color:        #fff;
+    border-color: var(--cream);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════════════════════════ */
+  @media (max-width: 900px) {
+    .abt__pillars-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2.5rem 2rem;
+    }
+
+    .abt__diagram--right {
+      margin-top: 3rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .abt__opening-title {
+      font-size: clamp(3rem, 14vw, 5rem);
+    }
+
+    .abt__manifesto-quote {
+      font-size: clamp(1.3rem, 5.5vw, 2rem);
+    }
+
+    .abt__pillars-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .abt__chapter--reverse > :not(.abt__chapter-meta) {
+      direction: ltr;
+    }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .svg-animated path,
+    .svg-animated line,
+    .svg-animated polyline,
+    .svg-animated ellipse,
+    .svg-animated circle,
+    .svg-animated text {
+      transition: none !important;
+      stroke-dashoffset: 0 !important;
+      opacity: 1 !important;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    'use strict';
+
+    /* ── Give each path its own stagger delay ─────────────── */
+    function prepareSvg(svg) {
+      var STEP = 140; /* ms between sequential path draws */
+      var drawables = Array.from(
+        svg.querySelectorAll('path, line, polyline, ellipse')
+      ).filter(function (el) {
+        return !el.classList.contains('svg-bg');
+      });
+
+      drawables.forEach(function (el, i) {
+        var len;
+        try { len = el.getTotalLength(); } catch (e) { len = 800; }
+        el.style.strokeDasharray  = len;
+        el.style.strokeDashoffset = len;
+        var dur = Math.max(1.0, len / 320);
+        el.style.transition =
+          'stroke-dashoffset ' + dur.toFixed(2) + 's ' +
+          'cubic-bezier(0.23, 1, 0.32, 1) ' +
+          (i * STEP) + 'ms';
+      });
+
+      /* Circles: just fade in with stagger */
+      Array.from(svg.querySelectorAll('circle')).forEach(function (el, i) {
+        el.style.transition = 'opacity 0.5s ease ' + (i * STEP * 0.6) + 'ms';
+        el.style.opacity = '0';
+      });
+
+      /* Text labels: fade in after paths */
+      var maxPathDelay = drawables.length * STEP;
+      Array.from(svg.querySelectorAll('text')).forEach(function (el, i) {
+        el.style.transition =
+          'opacity 0.55s ease ' + (maxPathDelay + i * 80) + 'ms';
+      });
+    }
+
+    /* ── Trigger drawing when SVG enters viewport ─────────── */
+    function drawSvg(svg) {
+      svg.classList.add('is-drawn');
+      /* circles need explicit opacity reset (CSS class won't affect inline) */
+      Array.from(svg.querySelectorAll('circle')).forEach(function (el) {
+        el.style.opacity = '';
+      });
+      Array.from(svg.querySelectorAll('text')).forEach(function (el) {
+        /* remove the !important override so transition takes over */
+        el.style.opacity = '1';
+      });
+    }
+
+    function init() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      var svgs = document.querySelectorAll('.svg-animated');
+      if (!svgs.length) return;
+
+      svgs.forEach(prepareSvg);
+
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          drawSvg(entry.target);
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0.18 });
+
+      svgs.forEach(function (svg) { io.observe(svg); });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    /* Re-run after Shopify section re-render in editor */
+    document.addEventListener('shopify:section:load', init);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "About",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Opening"
+    },
+    {
+      "type": "text",
+      "id": "hero_line1",
+      "label": "Title — Line 1",
+      "default": "The art of"
+    },
+    {
+      "type": "text",
+      "id": "hero_line2",
+      "label": "Title — Line 2 (italic)",
+      "default": "considered form."
+    },
+    {
+      "type": "header",
+      "content": "Manifesto"
+    },
+    {
+      "type": "textarea",
+      "id": "manifesto",
+      "label": "Manifesto quote",
+      "default": "We make clothes for those who believe that getting dressed is an act of intention.\nNot a performance. Not a trend.\nAn archive built one piece at a time."
+    },
+    {
+      "type": "text",
+      "id": "manifesto_cite",
+      "label": "Citation / source",
+      "default": "KENOLDEV Studio, 2026"
+    },
+    {
+      "type": "header",
+      "content": "Chapter 01 — Origin"
+    },
+    {
+      "type": "text",
+      "id": "ch1_tag",
+      "label": "Chapter tag",
+      "default": "Origin"
+    },
+    {
+      "type": "text",
+      "id": "ch1_title",
+      "label": "Chapter title",
+      "default": "Architecture of the everyday"
+    },
+    {
+      "type": "richtext",
+      "id": "ch1_text",
+      "label": "Chapter text",
+      "default": "<p>KENOLDEV was founded on a single premise: that clothing should function as architecture—structures that frame the body without constraining it. Each piece begins not with mood boards, but with geometry.</p><p>We study proportion, fall of fabric, and the mechanics of how cloth moves through space. The result is a garment that belongs to both the wearer and the discipline of making.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Chapter 02 — Philosophy"
+    },
+    {
+      "type": "text",
+      "id": "ch2_tag",
+      "label": "Chapter tag",
+      "default": "Philosophy"
+    },
+    {
+      "type": "text",
+      "id": "ch2_title",
+      "label": "Chapter title",
+      "default": "Four pillars of the archive"
+    },
+    {
+      "type": "richtext",
+      "id": "ch2_text",
+      "label": "Chapter text",
+      "default": "<p>Material, Form, Silence, Time. These four coordinates define every decision made in the studio. They are not categories. They are axes on which a garment is measured.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Pillars"
+    },
+    {
+      "type": "text",
+      "id": "p1_title",
+      "label": "Pillar I — Title",
+      "default": "Material"
+    },
+    {
+      "type": "textarea",
+      "id": "p1_text",
+      "label": "Pillar I — Text",
+      "default": "We source only fabrics that improve with age. Linen, heavy wool, washed silk. Nothing synthetic unless it exists for a structural reason."
+    },
+    {
+      "type": "text",
+      "id": "p2_title",
+      "label": "Pillar II — Title",
+      "default": "Form"
+    },
+    {
+      "type": "textarea",
+      "id": "p2_text",
+      "label": "Pillar II — Text",
+      "default": "Every silhouette begins as a geometric problem. We solve it through proportion before we consider beauty. Beauty emerges from correctness."
+    },
+    {
+      "type": "text",
+      "id": "p3_title",
+      "label": "Pillar III — Title",
+      "default": "Silence"
+    },
+    {
+      "type": "textarea",
+      "id": "p3_text",
+      "label": "Pillar III — Text",
+      "default": "We remove. We reduce. We resist the urge to add. A garment earns its presence through restraint, not decoration."
+    },
+    {
+      "type": "text",
+      "id": "p4_title",
+      "label": "Pillar IV — Title",
+      "default": "Time"
+    },
+    {
+      "type": "textarea",
+      "id": "p4_text",
+      "label": "Pillar IV — Text",
+      "default": "We design for a decade, not a season. Each piece is intended to become more itself—more worn in, more personal—with every passing year."
+    },
+    {
+      "type": "header",
+      "content": "Chapter 03 — Process"
+    },
+    {
+      "type": "text",
+      "id": "ch3_tag",
+      "label": "Chapter tag",
+      "default": "Process"
+    },
+    {
+      "type": "text",
+      "id": "ch3_title",
+      "label": "Chapter title",
+      "default": "From concept to archive"
+    },
+    {
+      "type": "richtext",
+      "id": "ch3_text",
+      "label": "Chapter text",
+      "default": "<p>Each collection moves through five defined stages. The process is iterative, not linear—we return to earlier phases as often as necessary. The diagram is a map, not a calendar.</p><p>We never release a piece until it has passed through all five stages with conviction. This is why our output is small and deliberate.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Closing Statement"
+    },
+    {
+      "type": "text",
+      "id": "closing_eyebrow",
+      "label": "Eyebrow text",
+      "default": "The archive is open"
+    },
+    {
+      "type": "textarea",
+      "id": "closing_statement",
+      "label": "Closing statement",
+      "default": "Everything we make is an argument for slowness."
+    },
+    {
+      "type": "text",
+      "id": "closing_cta_label",
+      "label": "CTA label",
+      "default": "Enter the archive"
+    },
+    {
+      "type": "url",
+      "id": "closing_cta_url",
+      "label": "CTA link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "About"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,381 @@
+{% doc %}
+  Editorial color swatches for product cards and product pages.
+
+  @param {product}  product          — product to render swatches for
+  @param {string}   [mode]           — 'card' (hover swaps image) | 'page' (click scrolls gallery)
+  @param {variant}  [current_variant]— active variant for page mode
+
+  @example
+  {% render 'color-swatches', product: product, mode: 'card' %}
+  {% render 'color-swatches', product: product, mode: 'page', current_variant: current_variant %}
+{% enddoc %}
+
+{%- comment -%}
+  Detect the "Color" option index.
+  Matches: color, colour, colore, couleur, farbe (case-insensitive).
+{%- endcomment -%}
+{%- assign swt_has_color  = false -%}
+{%- assign swt_color_idx  = 0 -%}
+{%- for opt in product.options -%}
+  {%- assign opt_lc = opt | downcase -%}
+  {%- if opt_lc == 'color' or opt_lc == 'colour' or opt_lc == 'colore' or opt_lc == 'couleur' or opt_lc == 'farbe' -%}
+    {%- assign swt_has_color = true -%}
+    {%- assign swt_color_idx = forloop.index0 -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if swt_has_color -%}
+  {%- assign swt_mode   = mode | default: 'card' -%}
+  {%- assign seen_keys  = '' -%}
+  {%- assign swt_count  = 0 -%}
+
+  {%- comment -%} Pre-scan to count unique colors {%- endcomment -%}
+  {%- for v in product.variants -%}
+    {%- assign ck = v.options[swt_color_idx] | downcase | replace: ' ', '' | replace: '/', '' -%}
+    {%- unless seen_keys contains ck -%}
+      {%- assign seen_keys = seen_keys | append: ck | append: ',' -%}
+      {%- assign swt_count = swt_count | plus: 1 -%}
+    {%- endunless -%}
+  {%- endfor -%}
+
+  {%- if swt_count >= 1 -%}
+    {%- assign seen_keys = '' -%}
+    {%- assign swt_seq   = 0 -%}
+
+    <div class="swt swt--{{ swt_mode }}"
+         data-swatches="{{ swt_mode }}"
+         data-product-id="{{ product.id }}">
+
+      {%- for variant in product.variants -%}
+        {%- assign color_val = variant.options[swt_color_idx] -%}
+        {%- assign color_key = color_val | downcase | replace: ' ', '' | replace: '/', '' -%}
+
+        {%- unless seen_keys contains color_key -%}
+          {%- assign seen_keys = seen_keys | append: color_key | append: ',' -%}
+          {%- assign swt_seq   = swt_seq | plus: 1 -%}
+
+          {%- comment -%} Zero-padded index for editorial label {%- endcomment -%}
+          {%- if swt_seq < 10 -%}
+            {%- assign swt_index = '0' | append: swt_seq -%}
+          {%- else -%}
+            {%- assign swt_index = swt_seq -%}
+          {%- endif -%}
+
+          {%- comment -%} Variant image (falls back to product hero) {%- endcomment -%}
+          {%- if variant.featured_image -%}
+            {%- assign swt_img    = variant.featured_image | image_url: width: 1200, height: 1600, crop: 'center' -%}
+            {%- assign swt_img_id = variant.featured_image.id -%}
+          {%- else -%}
+            {%- assign swt_img    = product.featured_image | image_url: width: 1200, height: 1600, crop: 'center' -%}
+            {%- assign swt_img_id = product.featured_image.id | default: '' -%}
+          {%- endif -%}
+
+          {%- comment -%} Active state for page mode {%- endcomment -%}
+          {%- assign swt_active = false -%}
+          {%- if current_variant != blank -%}
+            {%- assign cv_key = current_variant.options[swt_color_idx] | downcase | replace: ' ', '' | replace: '/', '' -%}
+            {%- if cv_key == color_key -%}{%- assign swt_active = true -%}{%- endif -%}
+          {%- endif -%}
+
+          <button
+            class="swt__btn{% if swt_active %} swt__btn--active{% endif %}"
+            type="button"
+            data-color-key="{{ color_key }}"
+            data-color-label="{{ color_val | escape }}"
+            data-img-url="{{ swt_img }}"
+            data-image-id="{{ swt_img_id }}"
+            data-variant-id="{{ variant.id }}"
+            aria-label="{{ color_val | escape }}"
+            aria-pressed="{{ swt_active }}"
+            title="{{ color_val | escape }}"
+          >
+            {%- comment -%} Page mode: editorial "01 BLACK" label {%- endcomment -%}
+            {%- if swt_mode == 'page' -%}
+              <span class="swt__idx">{{ swt_index }}</span>
+              <span class="swt__label">{{ color_val | upcase | escape }}</span>
+            {%- endif -%}
+          </button>
+        {%- endunless -%}
+      {%- endfor -%}
+
+    </div>
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+  /* ─── Shared tokens ──────────────────────────────────────── */
+  .swt {
+    --cream:  #e6e1d6;
+    --muted:  rgba(230, 225, 214, 0.32);
+    --line:   rgba(230, 225, 214, 0.14);
+    --bg:     #0a0a09;
+    --sans:   var(--font-body--family, "Work Sans", system-ui, sans-serif);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     CARD MODE — small colored squares, hover swaps photo
+  ═══════════════════════════════════════════════════════ */
+  .swt--card {
+    display:   flex;
+    flex-wrap: wrap;
+    gap:       5px;
+    margin-top: 0.65rem;
+    padding:   0;
+  }
+
+  .swt--card .swt__btn {
+    display:          block;
+    width:            12px;
+    height:           12px;
+    border:           1px solid var(--line);
+    border-radius:    0;
+    background-color: var(--muted);   /* JS will overwrite with real color */
+    cursor:           pointer;
+    padding:          0;
+    transition:
+      border-color  200ms ease,
+      transform     200ms ease,
+      box-shadow    200ms ease;
+    position:         relative;
+  }
+
+  .swt--card .swt__btn:hover,
+  .swt--card .swt__btn.swt__btn--active {
+    border-color: var(--cream);
+    transform:    scale(1.25);
+    box-shadow:   0 0 0 1px rgba(230, 225, 214, 0.35);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     PAGE MODE — editorial "01 BLACK" text labels
+  ═══════════════════════════════════════════════════════ */
+  .swt--page {
+    display:   flex;
+    flex-wrap: wrap;
+    gap:       0.6rem 1.2rem;
+    margin:    0;
+    padding:   0;
+  }
+
+  .swt--page .swt__btn {
+    display:     flex;
+    align-items: baseline;
+    gap:         0.4rem;
+    background:  transparent;
+    border:      1px solid var(--line);
+    border-radius: 0;
+    padding:     0.42rem 0.75rem;
+    cursor:      pointer;
+    transition:
+      border-color 220ms ease,
+      background   220ms ease,
+      color        220ms ease;
+  }
+
+  .swt--page .swt__btn::before {
+    content:       '';
+    display:       inline-block;
+    width:         8px;
+    height:        8px;
+    border:        1px solid var(--line);
+    border-radius: 0;
+    flex-shrink:   0;
+    /* JS sets background-color here */
+    transition: border-color 220ms ease;
+  }
+
+  .swt--page .swt__btn:hover {
+    border-color: rgba(230, 225, 214, 0.45);
+    color: var(--cream);
+  }
+
+  .swt--page .swt__btn.swt__btn--active {
+    background:   rgba(230, 225, 214, 0.06);
+    border-color: rgba(230, 225, 214, 0.65);
+  }
+
+  .swt--page .swt__btn.swt__btn--active::before {
+    border-color: var(--cream);
+  }
+
+  .swt__idx {
+    font-family:    var(--sans);
+    font-size:      0.52rem;
+    letter-spacing: 0.12em;
+    color:          rgba(230, 225, 214, 0.35);
+    line-height:    1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .swt__label {
+    font-family:    var(--sans);
+    font-size:      0.62rem;
+    letter-spacing: 0.2em;
+    color:          rgba(230, 225, 214, 0.7);
+    line-height:    1;
+  }
+
+  .swt--page .swt__btn.swt__btn--active .swt__label,
+  .swt--page .swt__btn:hover .swt__label { color: var(--cream); }
+  .swt--page .swt__btn.swt__btn--active .swt__idx  { color: rgba(230,225,214,.55); }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    'use strict';
+
+    /* ── Color name → CSS hex map ─────────────────────────── */
+    var COLOR_MAP = {
+      black:    '#0f0f0e',  white:    '#f5f4f0',
+      cream:    '#e6e1d6',  ivory:    '#f0ebe0',
+      ecru:     '#d8d0bc',  sand:     '#c4b8a0',
+      stone:    '#9e9a8e',  taupe:    '#a09580',
+      ash:      '#8a8a84',  smoke:    '#7a7a76',
+      grey:     '#888882',  gray:     '#888882',
+      charcoal: '#3a3a38',  slate:    '#4a4e58',
+      navy:     '#1a2436',  midnight: '#141c2e',
+      blue:     '#2c4a72',  cobalt:   '#1a3a6c',
+      camel:    '#b8956a',  tan:      '#c8aa80',
+      brown:    '#5c4033',  chocolate:'#3a2018',
+      olive:    '#4a4a38',  khaki:    '#8a8460',
+      forest:   '#2a3c28',  green:    '#2d5a3d',
+      burgundy: '#5c1a2a',  wine:     '#4a1020',
+      blush:    '#d4a0a0',  rose:     '#c07878',
+      red:      '#8a2020',  orange:   '#c85a28',
+      yellow:   '#c8b460',  gold:     '#b89840',
+    };
+
+    function getColorHex(key) {
+      return COLOR_MAP[key] || null;
+    }
+
+    /* ── Apply swatch background colors ──────────────────── */
+    function applySwatchColors(container) {
+      container.querySelectorAll('.swt__btn').forEach(function (btn) {
+        var key = btn.dataset.colorKey;
+        var hex = getColorHex(key);
+        var mode = container.dataset.swatches;
+
+        if (mode === 'card') {
+          if (hex) {
+            btn.style.backgroundColor = hex;
+            btn.style.borderColor = 'rgba(230,225,214,0.18)';
+          }
+          /* light colors get a contrasting border */
+          if (hex && parseInt(hex.slice(1,3),16) > 200) {
+            btn.style.borderColor = 'rgba(0,0,0,0.25)';
+          }
+        }
+
+        if (mode === 'page' && hex) {
+          btn.style.setProperty('--swatch-color', hex);
+          /* set the pseudo-element color via inline CSS var */
+          btn.style.cssText += '; --swatch-bg: ' + hex + ';';
+          /* directly color the ::before via a wrapper span instead */
+          var dot = btn.querySelector('.swt__dot');
+          if (!dot) {
+            dot = document.createElement('span');
+            dot.className = 'swt__dot';
+            dot.style.cssText =
+              'display:inline-block;width:8px;height:8px;' +
+              'flex-shrink:0;border:1px solid rgba(230,225,214,0.2);' +
+              'background:' + hex + ';margin-right:0.3rem;';
+            btn.insertBefore(dot, btn.firstChild);
+          }
+        }
+      });
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       CARD MODE — hover swaps product card image
+    ═══════════════════════════════════════════════════════ */
+    function initCardSwatches() {
+      document.querySelectorAll('[data-swatches="card"]').forEach(function (container) {
+        var article  = container.closest('.pc');
+        if (!article) return;
+        var swatchImg = article.querySelector('.pc__img--swatch');
+        if (!swatchImg) return;
+
+        applySwatchColors(container);
+
+        container.querySelectorAll('.swt__btn').forEach(function (btn) {
+          /* Preload image on init for faster first hover */
+          var url = btn.dataset.imgUrl;
+          if (url) { (new Image()).src = url; }
+
+          btn.addEventListener('mouseenter', function () {
+            if (!url) return;
+            /* If already showing this image, just ensure visible */
+            if (swatchImg.src && swatchImg.src.includes(url.split('?')[0].split('/').pop())) {
+              swatchImg.style.opacity = '1';
+              return;
+            }
+            swatchImg.style.opacity = '0';
+            swatchImg.onload = function () {
+              swatchImg.style.opacity = '1';
+            };
+            swatchImg.src = url;
+          });
+
+          btn.addEventListener('mouseleave', function () {
+            swatchImg.style.opacity = '0';
+          });
+        });
+      });
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       PAGE MODE — click selects variant + scrolls gallery
+    ═══════════════════════════════════════════════════════ */
+    function initPageSwatches() {
+      document.querySelectorAll('[data-swatches="page"]').forEach(function (container) {
+        applySwatchColors(container);
+
+        var select  = document.querySelector('.pd__select, select[name="id"]');
+        var gallery = document.querySelector('.pd__gallery');
+
+        container.querySelectorAll('.swt__btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            /* Update active state */
+            container.querySelectorAll('.swt__btn').forEach(function (b) {
+              b.classList.remove('swt__btn--active');
+              b.setAttribute('aria-pressed', 'false');
+            });
+            btn.classList.add('swt__btn--active');
+            btn.setAttribute('aria-pressed', 'true');
+
+            /* Sync hidden select → triggers ATC JS and price update */
+            var variantId = btn.dataset.variantId;
+            if (select && variantId) {
+              select.value = variantId;
+              select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            /* Scroll gallery to that colour's first image */
+            var imageId = btn.dataset.imageId;
+            if (gallery && imageId) {
+              var frame = gallery.querySelector('[data-image-id="' + imageId + '"]');
+              if (frame) {
+                frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }
+          });
+        });
+      });
+    }
+
+    /* ── Boot ─────────────────────────────────────────────── */
+    function boot() {
+      initCardSwatches();
+      initPageSwatches();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
+    }
+
+    document.addEventListener('shopify:section:load', boot);
+  })();
+{% endjavascript %}

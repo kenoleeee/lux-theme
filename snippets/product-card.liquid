@@ -15,6 +15,8 @@
 {%- if eager -%}{%- assign img_loading = 'eager' -%}{%- endif -%}
 
 <article class="pc{% if offset %} pc--offset{% endif %}">
+
+  {%- comment -%} Main link wraps photo + info {%- endcomment -%}
   <a class="pc__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
 
     <div class="pc__media">
@@ -44,6 +46,13 @@
         }}
       {% endif %}
 
+      {%- comment -%}
+        Swatch preview image — JS swaps src on colour hover.
+        Positioned on top of primary + alt, starts fully transparent.
+      {%- endcomment -%}
+      {%- comment -%} Swatch preview — src injected by JS, no initial src to avoid 404 {%- endcomment -%}
+      <img class="pc__img pc__img--swatch" alt="" aria-hidden="true" data-swatch-preview>
+
       {% if product.compare_at_price_max > product.price %}
         <span class="pc__badge">{{ 'collections.sale_badge' | t }}</span>
       {% endif %}
@@ -61,6 +70,13 @@
     </div>
 
   </a>
+
+  {%- comment -%}
+    Swatches live OUTSIDE <a> so hovering them doesn't navigate.
+    They still mutate the image inside the card via JS.
+  {%- endcomment -%}
+  {% render 'color-swatches', product: product, mode: 'card' %}
+
 </article>
 
 {% stylesheet %}
@@ -135,6 +151,23 @@
 
   .coll-grid .pc__img--primary { opacity: 1; transform: scale(1); }
   .coll-grid .pc__img--alt     { opacity: 0; transform: scale(1.04); }
+
+  /* Swatch preview: fully transparent by default, z-index above primary+alt */
+  .coll-grid .pc__img--swatch {
+    opacity:     0 !important;
+    transform:   scale(1) !important;
+    z-index:     3;
+    transition:
+      opacity   0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* When a swatch is hovered, JS sets opacity to 1 inline.
+     Also suppress the alt/primary hover while a swatch image is showing. */
+  .coll-grid .pc:has(.swt__btn:hover) .pc__img--primary,
+  .coll-grid .pc:has(.swt__btn:hover) .pc__img--alt {
+    transition-duration: 0.15s !important;
+  }
 
   .coll-grid .pc__link:hover .pc__img--primary,
   .coll-grid .pc__link:focus-visible .pc__img--primary {

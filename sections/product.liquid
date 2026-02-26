@@ -16,7 +16,7 @@
         {%- else -%}
           {%- assign img_loading = 'lazy' -%}
         {%- endif -%}
-        <div class="pd__frame">
+        <div class="pd__frame" data-image-id="{{ image.id }}">
           {{ image
             | image_url: width: 1800, height: 2400, crop: 'center'
             | image_tag:
@@ -64,28 +64,85 @@
       {% comment %} Form {% endcomment %}
       {% form 'product', product, class: 'pd__form pd__form--atc', id: 'pd-form-atc' %}
 
-        {% comment %} Variant select {% endcomment %}
+        {% comment %} Variant selector {% endcomment %}
         {% if product.variants.size > 1 %}
-          <div class="pd__field">
-            <label class="pd__label" for="pd-variant-id">
-              {{ 'product.choose_variant' | t }}
-            </label>
-            <div class="pd__select-wrap">
-              <select id="pd-variant-id" name="id" class="pd__select">
-                {% for variant in product.variants %}
-                  <option
-                    value="{{ variant.id }}"
-                    {% unless variant.available %}disabled{% endunless %}
-                    {% if variant == current_variant %}selected{% endif %}
-                  >
-                    {{ variant.title }}
-                    {% unless variant.available %} — {{ 'product.sold_out' | t }}{% endunless %}
-                  </option>
-                {% endfor %}
-              </select>
-              <span class="pd__select-arrow" aria-hidden="true">↓</span>
+
+          {%- comment -%}
+            Check whether the product has a Color option.
+            If yes: render editorial colour swatches + a visually-hidden select
+                    (still submitted with the form for Shopify to read).
+            If no:  render the standard labelled select as before.
+          {%- endcomment -%}
+          {%- assign pd_has_color = false -%}
+          {%- for opt in product.options -%}
+            {%- assign opt_lc = opt | downcase -%}
+            {%- if opt_lc == 'color' or opt_lc == 'colour' -%}
+              {%- assign pd_has_color = true -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- comment -%} Hidden select — always present for form submission {%- endcomment -%}
+          <select id="pd-variant-id" name="id" class="pd__select pd__select--sr-only"
+                  aria-label="{{ 'product.choose_variant' | t }}">
+            {% for variant in product.variants %}
+              <option
+                value="{{ variant.id }}"
+                {% unless variant.available %}disabled{% endunless %}
+                {% if variant == current_variant %}selected{% endif %}
+              >{{ variant.title }}</option>
+            {% endfor %}
+          </select>
+
+          {%- if pd_has_color -%}
+            {%- comment -%} COLOUR SWATCHES {%- endcomment -%}
+            <div class="pd__field pd__field--swatches">
+              <p class="pd__label pd__label--swatch">
+                {{ 'product.color' | t }}
+                <span class="pd__swatch-current" data-swatch-current>
+                  {{ current_variant.options | first }}
+                </span>
+              </p>
+              {% render 'color-swatches',
+                product: product,
+                mode: 'page',
+                current_variant: current_variant
+              %}
             </div>
-          </div>
+
+            {%- comment -%} Non-color options (Size, etc.) keep a styled select {%- endcomment -%}
+            {%- for option in product.options -%}
+              {%- assign opt_lc = option | downcase -%}
+              {%- unless opt_lc == 'color' or opt_lc == 'colour' -%}
+                {%- assign opt_index = forloop.index -%}
+                <div class="pd__field">
+                  <label class="pd__label" for="pd-option-{{ opt_index }}">
+                    {{ option }}
+                  </label>
+                  <div class="pd__select-wrap">
+                    <select id="pd-option-{{ opt_index }}" class="pd__select pd__select--option"
+                            data-option-index="{{ forloop.index0 }}">
+                      {%- for opt_val in product.options_with_values[forloop.index0].values -%}
+                        <option value="{{ opt_val | escape }}">{{ opt_val }}</option>
+                      {%- endfor -%}
+                    </select>
+                    <span class="pd__select-arrow" aria-hidden="true">↓</span>
+                  </div>
+                </div>
+              {%- endunless -%}
+            {%- endfor -%}
+
+          {%- else -%}
+            {%- comment -%} No colour option: show standard select {%- endcomment -%}
+            <div class="pd__field">
+              <label class="pd__label" for="pd-variant-id">
+                {{ 'product.choose_variant' | t }}
+              </label>
+              <div class="pd__select-wrap">
+                <span class="pd__select-arrow" aria-hidden="true">↓</span>
+              </div>
+            </div>
+          {%- endif -%}
+
         {% else %}
           <input type="hidden" name="id" value="{{ current_variant.id }}">
         {% endif %}
@@ -297,6 +354,37 @@
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--muted);
+  }
+
+  /* ── COLOUR SWATCHES field ───────────────────────────────── */
+  .pd__field--swatches {
+    padding-bottom: 0.4rem;
+  }
+
+  .pd__label--swatch {
+    display:     flex;
+    align-items: baseline;
+    gap:         0.6rem;
+    margin-bottom: 0.9rem !important;
+  }
+
+  .pd__swatch-current {
+    font-family:    var(--sans);
+    font-size:      0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color:          var(--cream);
+    opacity:        0.75;
+  }
+
+  /* ── Visually-hidden select (still in form) ─────────────── */
+  .pd__select--sr-only {
+    position: absolute !important;
+    width:    1px !important;
+    height:   1px !important;
+    overflow: hidden !important;
+    clip:     rect(0,0,0,0) !important;
+    pointer-events: none !important;
   }
 
   /* ── SELECT ──────────────────────────────────────────────── */
