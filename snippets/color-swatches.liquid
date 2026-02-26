@@ -351,12 +351,20 @@
               select.dispatchEvent(new Event('change', { bubbles: true }));
             }
 
-            /* Scroll gallery to that colour's first image */
+            /* Scroll gallery to that colour's first image + animate frame */
             var imageId = btn.dataset.imageId;
             if (gallery && imageId) {
               var frame = gallery.querySelector('[data-image-id="' + imageId + '"]');
               if (frame) {
                 frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                frame.classList.remove('pd__frame--flash');
+                // tiny timeout so re-adding the class retriggers keyframes
+                setTimeout(function () {
+                  frame.classList.add('pd__frame--flash');
+                  setTimeout(function () {
+                    frame.classList.remove('pd__frame--flash');
+                  }, 650);
+                }, 10);
               }
             }
           });

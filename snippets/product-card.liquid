@@ -51,7 +51,7 @@
         Positioned on top of primary + alt, starts fully transparent.
       {%- endcomment -%}
       {%- comment -%} Swatch preview — src injected by JS, no initial src to avoid 404 {%- endcomment -%}
-      <img class="pc__img pc__img--swatch" alt="" aria-hidden="true" data-swatch-preview>
+      <img class="pc__img pc__img--swatch" alt="" aria-hidden="true" data-swatch-preview width="1200" height="1600">
 
       {% if product.compare_at_price_max > product.price %}
         <span class="pc__badge">{{ 'collections.sale_badge' | t }}</span>
@@ -154,12 +154,13 @@
 
   /* Swatch preview: fully transparent by default, z-index above primary+alt */
   .coll-grid .pc__img--swatch {
-    opacity:     0 !important;
-    transform:   scale(1) !important;
+    opacity:     0;
+    transform:   scale(1);
     z-index:     3;
+    pointer-events: none;
     transition:
       opacity   0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* When a swatch is hovered, JS sets opacity to 1 inline.
