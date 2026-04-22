@@ -12,26 +12,28 @@
     "main": {
       "type": "hello-world",
       "settings": {
-        "hero_image": "shopify://shop_images/Diana-By-Mateusz-Stefanowski-2.jpg"
+        "bestseller_product": "float-inflatable-drink-cup-holder-pvc-floating-water-coaster-swimming-pool-drink-float-toy-flamingo-drinkware-tray-party-decor",
+        "bestseller_eyebrow": "Bestseller · N°001",
+        "bestseller_title": "",
+        "bestseller_cta": "Add to bag",
+        "bestseller_secondary": "View full details"
       }
     },
     "bestseller": {
       "type": "bestseller",
-      "blocks": {
-        "item-1": { "type": "bundle_item", "settings": {} },
-        "item-2": { "type": "bundle_item", "settings": {} },
-        "item-3": { "type": "bundle_item", "settings": {} }
-      },
-      "block_order": [ "item-1", "item-2", "item-3" ],
       "settings": {
-        "eyebrow": "The Bundle",
+        "product": "",
+        "eyebrow": "Bestseller",
         "object_no": "N°001",
-        "caption": "The bundle — this season",
-        "fallback_title": "Select the bundle product in Theme Editor",
-        "description": "<p>The full luxmaxx kit. Engineered as one — silhouettes that read together, wear together, return together. One price. One uniform. One add to bag.</p>",
+        "caption": "The object — this season",
+        "vendor_label": "",
+        "custom_title": "",
+        "fallback_title": "Select a piece in Theme Editor",
+        "description": "<p>Worn and re-worn. The silhouette chosen most this season — the piece our clients return to, layer after layer, wardrobe after wardrobe. Not a trend. A foundation of the luxmaxx uniform.</p>",
         "bundle_label": "Included in this bundle",
-        "cta_label": "Add bundle to bag",
+        "cta_label": "View the piece",
         "secondary_cta_label": "View full details",
+        "cta_url": "",
         "reverse": false
       }
     }
