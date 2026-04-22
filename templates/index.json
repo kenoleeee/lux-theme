@@ -14,9 +14,25 @@
       "settings": {
         "hero_image": "shopify://shop_images/Diana-By-Mateusz-Stefanowski-2.jpg"
       }
+    },
+    "bestseller": {
+      "type": "bestseller",
+      "settings": {
+        "eyebrow": "Bestseller",
+        "object_no": "N°001",
+        "caption": "The object — this season",
+        "fallback_title": "Select a piece in Theme Editor",
+        "description": "<p>Worn and re-worn. The silhouette chosen most this season — the piece our clients return to, layer after layer, wardrobe after wardrobe. Not a trend. A foundation of the luxmaxx uniform.</p>",
+        "tag_1": "Most worn",
+        "tag_2": "Luxmaxx staple",
+        "tag_3": "Season no. 26",
+        "cta_label": "View the piece",
+        "reverse": false
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "bestseller"
   ]
 }
