@@ -32,7 +32,7 @@
       <span class="editorial-hero__headline-line2">{{ 'home.hero.headline_2' | t }}</span>
     </h1>
 
-    <a href="{{ routes.collections_url }}" class="editorial-hero__cta">
+    <a href="#shopify-section-bestseller" class="editorial-hero__cta" data-hero-cta>
       {{ 'home.hero.cta_shop_now' | t }}
     </a>
   </div>
@@ -422,6 +422,21 @@
     }
   }
 {% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var cta = document.querySelector('[data-hero-cta]');
+    if (!cta) return;
+    cta.addEventListener('click', function (e) {
+      var id = cta.getAttribute('href');
+      if (!id || id.charAt(0) !== '#') return;
+      var target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  })();
+{% endjavascript %}
 
 {% schema %}
 {

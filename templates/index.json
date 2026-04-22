@@ -17,16 +17,21 @@
     },
     "bestseller": {
       "type": "bestseller",
+      "blocks": {
+        "item-1": { "type": "bundle_item", "settings": {} },
+        "item-2": { "type": "bundle_item", "settings": {} },
+        "item-3": { "type": "bundle_item", "settings": {} }
+      },
+      "block_order": [ "item-1", "item-2", "item-3" ],
       "settings": {
-        "eyebrow": "Bestseller",
+        "eyebrow": "The Bundle",
         "object_no": "N°001",
-        "caption": "The object — this season",
-        "fallback_title": "Select a piece in Theme Editor",
-        "description": "<p>Worn and re-worn. The silhouette chosen most this season — the piece our clients return to, layer after layer, wardrobe after wardrobe. Not a trend. A foundation of the luxmaxx uniform.</p>",
-        "tag_1": "Most worn",
-        "tag_2": "Luxmaxx staple",
-        "tag_3": "Season no. 26",
-        "cta_label": "View the piece",
+        "caption": "The bundle — this season",
+        "fallback_title": "Select the bundle product in Theme Editor",
+        "description": "<p>The full luxmaxx kit. Engineered as one — silhouettes that read together, wear together, return together. One price. One uniform. One add to bag.</p>",
+        "bundle_label": "Included in this bundle",
+        "cta_label": "Add bundle to bag",
+        "secondary_cta_label": "View full details",
         "reverse": false
       }
     }

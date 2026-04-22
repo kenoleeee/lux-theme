@@ -95,38 +95,88 @@
       </div>
     {% endif %}
 
-    {%- comment -%} Stats line — 3 editorial tags {%- endcomment -%}
-    {% if section.settings.tag_1 != blank
-       or section.settings.tag_2 != blank
-       or section.settings.tag_3 != blank %}
-      <ul class="bs__tags">
-        {% if section.settings.tag_1 != blank %}
-          <li class="bs__tag">{{ section.settings.tag_1 }}</li>
-        {% endif %}
-        {% if section.settings.tag_2 != blank %}
-          <li class="bs__tag">{{ section.settings.tag_2 }}</li>
-        {% endif %}
-        {% if section.settings.tag_3 != blank %}
-          <li class="bs__tag">{{ section.settings.tag_3 }}</li>
-        {% endif %}
-      </ul>
+    {%- comment -%} ── BUNDLE CONTENTS LIST ───────────────────────────
+         Blocks of type "bundle_item" rendered via product picker.
+         Shown as an editorial "INCLUDED IN THIS BUNDLE" list.
+    {%- endcomment -%}
+    {% if section.blocks.size > 0 %}
+      <div class="bs__bundle">
+        <p class="bs__bundle-label">
+          {{ section.settings.bundle_label | default: 'Included in this bundle' }}
+        </p>
+        <ul class="bs__bundle-list">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'bundle_item' -%}
+              {%- assign bi_prod = all_products[block.settings.product] -%}
+              {%- assign bi_title = block.settings.custom_title -%}
+              {%- if bi_title == blank and bi_prod and bi_prod != empty -%}
+                {%- assign bi_title = bi_prod.title -%}
+              {%- endif -%}
+              {%- if bi_title == blank -%}
+                {%- assign bi_title = 'Unnamed item' -%}
+              {%- endif -%}
+
+              {%- if forloop.index < 10 -%}
+                {%- assign bi_idx = '0' | append: forloop.index -%}
+              {%- else -%}
+                {%- assign bi_idx = forloop.index | append: '' -%}
+              {%- endif -%}
+
+              <li class="bs__bundle-item" {{ block.shopify_attributes }}>
+                <span class="bs__bundle-no">{{ bi_idx }}</span>
+                <span class="bs__bundle-name">{{ bi_title | escape }}</span>
+                {% if bi_prod and bi_prod != empty %}
+                  <span class="bs__bundle-price">{{ bi_prod.price | money }}</span>
+                {% elsif block.settings.price_label != blank %}
+                  <span class="bs__bundle-price">{{ block.settings.price_label }}</span>
+                {% endif %}
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
     {% endif %}
 
-    {%- comment -%} CTA ── product page if chosen, custom URL, or /collections {%- endcomment -%}
-    {%- assign bs_cta_url = section.settings.cta_url -%}
-    {%- if bs_cta_url == blank and bs_has_product -%}
-      {%- assign bs_cta_url = bs_product.url -%}
-    {%- endif -%}
-    {%- if bs_cta_url == blank -%}
-      {%- assign bs_cta_url = routes.collections_url -%}
-    {%- endif -%}
+    {%- comment -%} ── ADD-TO-CART / CTA ─────────────────────────────── {%- endcomment -%}
+    {%- if bs_has_product -%}
+      {%- assign bs_variant = bs_product.selected_or_first_available_variant -%}
+      {% form 'product', bs_product, class: 'pd__form pd__form--atc bs__form', id: 'bs-atc-form' %}
+        <input type="hidden" name="id" value="{{ bs_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button
+          type="submit"
+          class="bs__cta pd__btn pd__btn--outline"
+          data-atc-btn
+          data-atc-label="{{ section.settings.cta_label | default: 'Add bundle to bag' }}"
+          data-atc-adding="{{ 'product.adding' | t }}"
+          data-atc-added="{{ 'product.added' | t }}"
+          {% unless bs_variant.available %}disabled{% endunless %}
+        >
+          <span class="bs__cta-label pd__btn-text">
+            {%- if bs_variant.available -%}
+              {{ section.settings.cta_label | default: 'Add bundle to bag' }}
+            {%- else -%}
+              {{ 'product.sold_out' | t }}
+            {%- endif -%}
+          </span>
+          <span class="bs__cta-arrow" aria-hidden="true">→</span>
+        </button>
+      {% endform %}
 
-    <a href="{{ bs_cta_url }}" class="bs__cta">
-      <span class="bs__cta-label">
-        {{ section.settings.cta_label | default: 'View the piece' }}
-      </span>
-      <span class="bs__cta-arrow" aria-hidden="true">→</span>
-    </a>
+      {%- comment -%} Secondary text link to the product page {%- endcomment -%}
+      <a href="{{ bs_product.url }}" class="bs__cta-secondary">
+        {{ section.settings.secondary_cta_label | default: 'View full details' }}
+      </a>
+    {%- else -%}
+      {%- comment -%} No product chosen — simple link fallback {%- endcomment -%}
+      {%- assign bs_cta_url = section.settings.cta_url | default: routes.collections_url -%}
+      <a href="{{ bs_cta_url }}" class="bs__cta bs__cta--link">
+        <span class="bs__cta-label">
+          {{ section.settings.cta_label | default: 'Select a bundle' }}
+        </span>
+        <span class="bs__cta-arrow" aria-hidden="true">→</span>
+      </a>
+    {%- endif -%}
 
   </div>
 </section>
@@ -329,53 +379,107 @@
   .bs__desc p { margin: 0 0 0.9em; }
   .bs__desc p:last-child { margin-bottom: 0; }
 
-  /* Editorial tags row */
-  .bs__tags {
-    list-style: none;
-    padding:    0;
-    margin:     0.6rem 0 0;
-    display:    flex;
-    flex-wrap:  wrap;
-    gap:        1.2rem 2rem;
+  /* ═══════════════════════════════════════════════════════
+     BUNDLE CONTENTS
+  ═══════════════════════════════════════════════════════ */
+  .bs__bundle {
+    margin-top: 0.6rem;
   }
 
-  .bs__tag {
+  .bs__bundle-label {
     font-family:    var(--sans);
     font-size:      0.55rem;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 0.85rem;
+  }
+
+  .bs__bundle-list {
+    list-style: none;
+    padding:    0;
+    margin:     0;
+    max-width:  32rem;
+  }
+
+  .bs__bundle-item {
+    display:         grid;
+    grid-template-columns: auto 1fr auto;
+    align-items:     baseline;
+    gap:             1rem;
+    padding:         0.85rem 0;
+    border-bottom:   1px solid var(--line);
+  }
+
+  .bs__bundle-item:last-child { border-bottom: none; }
+
+  .bs__bundle-no {
+    font-family:    var(--sans);
+    font-size:      0.55rem;
+    letter-spacing: 0.14em;
     color:          var(--cream);
-    opacity:        0.6;
-    position:       relative;
-    padding-left:   1rem;
+    opacity:        0.38;
+    font-variant-numeric: tabular-nums;
   }
 
-  .bs__tag::before {
-    content:   '';
-    position:  absolute;
-    left:      0;
-    top:       50%;
-    width:     6px;
-    height:    1px;
-    background: rgba(230, 225, 214, 0.55);
+  .bs__bundle-name {
+    font-family:    var(--serif);
+    font-style:     italic;
+    font-weight:    300;
+    font-size:      1rem;
+    line-height:    1.3;
+    color:          var(--cream);
   }
 
-  /* CTA */
+  .bs__bundle-price {
+    font-family:    var(--sans);
+    font-size:      0.62rem;
+    letter-spacing: 0.16em;
+    color:          var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     CTA — primary button + secondary link
+  ═══════════════════════════════════════════════════════ */
+  .bs__form {
+    margin:  1.6rem 0 0;
+    padding: 0;
+  }
+
   .bs__cta {
     margin-top:      1.4rem;
     display:         inline-flex;
     align-items:     center;
-    gap:             1.4rem;
+    justify-content: space-between;
+    gap:             2rem;
     font-family:     var(--sans);
     font-size:       0.7rem;
     letter-spacing:  0.28em;
     text-transform:  uppercase;
     color:           var(--cream);
     text-decoration: none;
-    padding:         0.8rem 0;
+    padding:         1.1rem 1.8rem;
+    min-width:       18rem;
     width:           fit-content;
-    border-bottom:   1px solid rgba(230, 225, 214, 0.3);
-    transition:      border-color 260ms ease, color 260ms ease, gap 350ms ease;
+    background:      transparent;
+    border:          1px solid var(--cream);
+    border-radius:   0 !important;
+    cursor:          pointer;
+    transition:
+      background   280ms ease,
+      color        280ms ease,
+      gap          320ms ease;
+    position:        relative;
+    overflow:        hidden;
+  }
+
+  .bs__form .bs__cta { margin-top: 0; }
+
+  .bs__cta-label {
+    display:   inline-block;
+    flex:      1 1 auto;
+    text-align: left;
   }
 
   .bs__cta-arrow {
@@ -383,13 +487,48 @@
     transition: transform 420ms cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  .bs__cta:hover {
-    color:        #fff;
-    border-color: var(--cream);
-    gap:          2rem;
+  .bs__cta:hover:not([disabled]) {
+    background: var(--cream);
+    color:      #0a0a09;
+    gap:        2.4rem;
   }
 
-  .bs__cta:hover .bs__cta-arrow { transform: translateX(4px); }
+  .bs__cta:hover:not([disabled]) .bs__cta-arrow { transform: translateX(4px); }
+
+  .bs__cta[disabled] {
+    opacity: 0.4;
+    cursor:  not-allowed;
+  }
+
+  /* When used as plain link (no product chosen) */
+  .bs__cta--link {
+    border: none;
+    padding: 0.8rem 0;
+    min-width: 0;
+    border-bottom: 1px solid rgba(230, 225, 214, 0.3);
+  }
+
+  .bs__cta--link:hover { background: transparent; color: #fff; }
+
+  /* Secondary link below the main CTA */
+  .bs__cta-secondary {
+    display:         inline-block;
+    margin-top:      1rem;
+    font-family:     var(--sans);
+    font-size:       0.58rem;
+    letter-spacing:  0.24em;
+    text-transform:  uppercase;
+    color:           var(--muted);
+    text-decoration: none;
+    border-bottom:   1px solid transparent;
+    padding-bottom:  2px;
+    transition:      color 220ms ease, border-color 220ms ease;
+  }
+
+  .bs__cta-secondary:hover {
+    color:        var(--cream);
+    border-color: rgba(230, 225, 214, 0.35);
+  }
 
   /* ═══════════════════════════════════════════════════════
      RESPONSIVE
@@ -410,10 +549,12 @@
   }
 
   @media (max-width: 640px) {
-    .bs__title     { font-size: clamp(2.2rem, 10vw, 3.4rem); }
-    .bs__crosshair { width: 22px; height: 22px; top: 0.9rem; left: 0.9rem; }
-    .bs__caption   { font-size: 0.5rem; bottom: 0.9rem; right: 1rem; }
-    .bs__tags      { gap: 0.7rem 1.4rem; }
+    .bs__title        { font-size: clamp(2.2rem, 10vw, 3.4rem); }
+    .bs__crosshair    { width: 22px; height: 22px; top: 0.9rem; left: 0.9rem; }
+    .bs__caption      { font-size: 0.5rem; bottom: 0.9rem; right: 1rem; }
+    .bs__cta          { min-width: 0; width: 100%; padding: 1rem 1.3rem; font-size: 0.62rem; }
+    .bs__bundle-name  { font-size: 0.95rem; }
+    .bs__bundle-item  { gap: 0.8rem; }
   }
 
   /* ── prefers-reduced-motion ──────────────────────────── */
@@ -496,25 +637,17 @@
     },
     {
       "type": "header",
-      "content": "Editorial Tags"
+      "content": "Bundle contents"
     },
     {
       "type": "text",
-      "id": "tag_1",
-      "label": "Tag 1",
-      "default": "Most worn"
+      "id": "bundle_label",
+      "label": "Bundle list heading",
+      "default": "Included in this bundle"
     },
     {
-      "type": "text",
-      "id": "tag_2",
-      "label": "Tag 2",
-      "default": "Luxmaxx staple"
-    },
-    {
-      "type": "text",
-      "id": "tag_3",
-      "label": "Tag 3",
-      "default": "Season no. 26"
+      "type": "paragraph",
+      "content": "Use the 'Add block' button below to list every piece inside the bundle."
     },
     {
       "type": "header",
@@ -523,13 +656,20 @@
     {
       "type": "text",
       "id": "cta_label",
-      "label": "CTA label",
-      "default": "View the piece"
+      "label": "Primary CTA label",
+      "default": "Add bundle to bag",
+      "info": "Button adds the bestseller product to the cart."
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_label",
+      "label": "Secondary link label",
+      "default": "View full details"
     },
     {
       "type": "url",
       "id": "cta_url",
-      "label": "CTA link (optional, defaults to product URL)"
+      "label": "Fallback link (used only when no product is chosen)"
     },
     {
       "type": "header",
@@ -542,9 +682,41 @@
       "default": false
     }
   ],
+  "blocks": [
+    {
+      "type": "bundle_item",
+      "name": "Bundle item",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product",
+          "info": "Pick the piece included in the bundle."
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom title (optional)",
+          "info": "Overrides the product title in the list."
+        },
+        {
+          "type": "text",
+          "id": "price_label",
+          "label": "Price label (optional)",
+          "info": "Used only when no product is chosen, e.g. ‘—’ or ‘Included’."
+        }
+      ]
+    }
+  ],
   "presets": [
     {
-      "name": "Bestseller"
+      "name": "Bestseller",
+      "blocks": [
+        { "type": "bundle_item" },
+        { "type": "bundle_item" },
+        { "type": "bundle_item" }
+      ]
     }
   ]
 }
