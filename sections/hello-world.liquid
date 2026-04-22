@@ -7,6 +7,16 @@
   {%- assign hero_has_image = true -%}
 {%- endif -%}
 
+{%- liquid
+  assign hero_product = all_products[section.settings.bestseller_product]
+  assign hero_has_product = false
+  if hero_product and hero_product != empty
+    assign hero_has_product = true
+  endif
+  assign hero_variant    = hero_product.selected_or_first_available_variant
+  assign hero_thumb      = section.settings.bestseller_thumb | default: hero_product.featured_image
+-%}
+
 {% comment %} ── HERO ─────────────────────────────────────────────────────── {% endcomment %}
 <section class="editorial-hero full-width" aria-label="{{ 'home.hero.eyebrow' | t }}">
   <div class="editorial-hero__media" aria-hidden="true">
@@ -36,6 +46,88 @@
       {{ 'home.hero.cta_shop_now' | t }}
     </a>
   </div>
+
+  {% comment %} ── QUICK-BUY CARD — floating bestseller with ATC ─────── {% endcomment %}
+  {%- if hero_has_product -%}
+    <aside class="hero-quickbuy" aria-label="{{ section.settings.bestseller_eyebrow | default: 'Bestseller quick buy' }}">
+
+      {%- comment -%} crosshair marker above the card {%- endcomment -%}
+      <svg class="hero-quickbuy__mark" viewBox="0 0 40 40" aria-hidden="true">
+        <line x1="0"  y1="20" x2="16" y2="20" stroke="currentColor" stroke-width="0.7"/>
+        <line x1="24" y1="20" x2="40" y2="20" stroke="currentColor" stroke-width="0.7"/>
+        <line x1="20" y1="0"  x2="20" y2="16" stroke="currentColor" stroke-width="0.7"/>
+        <line x1="20" y1="24" x2="20" y2="40" stroke="currentColor" stroke-width="0.7"/>
+        <circle cx="20" cy="20" r="3" stroke="currentColor" stroke-width="0.7" fill="none"/>
+      </svg>
+
+      <div class="hero-quickbuy__head">
+        {% if hero_thumb %}
+          <div class="hero-quickbuy__thumb">
+            {{ hero_thumb | image_url: width: 280 | image_tag:
+              loading: 'eager',
+              widths: '140, 280, 420',
+              sizes: '70px',
+              alt: hero_product.title | escape
+            }}
+          </div>
+        {% endif %}
+        <div class="hero-quickbuy__meta">
+          <p class="hero-quickbuy__eyebrow">
+            <span class="hero-quickbuy__dot" aria-hidden="true"></span>
+            {{ section.settings.bestseller_eyebrow | default: 'Bestseller · N°001' }}
+          </p>
+          <p class="hero-quickbuy__title">
+            {%- if section.settings.bestseller_title != blank -%}
+              {{ section.settings.bestseller_title }}
+            {%- else -%}
+              {{ hero_product.title | escape }}
+            {%- endif -%}
+          </p>
+        </div>
+      </div>
+
+      <div class="hero-quickbuy__price-row">
+        <p class="hero-quickbuy__price">
+          {% if hero_product.compare_at_price_max > hero_product.price %}
+            <s class="hero-quickbuy__price-was">{{ hero_product.compare_at_price_max | money }}</s>
+          {% endif %}
+          <span class="hero-quickbuy__price-now">{{ hero_product.price | money }}</span>
+        </p>
+        {% if hero_product.compare_at_price_max > hero_product.price %}
+          {%- assign hero_save = hero_product.compare_at_price_max | minus: hero_product.price | times: 100 | divided_by: hero_product.compare_at_price_max -%}
+          <span class="hero-quickbuy__save">− {{ hero_save }}%</span>
+        {% endif %}
+      </div>
+
+      {% form 'product', hero_product, class: 'pd__form pd__form--atc hero-quickbuy__form' %}
+        <input type="hidden" name="id" value="{{ hero_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button
+          type="submit"
+          class="hero-quickbuy__atc"
+          data-atc-btn
+          data-atc-label="{{ section.settings.bestseller_cta | default: 'Add to bag' }}"
+          data-atc-adding="Adding"
+          data-atc-added="Added"
+          {% unless hero_variant.available %}disabled{% endunless %}
+        >
+          <span class="hero-quickbuy__atc-text pd__btn-text">
+            {%- if hero_variant.available -%}
+              {{ section.settings.bestseller_cta | default: 'Add to bag' }}
+            {%- else -%}
+              Sold out
+            {%- endif -%}
+          </span>
+          <span class="hero-quickbuy__atc-arrow" aria-hidden="true">→</span>
+        </button>
+      {% endform %}
+
+      <a href="{{ hero_product.url }}" class="hero-quickbuy__link">
+        {{ section.settings.bestseller_secondary | default: 'View full details' }}
+      </a>
+
+    </aside>
+  {%- endif -%}
 
   <p class="editorial-hero__scroll-hint" aria-hidden="true">scroll</p>
 
@@ -198,6 +290,215 @@
   .editorial-hero__cta:hover {
     border-color: var(--cream);
     color: #fff;
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     HERO QUICK-BUY CARD — floating bestseller
+  ═══════════════════════════════════════════════════════ */
+  .hero-quickbuy {
+    position: absolute;
+    z-index: 4;
+    right: clamp(1.2rem, 3vw, 3rem);
+    bottom: clamp(5.2rem, 10vh, 7.5rem);
+    width: clamp(19rem, 26vw, 23rem);
+    padding: 1.4rem 1.5rem 1.35rem;
+    background: rgba(10, 10, 9, 0.58);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    border: 1px solid rgba(240, 237, 229, 0.14);
+    color: var(--cream);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: hero-quickbuy-in 900ms cubic-bezier(0.23, 1, 0.32, 1) 450ms forwards;
+    box-shadow:
+      0 1px 0 rgba(240, 237, 229, 0.05) inset,
+      0 40px 80px -40px rgba(0, 0, 0, 0.8);
+  }
+
+  @keyframes hero-quickbuy-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-quickbuy__mark {
+    position: absolute;
+    top: -22px;
+    left: -22px;
+    width: 26px;
+    height: 26px;
+    color: rgba(240, 237, 229, 0.4);
+  }
+
+  .hero-quickbuy__head {
+    display: grid;
+    grid-template-columns: 62px 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid rgba(240, 237, 229, 0.1);
+  }
+
+  .hero-quickbuy__thumb {
+    width: 62px;
+    height: 82px;
+    overflow: hidden;
+    background: #14140f;
+    border: 1px solid rgba(240, 237, 229, 0.08);
+  }
+
+  .hero-quickbuy__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.82) contrast(1.06);
+  }
+
+  .hero-quickbuy__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--sans);
+    font-size: 0.54rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(240, 237, 229, 0.7);
+    margin: 0 0 0.5rem;
+  }
+
+  .hero-quickbuy__dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #d4b878;
+    box-shadow: 0 0 8px rgba(212, 184, 120, 0.8);
+    animation: hero-quickbuy-pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes hero-quickbuy-pulse {
+    0%, 100% { opacity: 1;   transform: scale(1);   }
+    50%      { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  .hero-quickbuy__title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.1rem;
+    line-height: 1.15;
+    color: var(--cream);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hero-quickbuy__price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+  .hero-quickbuy__price {
+    margin: 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-quickbuy__price-was {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: rgba(240, 237, 229, 0.42);
+    text-decoration: line-through;
+  }
+
+  .hero-quickbuy__price-now {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--cream);
+  }
+
+  .hero-quickbuy__save {
+    font-family: var(--sans);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #d4b878;
+    border: 1px solid rgba(212, 184, 120, 0.4);
+    padding: 0.3rem 0.55rem;
+  }
+
+  .hero-quickbuy__form { margin: 0; padding: 0; }
+
+  .hero-quickbuy__atc {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.95rem 1.1rem;
+    background: var(--cream);
+    color: #0a0a09;
+    border: 1px solid var(--cream);
+    border-radius: 0 !important;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    transition:
+      background 260ms ease,
+      color      260ms ease,
+      gap        320ms ease;
+  }
+
+  .hero-quickbuy__atc:hover:not([disabled]) {
+    background: transparent;
+    color: var(--cream);
+    gap: 1.4rem;
+  }
+
+  .hero-quickbuy__atc-arrow {
+    transition: transform 420ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .hero-quickbuy__atc:hover:not([disabled]) .hero-quickbuy__atc-arrow {
+    transform: translateX(4px);
+  }
+
+  .hero-quickbuy__atc[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .hero-quickbuy__link {
+    align-self: center;
+    font-family: var(--sans);
+    font-size: 0.55rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(240, 237, 229, 0.58);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: color 220ms ease, border-color 220ms ease;
+  }
+
+  .hero-quickbuy__link:hover {
+    color: var(--cream);
+    border-color: rgba(240, 237, 229, 0.4);
   }
 
   .editorial-hero__scroll-hint {
@@ -394,6 +695,29 @@
       display: none;
     }
 
+    /* Quick-buy card: stack full-width above ticker on mobile */
+    .hero-quickbuy {
+      left: 1rem;
+      right: 1rem;
+      bottom: 4.2rem;
+      width: auto;
+      padding: 1.1rem 1.1rem 1.05rem;
+      gap: 0.85rem;
+    }
+    .hero-quickbuy__mark { display: none; }
+    .hero-quickbuy__thumb { width: 54px; height: 72px; }
+    .hero-quickbuy__head  { grid-template-columns: 54px 1fr; gap: 0.85rem; padding-bottom: 0.75rem; }
+    .hero-quickbuy__title { font-size: 0.98rem; }
+    .hero-quickbuy__atc   { padding: 0.85rem 1rem; font-size: 0.62rem; }
+  }
+
+  /* When the quick-buy card is on desktop, shift scroll-hint to the left */
+  @media (min-width: 768px) {
+    .editorial-hero:has(.hero-quickbuy) .editorial-hero__scroll-hint {
+      right: auto;
+      left: 2.8rem;
+    }
+
     /* Category grid: 1 column */
     .editorial-categories {
       grid-template-columns: 1fr;
@@ -446,6 +770,48 @@
       "type": "image_picker",
       "id": "hero_image",
       "label": "t:home.hero.image_label"
+    },
+    {
+      "type": "header",
+      "content": "Quick-buy card (bestseller)"
+    },
+    {
+      "type": "paragraph",
+      "content": "A floating card with Add-to-bag appears in the hero corner when a product is selected."
+    },
+    {
+      "type": "product",
+      "id": "bestseller_product",
+      "label": "Bestseller product"
+    },
+    {
+      "type": "image_picker",
+      "id": "bestseller_thumb",
+      "label": "Custom thumbnail (overrides product photo)"
+    },
+    {
+      "type": "text",
+      "id": "bestseller_eyebrow",
+      "label": "Eyebrow",
+      "default": "Bestseller · N°001"
+    },
+    {
+      "type": "text",
+      "id": "bestseller_title",
+      "label": "Custom title (optional)",
+      "info": "Overrides the product title on the card."
+    },
+    {
+      "type": "text",
+      "id": "bestseller_cta",
+      "label": "Primary button label",
+      "default": "Add to bag"
+    },
+    {
+      "type": "text",
+      "id": "bestseller_secondary",
+      "label": "Secondary link label",
+      "default": "View full details"
     }
   ],
   "blocks": [
