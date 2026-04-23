@@ -10,12 +10,12 @@
 {
   "404": {
     "title": "404",
-    "not_found": "Page not found.",
-    "back_to_shopping": "Back to shopping"
+    "not_found": "Protocol not found.",
+    "back_to_shopping": "Back to store"
   },
   "errors": {
     "404": {
-      "label": "Lost in archive",
+      "label": "Lost in the process",
       "cta": "Return to home"
     }
   },
@@ -32,20 +32,20 @@
     "comment_form_name": "Name",
     "comment_form_submit": "Post",
     "comment_form_title": "Leave a comment",
-    "eyebrow": "Journal",
+    "eyebrow": "Protocols",
     "read_more": "Read more",
     "pagination_aria": "Blog pages",
     "articles_per_page": "Articles per page"
   },
   "cart": {
-    "eyebrow": "Your selection",
-    "title": "Bag",
-    "piece": "piece",
-    "pieces": "pieces",
+    "eyebrow": "Your arsenal",
+    "title": "Cart",
+    "piece": "item",
+    "pieces": "items",
     "checkout": "Proceed to checkout",
     "update": "Update",
     "remove": "Remove",
-    "empty": "Your bag is empty.",
+    "empty": "Your cart is empty.",
     "continue_shopping": "Continue shopping",
     "subtotal": "Subtotal",
     "taxes_note": "Taxes and shipping calculated at checkout.",
@@ -53,8 +53,8 @@
     "decrease_qty": "Decrease quantity",
     "increase_qty": "Increase quantity",
     "qty_label": "Quantity",
-    "remove_item": "Remove {{ title }} from bag",
-    "view_cart": "View bag"
+    "remove_item": "Remove {{ title }} from cart",
+    "view_cart": "View cart"
   },
   "customers": {
     "login": {
@@ -65,14 +65,14 @@
     }
   },
   "collections": {
-    "title": "Collections",
-    "index_title": "The Archive",
+    "title": "Kits & Bundles",
+    "index_title": "The Arsenal",
     "meta_label": "collections",
-    "page_eyebrow": "Our world",
-    "editorial_eyebrow": "Editorial selection",
+    "page_eyebrow": "Our tools",
+    "editorial_eyebrow": "Essential Upgrades",
     "shop_link": "Shop now",
     "view_collection": "View collection",
-    "empty": "No pieces found.",
+    "empty": "No items found.",
     "sale_badge": "Sale",
     "pagination_aria": "Product pages"
   },
@@ -84,7 +84,7 @@
     "use_at_checkout": "Use this gift card at checkout"
   },
   "password": {
-    "title": "This shop is private",
+    "title": "The Club is private",
     "password": "Password",
     "enter": "Enter"
   },
@@ -98,10 +98,10 @@
     "results_aria": "Search results"
   },
   "product": {
-    "choose_variant": "Choose size",
-    "color": "Color",
+    "choose_variant": "Select Option",
+    "color": "Variant",
     "quantity": "Quantity",
-    "add_to_cart": "Add to bag",
+    "add_to_cart": "Add to order",
     "adding": "Adding…",
     "added": "Added ✓",
     "sold_out": "Sold out"
@@ -109,19 +109,19 @@
   "home": {
     "hero": {
       "section_name": "Hero banner",
-      "preset_name": "Editorial home",
+      "preset_name": "Performance home",
       "image_label": "Hero image",
-      "eyebrow": "The Luxmaxx Archive",
+      "eyebrow": "The Casto Club",
       "season": "PROTOCOL N°001 / FACIAL AESTHETICS",
       "headline_1": "Engineered.",
-      "headline_2": "to be wealthy.",
-      "title": "Clothes engineered to read as quiet luxury",
-      "subtitle": "A curated archive for those studying the art of looking expensive without saying a word.",
-      "cta_shop_now": "Shop the bundle",
+      "headline_2": "Not born.",
+      "title": "Tools engineered for maximum aesthetic potential",
+      "subtitle": "The ultimate collection of physical tools and digital protocols to build a sharper jawline, fix your posture, and redefine your reality.",
+      "cta_shop_now": "Unlock the kit",
       "cta_new_in": "New arrivals"
     },
     "ticker": {
-      "text": "Luxmaxx archive — Season N°26 — Quiet luxury, engineered — Complimentary delivery on all orders — Dressed to be wealthy"
+      "text": "— SCIENCE-BASED AESTHETICS — FREE US SHIPPING — YOUR UNFAIR ADVANTAGE — ENGINEERED FOR MEN — 30-DAY PROTOCOL — THE GLOW-UP ARCHIVE —"
     },
     "categories": {
       "label": "Shop by category",
@@ -142,7 +142,7 @@
     "nav_left_aria": "Primary navigation",
     "search": "Search",
     "account": "Account",
-    "cart": "Bag",
+    "cart": "Cart",
     "menu_label": "Menu",
     "open_menu": "Open navigation menu",
     "close_menu": "Close navigation menu",
@@ -160,7 +160,7 @@
     "error": "Please review the fields below."
   },
   "footer": {
-    "tagline": "Refined essentials for the considered wardrobe.",
+    "tagline": "Precision tools and protocols for male aesthetic optimization.",
     "nav_aria": "Footer navigation",
     "legal_aria": "Legal links",
     "rights": "All rights reserved."
