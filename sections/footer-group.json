@@ -14,8 +14,19 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "menu": "",
-        "show_payment_icons": true
+        "tagline": "Engineered gear to sculpt your jawline, fix your posture, and redefine your reality.",
+        "estd_text": "ENGINEERED FOR PROGRESS",
+        "nav_label": "Navigate",
+        "nav_menu": "",
+        "social_label": "Follow",
+        "social_instagram": "",
+        "social_tiktok": "",
+        "social_twitter": "",
+        "social_pinterest": "",
+        "contact_label": "Contact",
+        "contact_email": "support@castoclub.com",
+        "contact_address": "Paris, France",
+        "legal_menu": ""
       }
     }
   },
