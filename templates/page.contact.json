@@ -12,18 +12,20 @@
     "main": {
       "type": "contact",
       "settings": {
-        "studio_name": "KENOLDEV STUDIO",
-        "tagline": "Refined essentials. Thoughtful design. Available worldwide.",
-        "address_1_label": "Headquarters",
-        "address_1_text": "75003 Paris, France\n12 Rue de Turenne",
-        "address_2_label": "Design Atelier",
-        "address_2_text": "10119 Berlin, Germany\nTorstraße 66",
-        "email_1_label": "General Inquiries",
-        "email_1_address": "info@kenoldev.com",
-        "email_2_label": "Press & Editorial",
-        "email_2_address": "press@kenoldev.com"
+        "studio_name": "THE CASTO CLUB",
+        "tagline": "Dedicated support for your aesthetic optimization journey. Our team is here to assist with order logistics and protocol inquiries.",
+        "address_1_label": "GLOBAL DISPATCH",
+        "address_1_text": "Fulfillment & Logistics\nUnited States",
+        "address_2_label": "DIGITAL ARCHIVE",
+        "address_2_text": "PDF Protocols & Guides\nDelivered Instantly",
+        "email_1_label": "CLIENT SUPPORT",
+        "email_1_address": "support@castoclub.com",
+        "email_2_label": "BUSINESS & PARTNERSHIPS",
+        "email_2_address": "partners@castoclub.com"
       }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }
