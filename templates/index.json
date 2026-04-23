@@ -12,6 +12,7 @@
     "main": {
       "type": "hello-world",
       "settings": {
+        "hero_image": "shopify://shop_images/backcasto.png",
         "bestseller_product": "float-inflatable-drink-cup-holder-pvc-floating-water-coaster-swimming-pool-drink-float-toy-flamingo-drinkware-tray-party-decor",
         "bestseller_eyebrow": "Bestseller · N°001",
         "bestseller_title": "",
