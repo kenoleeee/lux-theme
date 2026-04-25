@@ -20,8 +20,8 @@
 
   {%- comment -%} ── MEDIA SIDE ────────────────────────────────── {%- endcomment -%}
   <figure class="bs__media">
-    {% if bs_image %}
-      {{ bs_image
+      {% if bs_image != blank %}
+        {{ bs_image
         | image_url: width: 2000
         | image_tag:
           class: 'bs__img',
