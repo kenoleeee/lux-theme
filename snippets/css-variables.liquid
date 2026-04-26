@@ -49,4 +49,21 @@
     background-color: #0a0a09;
     color: #f0ede5;
   }
+
+  /* --- Override Shopify Policy default colors --- */
+  .shopify-policy__container,
+  .shopify-policy__title h1,
+  .shopify-policy__title,
+  .shopify-policy__body p,
+  .shopify-policy__body li,
+  .shopify-policy__body span {
+    color: var(--color-foreground) !important;
+    background-color: var(--color-background) !important;
+  }
+
+  .shopify-policy__body a {
+    color: var(--color-accent) !important;
+    text-decoration: underline;
+  }
+  
 {% endstyle %}
