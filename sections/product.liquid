@@ -1261,12 +1261,13 @@
   }
 
   .pd__sticky-inner {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.85rem;
+    gap: 0.75rem 1rem;
     max-width: 110rem;
     margin-inline: auto;
+    width: 100%;
   }
 
   .pd__sticky-meta {
@@ -1274,16 +1275,18 @@
     flex-direction: column;
     gap: 0.15rem;
     min-width: 0;
+    max-width: 100%;
   }
 
   .pd__sticky-price {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 1rem;
+    font-size: clamp(0.88rem, 3.5vw, 1rem);
     color: var(--cream);
     display: flex;
     align-items: baseline;
     gap: 0.45rem;
+    flex-wrap: wrap;
   }
 
   .pd__sticky-compare {
@@ -1303,17 +1306,23 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 42vw;
+    white-space: nowrap;
+    max-width: 100%;
   }
 
-  .pd__sticky-btn {
+  /* Must win over global `.pd__btn { width:100% }` on mobile */
+  .pd__sticky-btn.pd__btn {
+    grid-column: 2;
+    justify-self: end;
     flex-shrink: 0;
     width: auto !important;
-    min-width: 9rem;
-    padding: 0.85rem 1rem !important;
+    max-width: min(46vw, 12.5rem);
+    min-width: 7.5rem;
+    padding: 0.75rem 0.85rem !important;
+    display: inline-block !important;
+    box-sizing: border-box !important;
   }
 
   .pd__rule--tight {
@@ -1884,8 +1893,8 @@
       font-size: 1rem;
     }
 
-    /* Buttons: full width, large touch target */
-    .pd__btn {
+    /* Buttons: full width — except sticky bar chip */
+    .pd__btn:not(.pd__sticky-btn) {
       width: 100% !important;
       padding: 1.2rem 1rem;
       font-size: 0.68rem;
