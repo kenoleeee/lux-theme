@@ -25,7 +25,15 @@ window.__cartCfg = {
     empty:     {{ 'cart.empty'              | t | json }},
     shop:      {{ 'cart.continue_shopping'  | t | json }},
     close:     {{ 'header.close_label'      | t | json }},
-    remove:    {{ 'cart.remove'             | t | json }}
+    remove:    {{ 'cart.remove'             | t | json }},
+    discountLabel:       {{ 'cart.discount_label'       | t | json }},
+    discountApply:       {{ 'cart.discount_apply'       | t | json }},
+    discountRemove:      {{ 'cart.discount_remove'      | t | json }},
+    discountPlaceholder: {{ 'cart.discount_placeholder' | t | json }},
+    discountError:       {{ 'cart.discount_error'       | t | json }},
+    discountApplied:     {{ 'cart.discount_applied'     | t | json }},
+    discountEmpty:       {{ 'cart.discount_empty'       | t | json }},
+    discountSuccess:     {{ 'cart.discount_success'     | t | json }}
   }
 };
 </script>
@@ -324,6 +332,128 @@ window.__cartCfg = {
     border-top:  1px solid var(--line);
   }
 
+  /* Promo / discount code */
+  .cdrw__discount {
+    margin-bottom: 1.25rem;
+  }
+
+  .cdrw__discount-label {
+    display:        block;
+    font-family:    var(--sans);
+    font-size:      0.52rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    margin:         0 0 0.55rem;
+  }
+
+  .cdrw__discount-row {
+    display:    flex;
+    align-items: stretch;
+    gap:        0.5rem;
+  }
+
+  .cdrw__discount-input {
+    flex:          1 1 auto;
+    min-width:     0;
+    padding:       0.65rem 0.75rem;
+    border:        1px solid var(--line);
+    border-radius: 0;
+    background:    transparent;
+    color:         var(--cream);
+    font-family:   var(--sans);
+    font-size:     0.72rem;
+    letter-spacing: 0.04em;
+    box-sizing:    border-box;
+  }
+
+  .cdrw__discount-input::placeholder {
+    color: rgba(240, 237, 229, 0.35);
+  }
+
+  .cdrw__discount-input:focus {
+    outline: none;
+    border-color: rgba(240, 237, 229, 0.35);
+  }
+
+  .cdrw__discount-apply {
+    flex-shrink:    0;
+    padding:        0.65rem 1rem;
+    border:         1px solid var(--cream);
+    border-radius:  0;
+    background:     var(--cream);
+    color:          #0a0a09;
+    font-family:    var(--sans);
+    font-size:      0.54rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor:         pointer;
+    transition:     background 200ms, color 200ms;
+    box-sizing:     border-box;
+  }
+
+  .cdrw__discount-apply:hover:not(:disabled) {
+    background: transparent;
+    color:      var(--cream);
+  }
+
+  .cdrw__discount-apply:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .cdrw__discount-applied {
+    list-style: none;
+    margin:     0.55rem 0 0;
+    padding:    0;
+  }
+
+  .cdrw__discount-applied-item {
+    font-family:    var(--sans);
+    font-size:      0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color:          rgba(240, 237, 229, 0.72);
+    margin:         0.25rem 0 0;
+  }
+
+  .cdrw__discount-remove {
+    display:        inline-block;
+    margin-top:     0.65rem;
+    padding:        0;
+    border:         none;
+    background:     transparent;
+    font-family:    var(--sans);
+    font-size:      0.52rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color:          var(--muted);
+    cursor:         pointer;
+    border-bottom:  1px solid transparent;
+    transition:     color 200ms, border-color 200ms;
+  }
+
+  .cdrw__discount-remove:hover {
+    color: var(--cream);
+    border-bottom-color: rgba(240, 237, 229, 0.25);
+  }
+
+  .cdrw__discount-feedback {
+    font-family: var(--sans);
+    font-size:   0.58rem;
+    line-height: 1.45;
+    margin:      0.45rem 0 0;
+    color:       rgba(240, 237, 229, 0.55);
+  }
+
+  .cdrw__discount-feedback--error {
+    color: rgba(255, 168, 168, 0.92);
+  }
+
+  .cdrw__discount-feedback--success {
+    color: rgba(190, 225, 190, 0.85);
+  }
+
   .cdrw__subtotal {
     display:         flex;
     justify-content: space-between;
@@ -508,7 +638,20 @@ window.__cartCfg = {
     if (closeBtn)  closeBtn.addEventListener('click', closeDrawer);
     if (backdrop)  backdrop.addEventListener('click', closeDrawer);
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closeDrawer();
+      if (e.key === 'Escape') {
+        closeDrawer();
+        return;
+      }
+      if (e.key !== 'Enter') return;
+      var input = e.target && e.target.closest && e.target.closest('[data-cdrw-discount-input]');
+      if (!input || !drawer || !drawer.contains(input)) return;
+      e.preventDefault();
+      var code = String(input.value || '').trim();
+      if (!code) {
+        showDiscountFeedback(drawer, lbl.discountEmpty || '', 'error');
+        return;
+      }
+      submitCartDiscount(code);
     });
 
     /* ─── Header cart trigger ────────────────────────────── */
@@ -571,6 +714,112 @@ window.__cartCfg = {
         + '</div>';
     }
 
+    function renderDiscountSection(cart) {
+      var codes = cart.discount_codes || [];
+      var appliedHtml = '';
+      for (var i = 0; i < codes.length; i++) {
+        var d = codes[i];
+        if (d && d.code && d.applicable !== false) {
+          appliedHtml += '<li class="cdrw__discount-applied-item">' + esc(d.code) + '</li>';
+        }
+      }
+      var appliedBlock = '';
+      if (appliedHtml) {
+        appliedBlock =
+          '<ul class="cdrw__discount-applied" aria-label="'
+          + esc(lbl.discountApplied || 'Applied codes')
+          + '">'
+          + appliedHtml
+          + '</ul>'
+          + '<button type="button" class="cdrw__discount-remove" data-cdrw-discount-remove>'
+          + esc(lbl.discountRemove || 'Remove')
+          + '</button>';
+      }
+
+      return (
+        '<div class="cdrw__discount">'
+        + '<label class="cdrw__discount-label" for="cdrw-discount-input">'
+        + esc(lbl.discountLabel || 'Promo code')
+        + '</label>'
+        + '<div class="cdrw__discount-row">'
+        + '<input id="cdrw-discount-input" class="cdrw__discount-input" type="text" autocomplete="off" placeholder="'
+        + esc(lbl.discountPlaceholder || '')
+        + '" data-cdrw-discount-input="" />'
+        + '<button type="button" class="cdrw__discount-apply" data-cdrw-discount-apply>'
+        + esc(lbl.discountApply || 'Apply')
+        + '</button>'
+        + '</div>'
+        + appliedBlock
+        + '<p class="cdrw__discount-feedback" data-cdrw-discount-feedback hidden></p>'
+        + '</div>'
+      );
+    }
+
+    function postCartDiscount(code) {
+      return fetch('/cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ discount: code || '' })
+      }).then(function (r) {
+        return r.json().then(function (data) {
+          return { ok: r.ok, data: data };
+        });
+      });
+    }
+
+    function showDiscountFeedback(rootDrawer, text, kind) {
+      var fb = rootDrawer.querySelector('[data-cdrw-discount-feedback]');
+      if (!fb) return;
+      fb.hidden = false;
+      fb.textContent = text || '';
+      fb.className =
+        'cdrw__discount-feedback'
+        + (kind === 'error' ? ' cdrw__discount-feedback--error' : '')
+        + (kind === 'success' ? ' cdrw__discount-feedback--success' : '');
+    }
+
+    function hideDiscountFeedback() {
+      if (!drawer) return;
+      var fb = drawer.querySelector('[data-cdrw-discount-feedback]');
+      if (!fb) return;
+      fb.hidden = true;
+      fb.textContent = '';
+      fb.className = 'cdrw__discount-feedback';
+    }
+
+    function submitCartDiscount(code) {
+      if (!drawer) return Promise.resolve();
+      var applyBtn = drawer.querySelector('[data-cdrw-discount-apply]');
+      if (applyBtn) applyBtn.disabled = true;
+      return postCartDiscount(code)
+        .then(function (result) {
+          if (applyBtn) applyBtn.disabled = false;
+          var data = result.data;
+          if (!result.ok) {
+            var msg =
+              (data && (data.description || data.message)) ||
+              (lbl.discountError || '');
+            showDiscountFeedback(drawer, msg, 'error');
+            return;
+          }
+          renderDrawer(data, null);
+          if (code) {
+            var okMsg = lbl.discountSuccess || '';
+            if (okMsg) {
+              showDiscountFeedback(drawer, okMsg, 'success');
+            } else {
+              hideDiscountFeedback();
+            }
+          } else {
+            hideDiscountFeedback();
+          }
+        })
+        .catch(function () {
+          if (applyBtn) applyBtn.disabled = false;
+          showDiscountFeedback(drawer, lbl.discountError || '', 'error');
+        });
+    }
+
     /* ─── Render full drawer content ─────────────────────── */
     function renderDrawer(cart, newVariantId) {
       if (!bodyEl || !footEl) return;
@@ -593,7 +842,9 @@ window.__cartCfg = {
         return renderItem(item, isNew);
       }).join('');
 
-      footEl.innerHTML = '<div class="cdrw__subtotal">'
+      footEl.innerHTML =
+        renderDiscountSection(cart)
+        + '<div class="cdrw__subtotal">'
         + '<span class="cdrw__subtotal-label">' + esc(lbl.subtotal || 'Subtotal') + '</span>'
         + '<span class="cdrw__subtotal-amount">' + money(cart.total_price) + '</span>'
         + '</div>'
@@ -619,6 +870,25 @@ window.__cartCfg = {
       })
       .then(function (r) { return r.json(); })
       .then(function (cart) { renderDrawer(cart, null); });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!drawer || !drawer.contains(e.target)) return;
+      var applyBtn = e.target.closest('[data-cdrw-discount-apply]');
+      var removeBtn = e.target.closest('[data-cdrw-discount-remove]');
+      if (!applyBtn && !removeBtn) return;
+      e.preventDefault();
+      if (applyBtn) {
+        var inp = drawer.querySelector('[data-cdrw-discount-input]');
+        var discountCode = inp ? String(inp.value || '').trim() : '';
+        if (!discountCode) {
+          showDiscountFeedback(drawer, lbl.discountEmpty || '', 'error');
+          return;
+        }
+        submitCartDiscount(discountCode);
+        return;
+      }
+      submitCartDiscount('');
     });
 
     /* ─── Intercept ATC form submit ──────────────────────── */

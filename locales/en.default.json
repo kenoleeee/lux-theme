@@ -54,7 +54,15 @@
     "increase_qty": "Increase quantity",
     "qty_label": "Quantity",
     "remove_item": "Remove {{ title }} from cart",
-    "view_cart": "View cart"
+    "view_cart": "View cart",
+    "discount_label": "Promo code",
+    "discount_placeholder": "Enter code",
+    "discount_apply": "Apply",
+    "discount_remove": "Remove code",
+    "discount_applied": "Applied codes",
+    "discount_success": "Promo code applied.",
+    "discount_empty": "Enter a promo code.",
+    "discount_error": "That code could not be applied."
   },
   "customers": {
     "login": {
