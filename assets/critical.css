@@ -80,6 +80,11 @@ body {
   color: var(--color-foreground);
 }
 
+/* Fixed `.site-header` — content must start below it (no overlap on gallery / titles). */
+#main-content {
+  padding-top: clamp(4.25rem, 12vw, 6.75rem);
+}
+
 .skip-link {
   position: absolute;
   inset-block-start: 0.75rem;

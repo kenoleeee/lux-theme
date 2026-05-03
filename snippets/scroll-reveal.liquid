@@ -45,8 +45,7 @@
        stagger: false → animate independently, no delay
     ──────────────────────────────────────────────────────── */
     var GROUPS = [
-      /* Product grid cards */
-      { sel: '.coll-grid .pc',           stagger: true  },
+      /* Collection grid cards — excluded; reveal kept tiles invisible until scroll and looked “broken” */
       /* Blog article cards */
       { sel: '.blg-card',                stagger: true  },
       /* Collections index rows (handled by own load-animation) */
@@ -55,8 +54,7 @@
       { sel: '.editorial-cat',           stagger: true  },
       /* Cart items */
       { sel: '.cart-item',               stagger: true  },
-      /* Product gallery frames */
-      { sel: '.pd__gallery .pd__frame',  stagger: true  },
+      /* Product gallery: excluded — reveal opacity broke perceived layout / hero timing */
       /* Section / page headings */
       { sel: '.coll-header__body',       stagger: false },
       { sel: '.colls-page-header',       stagger: false },

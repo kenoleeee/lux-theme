@@ -331,8 +331,8 @@
       document.querySelectorAll('[data-swatches="page"]').forEach(function (container) {
         applySwatchColors(container);
 
-        var select  = document.querySelector('.pd__select, select[name="id"]');
-        var gallery = document.querySelector('.pd__gallery');
+        var select   = document.querySelector('[data-pd-variant-select], select[name="id"]');
+        var viewport = document.querySelector('[data-pd-viewport]');
 
         container.querySelectorAll('.swt__btn').forEach(function (btn) {
           btn.addEventListener('click', function () {
@@ -351,18 +351,20 @@
               select.dispatchEvent(new Event('change', { bubbles: true }));
             }
 
-            /* Scroll gallery to that colour's first image + animate frame */
+            /* Scroll product gallery to variant image + animate slide */
             var imageId = btn.dataset.imageId;
-            if (gallery && imageId) {
-              var frame = gallery.querySelector('[data-image-id="' + imageId + '"]');
-              if (frame) {
-                frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                frame.classList.remove('pd__frame--flash');
-                // tiny timeout so re-adding the class retriggers keyframes
+            if (viewport && imageId) {
+              var slide = viewport.querySelector('[data-image-id="' + imageId + '"]');
+              if (slide) {
+                var slideRect = slide.getBoundingClientRect();
+                var viewRect = viewport.getBoundingClientRect();
+                var targetLeft = viewport.scrollLeft + (slideRect.left - viewRect.left);
+                viewport.scrollTo({ left: targetLeft, behavior: 'smooth' });
+                slide.classList.remove('pd__frame--flash');
                 setTimeout(function () {
-                  frame.classList.add('pd__frame--flash');
+                  slide.classList.add('pd__frame--flash');
                   setTimeout(function () {
-                    frame.classList.remove('pd__frame--flash');
+                    slide.classList.remove('pd__frame--flash');
                   }, 650);
                 }, 10);
               }

@@ -1,0 +1,19 @@
+{% comment %}
+  Fragment rendered only via Product Recommendations API
+  (?section_id=pd-complementary&product_id=&intent=complementary).
+{% endcomment %}
+
+{%- if recommendations.performed and recommendations.products_count > 0 -%}
+  <div class="pd-comp-api">
+    {%- for card_product in recommendations.products -%}
+      {% render 'pd-compact-atc', card_product: card_product %}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PD complementary API",
+  "settings": []
+}
+{% endschema %}

@@ -98,13 +98,24 @@
     "results_aria": "Search results"
   },
   "product": {
+    "gallery_region": "Product gallery",
+    "gallery_go_to": "View image {{ index }} of {{ count }}",
+    "reviews_region": "Customer reviews",
     "choose_variant": "Select Option",
     "color": "Variant",
     "quantity": "Quantity",
     "add_to_cart": "Add to order",
     "adding": "Adding…",
     "added": "Added ✓",
-    "sold_out": "Sold out"
+    "sold_out": "Sold out",
+    "save_percent": "Save {{ percent }}%",
+    "express_checkout": "Express checkout",
+    "scarcity_inventory": "High demand — only {{ count }} left in stock.",
+    "complementary_heading": "Pairs well with",
+    "sticky_read_more": "Scroll for details",
+    "trust_secure_checkout": "Secure checkout",
+    "trust_fast_shipping": "Fast shipping",
+    "trust_quality": "Premium materials"
   },
   "home": {
     "hero": {

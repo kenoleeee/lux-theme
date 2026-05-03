@@ -48,9 +48,10 @@
       style="
         --gap-row: {{ section.settings.grid_gap }}rem;
         --gap-col: {{ section.settings.grid_gap | times: 0.65 }}rem;
-        --cols:    {{ section.settings.columns_desktop }};
+        --cols:    {{ section.settings.columns_desktop | default: 4 }};
         --offset:  {{ section.settings.stagger_offset }}rem;
         --pad:     clamp(1.2rem, {{ section.settings.side_padding }}vw, {{ section.settings.side_padding | times: 0.6 }}rem);
+        grid-template-columns: repeat({{ section.settings.columns_desktop | default: 4 }}, minmax(0, 1fr));
       "
       aria-label="{{ collection.title | escape }}"
     >
@@ -183,9 +184,11 @@
     background:    var(--bg) !important;
     background-color: var(--bg) !important;
     display:       grid !important;
-    /* 4 cols desktop, overridden at smaller breakpoints */
-    grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)) !important;
-    gap:           var(--gap-row, 1.8rem) var(--gap-col, 1.2rem) !important;
+    width:         100%;
+    min-width:     0;
+    box-sizing:    border-box;
+    /* grid-template-columns: set inline (Liquid) so repeat(count) is always valid */
+    gap:           var(--gap-row, 2rem) var(--gap-col, 1.35rem) !important;
     padding:       2rem var(--pad, 3vw) 4rem !important;
     align-items:   start;
   }
@@ -195,15 +198,22 @@
   .coll-grid *::before,
   .coll-grid *::after { box-sizing: border-box; }
 
-  .coll-grid .card,
-  .coll-grid .card-wrapper,
+  /* Legacy Shopify “card” wrappers only — NOT [class*="card"] (matches e.g. swt--card and breaks layout). */
+  .coll-grid .card:not(.pc),
+  .coll-grid .card-wrapper:not(.pc),
   .coll-grid .card__inner,
-  .coll-grid .card__media,
-  .coll-grid [class*="card"],
-  .coll-grid [class*="product-card"] {
+  .coll-grid .card__media {
     background:    transparent !important;
     border:        none !important;
     border-radius: 0 !important;
+    box-shadow:    none !important;
+    color:         var(--cream) !important;
+  }
+
+  .coll-grid .swt,
+  .coll-grid .swt--card {
+    background:    transparent !important;
+    border:        none !important;
     box-shadow:    none !important;
     color:         var(--cream) !important;
   }
@@ -335,7 +345,7 @@
       "max": 5,
       "step": 0.5,
       "unit": "rem",
-      "default": 1.5
+      "default": 2
     },
     {
       "type": "range",

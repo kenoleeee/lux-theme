@@ -1,0 +1,40 @@
+{% doc %}
+  Compact complementary product row: thumb, title, price, single-variant add to cart.
+
+  @param {product} card_product - Product to display
+{% enddoc %}
+
+{%- assign cp_var = card_product.selected_or_first_available_variant -%}
+
+<article class="pd-comp-card">
+  <a href="{{ card_product.url }}" class="pd-comp-card__media" tabindex="-1" aria-hidden="true">
+    {% if card_product.featured_image %}
+      {{
+        card_product.featured_image
+        | image_url: width: 240, height: 320, crop: 'center'
+        | image_tag:
+          class: 'pd-comp-card__img',
+          loading: 'lazy',
+          widths: '120, 180, 240',
+          sizes: '72px'
+      }}
+    {% else %}
+      <span class="pd-comp-card__img pd-comp-card__img--placeholder"></span>
+    {% endif %}
+  </a>
+  <div class="pd-comp-card__body">
+    <a href="{{ card_product.url }}" class="pd-comp-card__title">{{ card_product.title | escape }}</a>
+    <p class="pd-comp-card__price">{{ cp_var.price | money }}</p>
+    {% form 'product', card_product, class: 'pd-comp-card__form' %}
+      <input type="hidden" name="id" value="{{ cp_var.id }}">
+      <button
+        type="submit"
+        name="add"
+        class="pd-comp-card__btn"
+        {% unless cp_var.available %}disabled{% endunless %}
+      >
+        {{ 'product.add_to_cart' | t }}
+      </button>
+    {% endform %}
+  </div>
+</article>
