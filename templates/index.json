@@ -13,7 +13,7 @@
       "type": "hello-world",
       "settings": {
         "hero_image": "shopify://shop_images/backcasto.png",
-        "bestseller_product": "casto™-obsidian-contour-edge",
+        "bestseller_product": "the-signature-face-kit",
         "bestseller_eyebrow": "Bestseller · N°001",
         "bestseller_title": "",
         "bestseller_cta": "Add to bag",
@@ -23,7 +23,7 @@
     "bestseller": {
       "type": "bestseller",
       "settings": {
-        "product": "casto™-obsidian-contour-edge",
+        "product": "the-signature-face-kit",
         "eyebrow": "Bestseller",
         "object_no": "N°001",
         "caption": "The object — this season",
