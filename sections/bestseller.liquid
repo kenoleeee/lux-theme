@@ -21,13 +21,15 @@
   {%- comment -%} ── MEDIA SIDE ────────────────────────────────── {%- endcomment -%}
   <figure class="bs__media">
       {% if bs_image != blank %}
+        {%- assign bs_alt = bs_product.featured_image.alt | default: bs_product.title | default: section.settings.eyebrow | default: 'Bestseller' -%}
         {{ bs_image
         | image_url: width: 2000
         | image_tag:
           class: 'bs__img',
           loading: 'lazy',
           widths: '600, 900, 1200, 1600, 2000',
-          sizes: '(max-width: 900px) 100vw, 55vw'
+          sizes: '(max-width: 900px) 100vw, 55vw',
+          alt: bs_alt
       }}
     {% else %}
       <div class="bs__img bs__img--placeholder"></div>

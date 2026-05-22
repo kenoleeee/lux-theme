@@ -28,6 +28,18 @@
   }
 </script>
 
+<nav class="pd__breadcrumb full-width" aria-label="Breadcrumb">
+  <ol class="pd__bc-list">
+    <li class="pd__bc-item"><a class="pd__bc-link" href="{{ routes.root_url }}">{{ shop.name | escape }}</a></li>
+    {%- if collection -%}
+      <li class="pd__bc-item" aria-hidden="true"><span class="pd__bc-sep">—</span></li>
+      <li class="pd__bc-item"><a class="pd__bc-link" href="{{ collection.url }}">{{ collection.title | escape }}</a></li>
+    {%- endif -%}
+    <li class="pd__bc-item" aria-hidden="true"><span class="pd__bc-sep">—</span></li>
+    <li class="pd__bc-item pd__bc-item--current" aria-current="page">{{ product.title | escape }}</li>
+  </ol>
+</nav>
+
 <div class="pd full-width">
 
   {% comment %} ── LEFT: gallery (carousel mobile / thumbs + main desktop) ─{% endcomment %}
@@ -65,7 +77,8 @@
                     class: 'pd__thumb-img',
                     loading: 'lazy',
                     widths: '120, 180, 280',
-                    sizes: '76px'
+                    sizes: '76px',
+                    alt: image.alt | default: product.title
                 }}
               </button>
             {% endfor %}
@@ -105,8 +118,10 @@
                   | image_tag:
                     class: 'pd__photo',
                     loading: 'eager',
+                    fetchpriority: forloop.first | iif: 'high', 'auto',
                     widths: '600, 900, 1200, 1600, 2000',
-                    sizes: '(max-width: 900px) 100vw, 58vw'
+                    sizes: '(max-width: 900px) 100vw, 58vw',
+                    alt: image.alt | default: product.title
                 }}
               </div>
             {% endfor %}
@@ -576,6 +591,48 @@
 </section>
 
 {% stylesheet %}
+  /* ── Breadcrumb ──────────────────────────────────────────── */
+  .pd__breadcrumb {
+    background: #0a0a09;
+    padding: 0.85rem clamp(1.5rem, 4vw, 3.5rem);
+    border-bottom: 1px solid rgba(240, 237, 229, 0.07);
+  }
+
+  .pd__bc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .pd__bc-item {
+    font-family: var(--font-body--family, "Work Sans", system-ui, sans-serif);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(240, 237, 229, 0.38);
+  }
+
+  .pd__bc-link {
+    color: rgba(240, 237, 229, 0.38);
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+
+  .pd__bc-link:hover { color: rgba(240, 237, 229, 0.75); }
+
+  .pd__bc-sep { color: rgba(240, 237, 229, 0.22); }
+
+  .pd__bc-item--current { color: rgba(240, 237, 229, 0.6); }
+
+  @media (max-width: 767px) {
+    .pd__breadcrumb { padding: 0.7rem 1.1rem; }
+    .pd__bc-item { font-size: 0.54rem; }
+  }
+
   /* ── Tokens ──────────────────────────────────────────────── */
   .pd {
     --bg:    #0a0a09;
@@ -2462,7 +2519,7 @@
       "type": "checkbox",
       "id": "show_product_description",
       "label": "Show product description below accordions",
-      "default": false
+      "default": true
     },
     {
       "type": "header",

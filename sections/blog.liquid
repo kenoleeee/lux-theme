@@ -26,7 +26,8 @@
                 class: 'blg-card__img',
                 loading: blg_loading,
                 widths: '480, 720, 1000, 1200',
-                sizes: '(max-width: 640px) 100vw, 33vw'
+                sizes: '(max-width: 640px) 100vw, 33vw',
+                alt: article.image.alt | default: article.title
             }}
           {% else %}
             {{ 'image' | placeholder_svg_tag: 'blg-card__img blg-card__img--placeholder' }}

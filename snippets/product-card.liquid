@@ -29,8 +29,10 @@
           | image_tag:
             class: 'pc__img pc__img--primary',
             loading: img_loading,
+            fetchpriority: eager | iif: 'high', 'auto',
             widths: '480, 720, 960, 1200, 1400',
-            sizes: '(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw'
+            sizes: '(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw',
+            alt: product.featured_image.alt | default: product.title
         }}
       {% else %}
         <div class="pc__img-placeholder"></div>
@@ -44,6 +46,7 @@
             loading: 'lazy',
             widths: '480, 720, 960, 1200, 1400',
             sizes: '(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw',
+            alt: '',
             aria_hidden: 'true'
         }}
       {% endif %}

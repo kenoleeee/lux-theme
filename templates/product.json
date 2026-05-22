@@ -11,7 +11,14 @@
   "sections": {
     "main": {
       "type": "product",
-      "settings": {}
+      "settings": {
+        "show_product_description": true,
+        "show_scarcity": true,
+        "scarcity_threshold": 24,
+        "show_trust_row": true,
+        "show_complementary": true,
+        "complementary_limit": 4
+      }
     }
   },
   "order": [

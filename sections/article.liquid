@@ -12,8 +12,10 @@
         | image_tag:
           class: 'art-hero__img',
           loading: 'eager',
+          fetchpriority: 'high',
           widths: '768, 1200, 1800, 2400',
-          sizes: '100vw'
+          sizes: '100vw',
+          alt: article.image.alt | default: article.title
       }}
     {% else %}
       {{ 'image' | placeholder_svg_tag: 'art-hero__img art-hero__img--placeholder' }}

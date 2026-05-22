@@ -16,7 +16,8 @@
           class: 'pd-comp-card__img',
           loading: 'lazy',
           widths: '120, 180, 240',
-          sizes: '72px'
+          sizes: '72px',
+          alt: card_product.featured_image.alt | default: card_product.title
       }}
     {% else %}
       <span class="pd-comp-card__img pd-comp-card__img--placeholder"></span>

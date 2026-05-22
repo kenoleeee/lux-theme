@@ -101,7 +101,8 @@
                 class: 'clx__thumb-img',
                 loading: img_loading,
                 widths: '300, 450, 600',
-                sizes: '20vw'
+                sizes: '20vw',
+                alt: collection.featured_image.alt | default: collection.title
             }}
           {% else %}
             <div class="clx__thumb-empty"></div>

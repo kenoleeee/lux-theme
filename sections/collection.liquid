@@ -15,8 +15,10 @@
       {{ banner_img | image_url: width: 2400 | image_tag:
         class: 'coll-header__cover-img',
         loading: 'eager',
+        fetchpriority: 'high',
         widths: '800, 1200, 2000, 2400',
-        sizes: '100vw'
+        sizes: '100vw',
+        alt: collection.title | escape
       }}
       <div class="coll-header__grain"></div>
       <div class="coll-header__vignette"></div>
@@ -31,6 +33,13 @@
     {% endif %}
   </div>
 </header>
+
+{% comment %} ── COLLECTION DESCRIPTION ───────────────────────────────────── {% endcomment %}
+{% if collection.description != blank %}
+  <div class="coll-desc full-width">
+    <p class="coll-desc__text">{{ collection.description | strip_html | truncate: 320 }}</p>
+  </div>
+{% endif %}
 
 {% comment %} ── PRODUCT GRID ──────────────────────────────────────────────── {% endcomment %}
 {% paginate collection.products by 12 %}
@@ -176,8 +185,28 @@
     margin:         0;
   }
 
-  /* description hidden in compact mode — not enough room */
   .coll-header__desc { display: none; }
+
+  /* ─── COLLECTION DESCRIPTION ──────────────────────────────────── */
+  .coll-desc {
+    background: var(--bg) !important;
+    padding: 1.25rem clamp(1.5rem, 5vw, 5rem);
+    border-bottom: 1px solid rgba(240, 237, 229, 0.08);
+  }
+
+  .coll-desc__text {
+    font-family:  var(--sans);
+    font-size:    0.82rem;
+    line-height:  1.75;
+    color:        rgba(240, 237, 229, 0.55);
+    margin:       0;
+    max-width:    72ch;
+  }
+
+  @media (max-width: 767px) {
+    .coll-desc { padding: 1rem 0.8rem; }
+    .coll-desc__text { font-size: 0.78rem; }
+  }
 
   /* ─── PRODUCT GRID ────────────────────────────────────────────── */
   .coll-grid {

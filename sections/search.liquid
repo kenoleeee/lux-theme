@@ -60,7 +60,8 @@
                     | image_tag:
                       class: 'srch-article__img',
                       loading: 'lazy',
-                      widths: '400, 600, 800'
+                      widths: '400, 600, 800',
+                      alt: result.image.alt | default: result.title
                   }}
                 </div>
               {% endif %}

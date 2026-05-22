@@ -47,7 +47,8 @@
                       class: 'cart-item__img',
                       loading: 'lazy',
                       widths: '200, 300, 450, 600',
-                      sizes: '(max-width: 767px) 28vw, 14vw'
+                      sizes: '(max-width: 767px) 28vw, 14vw',
+                      alt: item.image.alt | default: item.product.title
                   }}
                 {% else %}
                   {{ 'image' | placeholder_svg_tag: 'cart-item__img cart-item__img--empty' }}
