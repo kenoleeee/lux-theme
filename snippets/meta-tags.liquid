@@ -10,51 +10,39 @@
 
   if request.page_type == 'product'
     assign og_type = 'product'
+    if og_description == shop.name and product.description != blank
+      assign og_description = product.description | strip_html | truncate: 160
+    endif
+  elsif request.page_type == 'collection'
+    assign og_type = 'website'
+    if og_description == shop.name and collection.description != blank
+      assign og_description = collection.description | strip_html | truncate: 160
+    endif
   elsif request.page_type == 'article'
     assign og_type = 'article'
+    if og_description == shop.name and article.excerpt_or_content != blank
+      assign og_description = article.excerpt_or_content | strip_html | truncate: 160
+    endif
   elsif request.page_type == 'password'
     assign og_url = request.origin
   endif
-%}
+-%}
 
-<meta
-  property="og:site_name"
-  content="{{ shop.name }}"
->
-<meta
-  property="og:url"
-  content="{{ og_url }}"
->
-<meta
-  property="og:title"
-  content="{{ og_title | escape }}"
->
-<meta
-  property="og:type"
-  content="{{ og_type }}"
->
-<meta
-  property="og:description"
-  content="{{ og_description | escape }}"
->
+{%- unless request.page_type == 'password' -%}
+  <meta name="robots" content="index, follow">
+{%- endunless -%}
+
+<meta property="og:site_name" content="{{ shop.name }}">
+<meta property="og:url" content="{{ og_url }}">
+<meta property="og:title" content="{{ og_title | escape }}">
+<meta property="og:type" content="{{ og_type }}">
+<meta property="og:description" content="{{ og_description | escape }}">
+<meta property="og:locale" content="{{ request.locale.iso_code | replace: '-', '_' }}">
 
 {%- if page_image -%}
-  <meta
-    property="og:image"
-    content="http:{{ page_image | image_url }}"
-  >
-  <meta
-    property="og:image:secure_url"
-    content="https:{{ page_image | image_url }}"
-  >
-  <meta
-    property="og:image:width"
-    content="{{ page_image.width }}"
-  >
-  <meta
-    property="og:image:height"
-    content="{{ page_image.height }}"
-  >
+  <meta property="og:image" content="http:{{ page_image | image_url: width: 1200 }}">
+  <meta property="og:image:secure_url" content="https:{{ page_image | image_url: width: 1200 }}">
+  <meta property="og:image:alt" content="{{ page_image.alt | default: og_title | escape }}">
 {%- endif -%}
 
 {%- if request.page_type == 'product' -%}
@@ -62,28 +50,101 @@
     {{ product | structured_data }}
   </script>
 
-  <meta
-    property="og:price:amount"
-    content="{{ product.price | money_without_currency | strip_html }}"
-  >
-  <meta
-    property="og:price:currency"
-    content="{{ cart.currency.iso_code }}"
-  >
+  <meta property="og:price:amount" content="{{ product.price | money_without_currency | strip_html }}">
+  <meta property="og:price:currency" content="{{ cart.currency.iso_code }}">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": {{ shop.name | json }}, "item": {{ request.origin | json }} }
+      {%- if collection -%}
+      ,{ "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ collection.url | prepend: request.origin | json }} }
+      ,{ "@type": "ListItem", "position": 3, "name": {{ product.title | json }}, "item": {{ canonical_url | json }} }
+      {%- else -%}
+      ,{ "@type": "ListItem", "position": 2, "name": {{ product.title | json }}, "item": {{ canonical_url | json }} }
+      {%- endif -%}
+    ]
+  }
+  </script>
+
+{%- elsif request.page_type == 'collection' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": {{ shop.name | json }}, "item": {{ request.origin | json }} },
+      { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ canonical_url | json }} }
+    ]
+  }
+  </script>
+
+{%- elsif request.page_type == 'article' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": {{ article.title | json }},
+    "description": {{ article.excerpt_or_content | strip_html | truncate: 200 | json }},
+    "datePublished": "{{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' }}",
+    "dateModified": "{{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' }}",
+    "author": { "@type": "Person", "name": {{ article.author | json }} },
+    "publisher": { "@type": "Organization", "name": {{ shop.name | json }}, "url": {{ request.origin | json }} },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": {{ canonical_url | json }} }
+    {%- if article.image -%}
+    ,"image": "https:{{ article.image | image_url: width: 1200 }}"
+    {%- endif -%}
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": {{ shop.name | json }}, "item": {{ request.origin | json }} },
+      { "@type": "ListItem", "position": 2, "name": {{ blog.title | json }}, "item": {{ blog.url | prepend: request.origin | json }} },
+      { "@type": "ListItem", "position": 3, "name": {{ article.title | json }}, "item": {{ canonical_url | json }} }
+    ]
+  }
+  </script>
+
+{%- elsif request.page_type == 'index' -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": {{ shop.name | json }},
+    "url": {{ request.origin | json }},
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": { "@type": "EntryPoint", "urlTemplate": "{{ request.origin }}/search?q={%- raw -%}{search_term_string}{%- endraw -%}" },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    "url": {{ request.origin | json }},
+    "description": {{ shop.description | default: shop.name | json }}
+    {%- if shop.email -%}
+    ,"contactPoint": { "@type": "ContactPoint", "contactType": "customer service", "email": {{ shop.email | json }} }
+    {%- endif -%}
+  }
+  </script>
 {%- endif -%}
 
-<meta
-  name="twitter:card"
-  content="summary_large_image"
->
-<meta
-  name="twitter:title"
-  content="{{ og_title | escape }}"
->
-<meta
-  name="twitter:description"
-  content="{{ og_description | escape }}"
->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title | escape }}">
+<meta name="twitter:description" content="{{ og_description | escape }}">
+{%- if page_image -%}
+  <meta name="twitter:image" content="https:{{ page_image | image_url: width: 1200 }}">
+  <meta name="twitter:image:alt" content="{{ page_image.alt | default: og_title | escape }}">
+{%- endif -%}
 
 <title>
   {{ page_title }}
@@ -92,14 +153,15 @@
   {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
 </title>
 
-<link
-  rel="canonical"
-  href="{{ canonical_url }}"
->
+<link rel="canonical" href="{{ canonical_url }}">
 
-{% if page_description %}
-  <meta
-    name="description"
-    content="{{ page_description | escape }}"
-  >
-{% endif %}
+<meta name="description" content="{{ og_description | escape }}">
+
+{%- if shop.enabled_locales.size > 1 -%}
+  {%- for locale in shop.enabled_locales -%}
+    {%- assign locale_root = locale.root_url | default: '' -%}
+    {%- if locale_root == '/' -%}{%- assign locale_root = '' -%}{%- endif -%}
+    <link rel="alternate" hreflang="{{ locale.iso_code }}" href="{{ request.origin }}{{ locale_root }}{{ request.path }}">
+  {%- endfor -%}
+  <link rel="alternate" hreflang="x-default" href="{{ canonical_url }}">
+{%- endif -%}
